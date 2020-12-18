@@ -1,0 +1,64 @@
+/*
+ * @Descripttion: Crane message center interface class.
+ * @version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2020-09-09 16:53:13
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2020-09-15 17:06:10
+ */
+#ifndef __PLUGIN_CRANEMSGCENTERINTERFACE_H__
+#define __PLUGIN_CRANEMSGCENTERINTERFACE_H__
+
+#include <memory>
+
+#include "PluginBaseInterface.h"
+
+#include "CraneTopic.h"
+#include "CraneMsg.h"
+#include "CraneObserver.h"
+
+using namespace std;
+namespace NS_CRANE {
+
+class Itf_CraneMsgCenter : public PluginBaseInterface {
+    public:
+        /**
+         * @Descripttion:   Subscribe a special topic with Observer implement class instance.
+         * @Param:          topic: Topic of the data. 
+         * @Param:          oberver: a oberver which desire to get the data of the specified topic. 
+         * @Param[out]:     null 
+         * @Return:         CRANE_SUCC/CRANE_FAIL 
+         */        
+        virtual unsigned subscriber(const CraneTopic& topic, shared_ptr<CraneObserver> observer) = 0;
+
+        /**
+         * @Descripttion:   Unsubscribe the topic with Observer implement class instance.
+         * @Param:          topic: Topic of the data. 
+         * @Param:          oberver: A oberver which has subscriber the data of the specified topic. 
+         * @Param[out]:     null
+         * @Return:         CRANE_SUCC/CRANE_FAIL 
+         */        
+        virtual unsigned unSubscriber(const CraneTopic& topic, shared_ptr<CraneObserver> observer) = 0;
+
+        /**
+         * @Descripttion:   Publish the data to the special topic.
+         * @Param:          topic: Topic of the data. 
+         * @Param:          data: 
+         * @Param[out]:     null
+         * @Return:         CRANE_SUCC/CRANE_FAIL 
+         */        
+        virtual unsigned publish(const CraneTopic& topic, shared_ptr<CraneMsg> data) = 0;
+
+        /**
+         * @Descripttion:   Pull the data back with key.
+         * @Param:          key: key of datas poll.
+         * @Param[out]:     data: reference of data.
+         * @Return:         CRANE_SUCC/CRANE_FAIL 
+         */        
+        //virtual unsigned pull(const CraneMsg::Key key, shared_ptr<CraneMsg>& data) = 0;
+        virtual const shared_ptr<CraneMsg>& pull(const CraneMsg::Key key) = 0; 
+};
+
+}
+
+#endif
