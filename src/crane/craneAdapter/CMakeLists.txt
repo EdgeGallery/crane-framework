@@ -4,7 +4,7 @@ file(GLOB _CRANEADAPTER_H_ ${PROJECT_SOURCE_DIR}/src/crane/craneAdapter/inc/*.h)
 get_property(TMP GLOBAL PROPERTY "CRANE_H")
 set_property(GLOBAL PROPERTY CRANE_H "${TMP} ${_CRANEADAPTER_H_}")
 get_property(ABC GLOBAL PROPERTY "CRANE_H")
-message("CRANE_H: ${ABC}")
+#message("CRANE_H: ${ABC}")
 
 include_directories("${PROJECT_SOURCE_DIR}/src/inc")
 include_directories("${PROJECT_SOURCE_DIR}/src/crane/common/inc")

@@ -4,16 +4,18 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-09-29 10:07:34
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-10-02 16:23:53
+ * @LastEditTime: 2020-10-10 11:54:43
  */
 #include "DlLibrary.h"
 
 
 namespace NS_CRANE {
-    shared_ptr<DlLibrary> DlLibrary::Load(const string& filename) {
+    //shared_ptr<DlLibrary> DlLibrary::Load(const string& filename) {
+    unique_ptr<DlLibrary> DlLibrary::Load(const string& filename) {
         if ( filename.empty() ){
             LOG_ERROR("Absolute filename of plugin is empty.");
-            return shared_ptr<DlLibrary>(nullptr);
+            //return shared_ptr<DlLibrary>(nullptr);
+            return unique_ptr<DlLibrary>(nullptr);
         } else {
             LOG_DEBUG("Plugin absolute filename: { %s }", filename.c_str());
         }
@@ -24,18 +26,11 @@ namespace NS_CRANE {
         if (!handle){
             const char* err = ::dlerror();
             LOG_ERROR("Failed to load library of plugin filename: { %s } with error: { %s }", filename.c_str(), err);
-            return shared_ptr<DlLibrary>(nullptr);
+            return unique_ptr<DlLibrary>(nullptr);
         }
 
-        return shared_ptr<DlLibrary>(new DlLibrary(filename, handle));
-    }
-
-    const string& DlLibrary::name() const {
-        return _name;
-    }
-
-    const PluginDesc& DlLibrary::pluginDesc() const {
-        return _pluginDesc;
+        //return shared_ptr<DlLibrary>(new DlLibrary(filename, handle));
+        return unique_ptr<DlLibrary>(new DlLibrary(filename, handle));
     }
 
     void DlLibrary::getPluginDesc() {
@@ -76,12 +71,7 @@ namespace NS_CRANE {
         }
         return symbolHandle;
     }
-
-    DlLibrary::DlLibrary(string name, void* handle) {
-        _name = name;
-        _handle = handle;
-    }
-
+    
     DlLibrary::~DlLibrary() {
         LOG_DEBUG("================~DlLibrary(%s) =================", _name.c_str());
         if (_handle) { 

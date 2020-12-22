@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-10 14:29:21
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-29 11:44:50
+ * @LastEditTime: 2020-10-14 16:29:40
  */ 
 #include "playImplCD.h"
 
@@ -32,10 +32,12 @@ PlayerImplCD::~PlayerImplCD() {
     std::cout<<"Crane plugin: CD player release resource."<<endl;
 }
 
-CRANE_PLUGIN_DEFINE("1.0.0",    //插件接口版本
-                    Itf_Player,
-                    "1.0.1",    //要求的插件框架版本   
-                    PlayerImplCD,
-                    "CD player which is implement the Itf_Player interface.",
-                    "dongyin@huawei.com",
-                    "LGPL")
+CRANE_PLUGIN_DEFINE(
+    "1.0.0",        //Version of the plugin interface
+    Itf_Player,     //Name of the plugin interface 
+    "1.0.1",        //Required the version of the plugin framework.    
+    PlayerImplCD,   //Name of the plugin interface implemention.
+    "CD player which is implement the Itf_Player interface.",   //Description of the plugin implemention
+    "dongyin@huawei.com",       //Author of the plugin implemention.
+    "LGPL"                      //License.
+    )

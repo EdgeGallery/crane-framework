@@ -49,7 +49,8 @@ namespace NS_CRANE {
                     }           
                 }
             }
-            this_thread::sleep_for(chrono::milliseconds(20));
+            //this_thread::sleep_for(chrono::milliseconds(20));
+            this_thread::yield();
         }
     }
 
@@ -67,18 +68,12 @@ namespace NS_CRANE {
                 continue;
             }
 
-            LOG_DEBUG("---------------here 0--------------------");
-
             tp = chrono::time_point_cast<chrono::seconds>(chrono::system_clock::now());
             timeNow = tp.time_since_epoch().count();
-
-            LOG_DEBUG("---------------here 1--------------------");
 
             count = 0;
             workLoad = (_msgAgingQueue.size()>>2 < 128)? _msgAgingQueue.size()>>2 : 128;
             workLoad = (workLoad == 0)? 128 : workLoad;
-
-            LOG_DEBUG("---------------workLoad { %d }--------------------", workLoad);
 
             while (true) {
                 msg = _msgAgingQueue.top();

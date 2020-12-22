@@ -1,10 +1,10 @@
 /*
- * @Descripttion: 
+ * @Descripttion: Plugin library class
  * @Version: 1.0
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-12 16:11:31
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-22 10:40:57
+ * @LastEditTime: 2020-10-10 11:55:25
  */ 
 #ifndef __CRANE_DLLIBRARY_H__
 #define __CRANE_DLLIBRARY_H__
@@ -23,14 +23,15 @@
 using namespace std;
 
 namespace NS_CRANE {
-class DlLibrary : public enable_shared_from_this<DlLibrary>/* : public Library*/{
+class DlLibrary : public enable_shared_from_this<DlLibrary> {
     public:
         /**
          * @Descripttion: Load the library file of the plugin into the current process.
          * @Param: filename: absolute filename of library file.
          * @Return: 
          */        
-        static shared_ptr<DlLibrary> Load(const string& filename);
+        //static shared_ptr<DlLibrary> Load(const string& filename);
+        static unique_ptr<DlLibrary> Load(const string& filename);
 
         /**
          * @Descripttion: Get handle of symbol in the library.
@@ -51,14 +52,18 @@ class DlLibrary : public enable_shared_from_this<DlLibrary>/* : public Library*/
          * @Param: null
          * @Return: 
          */        
-        const string& name() const;
+        inline const string& name() const {
+            return _name;
+        }
         
         /**
-         * @Descripttion: 插件动态库的描述信息
-         * @Param: 
+         * @Descripttion: Get plugin description information.
+         * @Param: null
          * @Return: 
          */        
-        const PluginDesc& pluginDesc() const;
+        inline const PluginDesc& pluginDesc() const {
+            return _pluginDesc;
+        }
 
         /**
          * @Descripttion: Create and return the handle of instance of the plugin factory.
@@ -67,8 +72,14 @@ class DlLibrary : public enable_shared_from_this<DlLibrary>/* : public Library*/
          */        
         shared_ptr<AbstractPluginFactory> createPluginFactory();
 
-    private:        
-        DlLibrary(string name, void* handle);
+    private:
+        DlLibrary() = delete;
+
+        DlLibrary(const DlLibrary&) = delete;
+
+        DlLibrary& operator=(const DlLibrary&) = delete;
+
+        DlLibrary(const string& name, void* handle) : _name(name), _handle(handle) {};
 
     public:
         ~DlLibrary();

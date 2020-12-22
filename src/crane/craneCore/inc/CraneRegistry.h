@@ -1,10 +1,10 @@
 /*
- * @Descripttion: Crane插件注册中心
+ * @Descripttion: Crane plugin registry.
  * @version: 1.0
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-09 16:15:57
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-29 16:43:32
+ * @LastEditTime: 2020-10-12 15:10:22
  */ 
 #ifndef __CRANE_CRANEREGISTRY_H__
 #define __CRANE_CRANEREGISTRY_H__
@@ -35,7 +35,7 @@ using namespace rapidjson;
 
 namespace NS_CRANE {
 
-class CraneRegistry/* : public AbsRegistry */{
+class CraneRegistry {
     public:
         CraneRegistry() = default;
 
@@ -55,35 +55,62 @@ class CraneRegistry/* : public AbsRegistry */{
          */        
         unsigned craneInit(int argc, char** argv);
 
-        shared_ptr<PluginInterfaceInfo> getPluginItfInfo(const string&);
+        /**
+         * @Descripttion: Find plugin interface info from _pluginItfMap with plugin interface name.
+         * @Param: plugin interface name 
+         * @Return: a copy of the shared_ptr<PluginInterfaceInfo>
+         */        
+        shared_ptr<PluginInterfaceInfo> findPluginItfInfo(const string&);
         
+        /**
+         * @Descripttion: Create a new Itf object through absolute library file name.
+         * @Param: absoluteFileName: Absolute library file name of the plugin.
+         * @Return: shared_ptr<PluginInterfaceInfo>
+         */        
         shared_ptr<PluginInterfaceInfo> createItfInfo(const string& absoluteFileName);
 
+        /**
+         * @Descripttion: Clear the data related with the plugin library file which has been load before.
+         *                1. Clear the lib instance from registry's map.
+         *                2. Clear the absolute library file name from _pluginLibFileMap of the Itf instance.
+         *                3. Clear the plugin factory instance from _pluginFactoryList of the Itf instance.
+         * @Param: type: Interface name of the plugin 
+         * @Param: pluginName: class name of the plugin 
+         * @Return: CRANE_SUCC/CRANE_FAIL
+         */        
         unsigned clearPlugin(const string& type, const string& pluginName);
 
     protected:
+        /**
+         * @Descripttion: Add plugin interface info into the registry. 
+         * @Param: instance of the shared_ptr<PluginInterfaceInfo>
+         * @Return: CRANE_SUCC/CRANE_FAIL 
+         */        
         unsigned registry_(shared_ptr<PluginInterfaceInfo>);
 
     private:
         using PluginInterfaceMap = map<string /*interface name*/, shared_ptr<PluginInterfaceInfo>>;
         PluginInterfaceMap _pluginItfMap; //map contain pair of interface name and interface instance.
 
-        using PluginImplementMap = map<string /*libName*/,  shared_ptr<DlLibrary>>; //libName is ABCD which is extracted from libcranepluginABCD.so
+        using PluginImplementMap = map<string /*libName*/,  unique_ptr<DlLibrary>>; //libName is ABCD which is extracted from libcranepluginABCD.so
         PluginImplementMap _pluginLibMap; //map contain pair of library file name and library handle.
         
-        static const string   _CACHE_FILE;
-        static const string   _CACHE_FILE_TMP;
+        static const string     _CACHE_FILE;
+        static const string     _CACHE_FILE_TMP;
+
+        string                  _crane_sys_plugin_path;
+        string                  _crane_app_plugin_path;
 
         enum class _InitMode {
             LIB_FILE   = 0,
             CACHE_FILE,
         };
 
-        mutex       _mtx;
+        mutex                   _mtx;
 
-        list<string> _dlFiles; //library files.
+        list<string>            _dlFiles; //library files.
 
-        unsigned _addPluginLibMap(shared_ptr<DlLibrary>);
+        unsigned _addPluginLibMap(unique_ptr<DlLibrary>);
 
         /**
          * @Descripttion: Remove the library from _pluginLibMap and close the handle of the library.
@@ -105,6 +132,8 @@ class CraneRegistry/* : public AbsRegistry */{
         void _listFiles(list<string>& list, const string& folder, const string& extension, bool recursive);
 
         _InitMode _initMode();
+
+        void _initPluginPath();
 
         unsigned _scan();
 

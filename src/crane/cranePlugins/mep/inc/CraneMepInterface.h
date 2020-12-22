@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-09-10 19:19:37
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-11 18:31:04
+ * @LastEditTime: 2020-10-12 17:38:51
  */
 #ifndef __PLUGIN_CRANEMEPINTERFACE_H__
 #define __PLUGIN_CRANEMEPINTERFACE_H__
@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "PluginBaseInterface.h"
+#include "Util.h"
 
 using namespace std;
 namespace NS_CRANE {

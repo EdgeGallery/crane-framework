@@ -35,15 +35,13 @@ add_subdirectory(src/crane/craneCore)
 add_subdirectory(src/crane/cranePlugins/msg)
 add_subdirectory(src/crane/cranePlugins/mep)
 add_subdirectory(src/crane/cranePlugins/srv)
-#add_subdirectory(src/crane/craneMep)
-#add_subdirectory(src/crane/craneServer)
 add_subdirectory(src/crane/gstFacade)
 add_subdirectory(src/crane/craneAdapter)
 add_subdirectory(src/crane/craneWrapper)
 add_subdirectory(src/crane)
 add_subdirectory(src/crane/craneSwig)
 
-#plugins
+#application plugins
 add_subdirectory(src/plugins/crane/playcd/cpp)
 add_subdirectory(src/plugins/crane/playcd/wrap)
 add_subdirectory(src/plugins/crane/playcd/swig)
@@ -51,7 +49,10 @@ add_subdirectory(src/plugins/crane/playcd/swig)
 add_subdirectory(src/plugins/crane/playmp3/cpp)
 
 add_subdirectory(src/plugins/crane/fetchImgInfo)
+
 add_subdirectory(src/plugins/crane/singleton)
+
+#application example 
 add_subdirectory(src/app)
 
 if (CRANE_BUILD_TESTS)
@@ -85,12 +86,13 @@ message("CMAKE_INSTALL_FULL_INCLUDEDIR: ${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 #target_link_libraries(libcrane -lcommon -lcranecore)
 #target_link_libraries(LibCraneFramework libcommon libcranecore)
 
-#在src/../build路径下执行`cmake -DCRANE_BUILD_TESTS=true ..`生成cmake相关文件；
+#在src/../build路径下执行`cmake -DCRANE_BUILD_TESTS=true -DCRANE_IMG_BUILD=false -DCMAKE_BUILD_TYPE=Release ..`生成cmake相关文件；
 #修改src/../build路径下CMakeCache.txt中CMAKE_CXX_COMPILER宏，将其指向需要使用的c++编译器可执行文件
 #在src/../build路径下执行`make`完成编译
 #动态库生成在build/lib/下的对应路径
 #可执行文件生成在build/bin路径下
+#在src/../build路径下执行sudo make install 安装crane框架和crane系统插件的头文件和库到/usr/local/对应的路径下
 
-#make完成后，通过下面命令完成python的安装，安装路径在/usr/lib/python3/dist-packages下
+#make完成后，通过下面命令完成python包装后的so和py文件安装，安装目标路径在/usr/lib/python3/dist-packages下
 #sudo cmake --build . --target install-playcd-python
 #sudo cmake --build . --target install-crane-python

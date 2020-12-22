@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-09-09 16:53:13
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-10 18:00:57
+ * @LastEditTime: 2020-10-12 19:35:43
  */
 #ifndef __PLUGIN_CRANEOBSERVERIMPI_H__
 #define __PLUGIN_CRANEOBSERVERIMPI_H__
@@ -31,7 +31,6 @@ class CraneObserverImpi : public CraneObserver, public enable_shared_from_this<C
 
         virtual unsigned subscribe(const CraneTopic& topic) override {
             LOG_ENTER();
-            //unsigned ret = _msgCenter->subscriber(topic, dynamic_pointer_cast<CraneObserver>(shared_from_this()));
             unsigned ret = _msgCenter->subscriber(topic, shared_from_this());
             if (ret != CRANE_SUCC) {
                 LOG_ERROR("subscribe with topic { %s } failed with retCode: { %u }", topic.name().c_str(), ret);

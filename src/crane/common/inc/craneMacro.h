@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-19 11:48:09
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-16 11:52:38
+ * @LastEditTime: 2020-10-12 16:50:09
  */ 
 
 #ifndef __CRANE_CRANE_MACRO_H__
@@ -32,9 +32,6 @@
 ///////////////////////////////////////////////////////////
 ///插件动态库文件相关的宏
 ///////////////////////////////////////////////////////////
-//#define CRANE_PLUGINS_PATH              "/usr/local/lib/crane/plugins"
-#define CRANE_SYS_PLUGINS_PATH              "/home/dongyin/CraneFramework/build/lib/crane"
-#define CRANE_PLUGINS_PATH                  "/home/dongyin/CraneFramework/build/lib/plugins"
 #define CRANE_PLUGIN_LIB_PREFIX             "libcraneplugin"
 #define CRANE_PLUGIN_LIB_SUFFIX             "so" 
 #define CRANE_PLUGIN_DESC_FUNC_SYMBOL       "crane_plugin_desc"

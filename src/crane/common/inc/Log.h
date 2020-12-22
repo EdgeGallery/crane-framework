@@ -18,7 +18,7 @@
 #include <mutex>
 
 #include "craneMacro.h"
-#include "Util.h"
+//#include "Util.h"
 
 using namespace std;
 
@@ -28,10 +28,10 @@ namespace NS_CRANE {
     #define gettid() syscall(__NR_gettid)
     
     #define FILENAME(x) strrchr(x,'\\')?strrchr(x,'\\')+1:x
-    #define LOG_DEBUG(...)    Log::writeLog(Log::Level::DEBUG, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
-    #define LOG_INFO(...)     Log::writeLog(Log::Level::INFO, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
-    #define LOG_WARNING(...)  Log::writeLog(Log::Level::WARNING, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
-    #define LOG_ERROR(...)    Log::writeLog(Log::Level::ERROR, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
+    #define LOG_DEBUG(...)    crane::Log::writeLog(crane::Log::Level::DEBUG, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
+    #define LOG_INFO(...)     crane::Log::writeLog(crane::Log::Level::INFO, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
+    #define LOG_WARNING(...)  crane::Log::writeLog(crane::Log::Level::WARNING, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
+    #define LOG_ERROR(...)    crane::Log::writeLog(crane::Log::Level::ERROR, (unsigned char*)(FILENAME(__FILE__)), (unsigned char*)(__FUNCTION__), (int)(__LINE__), __VA_ARGS__)
     
     #define LOG_ENTER() LOG_INFO("enter")
     #define LOG_EXIT()  LOG_INFO("exit")

@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-04 20:57:07
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-27 18:21:07
+ * @LastEditTime: 2020-10-14 16:32:56
  */ 
 #ifndef __PLAYIMPLCD_H__
 #define __PLAYIMPLCD_H__
@@ -21,7 +21,7 @@ class PlayerImplCD : public Itf_Player {
         unsigned int stop() override;
 
     public:
-        ~PlayerImplCD();
+        virtual ~PlayerImplCD();
 };
 
 #endif

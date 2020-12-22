@@ -1,10 +1,11 @@
 /*
- * @Descripttion: CRANE插件框架的适配类，实现AbstractPluginFrame接口的同时，采用类适配方式适配CRANE和GSTREAMER两个插件系统
+ * @Descripttion: Adapter of Crane framework which implement the AbstractPluginFrame interface 
+ *              and used the implemention of Crane and Gstreamer system through the PRIVATE inheritance.
  * @version: 1.0
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-09 16:49:40
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-29 14:25:55
+ * @LastEditTime: 2020-10-09 17:34:23
  */ 
 
 #ifndef __CRANE_PLUGINSYSADAPTER_H__
@@ -46,14 +47,18 @@
 
 using namespace std;
 
-
 namespace NS_CRANE {
 
     class PluginSysAdapter : public AbstractPluginFrame,  private CraneRegistry, private GstFacade {
         friend class AbstractPluginFrame;
 
         public:
-            unsigned init(int, char**, unsigned) override;
+            /**
+             * @Descripttion: initialize the framework by parameter.
+             * @Param: mode: intitialize either Crane or Gstreamer or both. 
+             * @Return: CRANE_SUCC/CRANE_FAIL 
+             */            
+            unsigned init(int, char**, unsigned mode) override;
             
             /**
              * @Descripttion: Create a plugin instance though the interface type and plugin implemention class name. 
@@ -66,13 +71,36 @@ namespace NS_CRANE {
              */            
             PluginBaseInterface* create(const string& type, const string& pluginName, const string& description) override;
 
+            /**
+             * @Descripttion: Release the plugin throuth the point.
+             * @Param: the pointer of the plugin instance.
+             * @Return: null
+             */            
             void destory(PluginBaseInterface*) override;
 
+            /**
+             * @Descripttion: Create Gestreamer plugin, this method just wrap the function of Gstreamer. 
+             * @Param: gstFactoryName: the name of the factory of the plugin 
+             * @Param: name: the name of the plugin 
+             * @Return: pointer of the instance of the plugin. 
+             */            
             void* create(const string& gstFactoryName, const string& name) override;
 
+            /**
+             * @Descripttion: Realse the Gestreamer plugin, this method just wrap the function of Gstreamer. 
+             * @Param: the pointer of the plugin 
+             * @Return: null 
+             */            
             void destory(void*) override;
 
+            /**
+             * @Descripttion: Load the plugin throuth the absolute library file name. 
+             *                This method is used after Crane has initialized.
+             * @Param: filename: absolute library file name.
+             * @Return: CRANE_SUCC/CRANE_FAIL 
+             */            
             unsigned load(const string& filename) override; 
+
             /**
              * @Descripttion: Unload the plugin library from virtual memory space of the process.
              * @Param:  type: Interface type of plugin, which is same as the pure virtual class name of the plugin.
@@ -82,8 +110,6 @@ namespace NS_CRANE {
              */            
             void unload(const string& type, const string& pluginName) override;
 
-            //unsigned _loadPluginLib(const string& filename);
-
         public:
             ~PluginSysAdapter() override;
 
@@ -91,20 +117,9 @@ namespace NS_CRANE {
             PluginSysAdapter();
 
         private:
-            //AbstractMediator*            _mepMediator;
-            //AbstractMepService*            _mepMediator;
-            //shared_ptr<AbstractMediator>   _mepMediator; //del by dongyin 2020-9-11
-            //shared_ptr<MepMediator>   _mepMediator;
-
             shared_ptr<Config>          _config;
-            //Config              _config;
-
-            vector<string> _dsvServices;
-            vector<string> _regServices;
-            vector<string> _subServices;
 
             mutex                       _mtx;
-
     };
 }
 

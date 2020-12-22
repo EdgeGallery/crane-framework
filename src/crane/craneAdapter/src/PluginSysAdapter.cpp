@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-09 16:53:13
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-10-04 17:37:42
+ * @LastEditTime: 2020-10-09 15:28:56
  */ 
 
 #include "PluginSysAdapter.h"
@@ -54,7 +54,7 @@ namespace NS_CRANE {
 
         lock_guard<mutex> lock(_mtx);
         
-        shared_ptr<PluginInterfaceInfo> spItfInfo = getPluginItfInfo(itfType);
+        shared_ptr<PluginInterfaceInfo> spItfInfo = findPluginItfInfo(itfType);
         if (!spItfInfo) {
             //该接口类型再CRANE系统中不存在；
             LOG_ERROR("Plugin interface type[%s] is not exist in Crane Registry.", itfType.c_str());
@@ -67,7 +67,7 @@ namespace NS_CRANE {
             return nullptr;
         }
 
-        shared_ptr<AbstractPluginFactory> factory = spItfInfo->getPluginFactory(pluginName);
+        shared_ptr<AbstractPluginFactory> factory = spItfInfo->pluginFactory(pluginName);
         if (!factory) {
             LOG_INFO("Library file of plugin [%s] is not loaded.", pluginName.c_str());
 
@@ -77,10 +77,10 @@ namespace NS_CRANE {
                 LOG_ERROR("Create a new itfInfo instance with library filename { %s } failed.", absoluteLibFilename.c_str());
                 return nullptr;
             }
-            spItfInfo->addPluginFactory(newItfInfo->getPluginFactoryList());
+            spItfInfo->addPluginFactory(newItfInfo->pluginFactoryList());
 
             //After load the plugin library, get factory of plugin again.
-            factory = spItfInfo->getPluginFactory(pluginName);
+            factory = spItfInfo->pluginFactory(pluginName);
             if (!factory) {
                 LOG_ERROR("Get factory of PluginName: { %s } failed", pluginName.c_str());
                 return nullptr;

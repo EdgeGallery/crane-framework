@@ -187,7 +187,7 @@ namespace NS_CRANE {
             lseek(mFileHandle, 0, SEEK_END);
             size = write(mFileHandle, logBuffer.c_str(), logBuffer.length());
             ret = syncfs(mFileHandle);
-            unused(ret);unused(size);
+			ret = ret; size = size;
     	}
     	if (static_cast<int>(Log::getInstance()->getTarget()) & (int)Target::CONSOLE)
     	{

@@ -1,10 +1,18 @@
+/*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2020-10-04 19:36:53
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2020-10-12 17:26:08
+ */
 #ifndef __PLUGIN_CRANETOPIC_H__
 #define __PLUGIN_CRANETOPIC_H__
 
 #include <string>
 
 #include "craneMacro.h"
-#include "Log.h"
+#include "Util.h"
 
 using namespace std;
 namespace NS_CRANE {

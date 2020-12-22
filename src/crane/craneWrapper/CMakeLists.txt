@@ -6,7 +6,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneAdapter/inc")
 #include_directories("${PROJECT_SOURCE_DIR}/src/crane/gstFacade/inc")
 #include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneCore/inc")
 #include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneMep/inc")
-include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneServer/inc")
+#include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneServer/inc")
 include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneWrapper/inc")
 AUX_SOURCE_DIRECTORY(${PROJECT_SOURCE_DIR}/src/crane/craneWrapper/src libCraneWrapper_src)
 

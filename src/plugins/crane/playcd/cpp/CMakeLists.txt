@@ -1,4 +1,4 @@
-message("CMAKE_CXX_FLAGS of playcd: ${CMAKE_CXX_FLAGS}")
+#message("CMAKE_CXX_FLAGS of playcd: ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -shared -fPIC")
 
 include_directories("${PROJECT_SOURCE_DIR}/src/inc")

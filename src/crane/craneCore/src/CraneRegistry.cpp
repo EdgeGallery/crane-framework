@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-10 10:26:19
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-10-02 19:53:39
+ * @LastEditTime: 2020-10-12 16:10:21
  */ 
 #include "CraneRegistry.h"
 
@@ -59,12 +59,12 @@ namespace NS_CRANE {
             if (insertFactoryAndPluginNameFlags) {
                 //添加插件接口实现类名称
                 LOG_INFO("Add the pair of plugin name and plugin library filename into the registry.");
-                (*itr).second->addPluginLibFileMap(tmpItfInfo->getPluginLibFileMap());
+                (*itr).second->addPluginLibFileMap(tmpItfInfo->pluginLibFileMap());
                 //(*itr).second->addPluginNames(spItfInfo->getPluginNameList());
 
                 //添加插件类型的工厂对象
                 LOG_INFO("Add Plugin factory into the registry.");
-                (*itr).second->addPluginFactory(tmpItfInfo->getPluginFactoryList());
+                (*itr).second->addPluginFactory(tmpItfInfo->pluginFactoryList());
             }
 
             return CRANE_SUCC;
@@ -84,7 +84,7 @@ namespace NS_CRANE {
         }
     }
 
-    unsigned CraneRegistry::_addPluginLibMap(shared_ptr<DlLibrary> library) {
+    unsigned CraneRegistry::_addPluginLibMap(unique_ptr<DlLibrary> library) {
         //getDlFileDesc = reinterpret_cast<Func_Crane_Dl_Name_Desc>(library->symbol("crane_dl_" + -lib-file-name- + "_desc"));
         //DlLibrary& dlLibrary = dynamic_cast<DlLibrary>(library);
         const PluginDesc& pluginDesc = library->pluginDesc();
@@ -97,13 +97,12 @@ namespace NS_CRANE {
             LOG_ERROR("This plugin{ %s } has existed in plugin library map.", filename.c_str());
             return CRANE_SUCC;
         }
-        _pluginLibMap[library->name()] = library;
+        _pluginLibMap[library->name()] = std::move(library);
         LOG_INFO("Add plugin{ %s } into the plugin library map.", filename.c_str());
         return CRANE_SUCC;
     }
 
     unsigned CraneRegistry::_delPluginLibMap(const string& filename) {
-        LOG_ENTER();
         if (filename.empty()) {
             LOG_ERROR("filename is empty.");
             return CRANE_FAIL;
@@ -115,7 +114,7 @@ namespace NS_CRANE {
         }
         LOG_DEBUG("===========Erase { %s %s }==============", itr->first.c_str(), itr->second->pluginDesc().pluginName.c_str());
 
-        //Pointer of DlLibrary instance is swapped by shared_ptr instance which is ONLY holded by _pluginLibMap.
+        //Pointer of DlLibrary instance is swapped by unique_ptr instance which is ONLY holded by _pluginLibMap.
         //So when shared_ptr instance is removed, the ~DlLibrary will be invoked.
         _pluginLibMap.erase(itr);
         LOG_DEBUG("=================_pluginLibMap.erase(itr);=================");
@@ -131,6 +130,8 @@ namespace NS_CRANE {
         LOG_INFO("Crane: Init CRANE plugin system...... ");
 
         unused(argc, argv);
+        
+        _initPluginPath();
 
         if (_initMode() == _InitMode::CACHE_FILE) {
             LOG_INFO("Init Crane from the cache file.");
@@ -146,7 +147,7 @@ namespace NS_CRANE {
         }
     }
 
-    shared_ptr<PluginInterfaceInfo> CraneRegistry::getPluginItfInfo(const string& itfType) {
+    shared_ptr<PluginInterfaceInfo> CraneRegistry::findPluginItfInfo(const string& itfType) {
 
         PluginInterfaceMap::const_iterator itr = _pluginItfMap.find(itfType);
         if (itr == _pluginItfMap.end()) {
@@ -155,6 +156,18 @@ namespace NS_CRANE {
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         }
         return itr->second;
+    }
+
+    void CraneRegistry::_initPluginPath() {
+        const char* sysPath = getenv("CRANE_SYS_PLUGIN_PATH");
+        const char* appPath = getenv("CRANE_APP_PLUGIN_PATH");
+        if ((sysPath == NULL) || (appPath == NULL)) {
+            throw std::runtime_error("Obtain the plugin path from environment variable failed.");
+            return;
+        }
+        _crane_sys_plugin_path = string(sysPath);
+        _crane_app_plugin_path = string(appPath);
+        return;
     }
 
     CraneRegistry::_InitMode CraneRegistry::_initMode() {
@@ -260,8 +273,8 @@ namespace NS_CRANE {
     }
 
     unsigned CraneRegistry::_scan() {
-        _listFiles(_dlFiles, CRANE_SYS_PLUGINS_PATH, CRANE_PLUGIN_LIB_SUFFIX, true);
-        _listFiles(_dlFiles, CRANE_PLUGINS_PATH, CRANE_PLUGIN_LIB_SUFFIX, true);
+        _listFiles(_dlFiles, _crane_sys_plugin_path, CRANE_PLUGIN_LIB_SUFFIX, true);
+        _listFiles(_dlFiles, _crane_app_plugin_path, CRANE_PLUGIN_LIB_SUFFIX, true);
         return CRANE_SUCC;
     }
 
@@ -286,7 +299,7 @@ namespace NS_CRANE {
     }
 
     shared_ptr<PluginInterfaceInfo> CraneRegistry::createItfInfo(const string& filename) {
-        shared_ptr<DlLibrary> lib = DlLibrary::Load(filename);
+        unique_ptr<DlLibrary> lib = DlLibrary::Load(filename);
         if (lib == nullptr) {
             LOG_ERROR("Load plugin library { %s } Failed", filename.c_str());
             return shared_ptr<PluginInterfaceInfo>(nullptr);
@@ -295,17 +308,12 @@ namespace NS_CRANE {
         lib->getPluginDesc();
         const PluginDesc& pluginDesc = lib->pluginDesc();
 
-        //检查插件框架的版本是否满足要加载的插件的要求
+        //Check whether the version of the plugin framework meet the need of the plugin interface.
         if (Util::compareVersion(pluginDesc.fwVer, CRANE_FRAMEWORK_VERION) == CRANE_HIGHER) {
             LOG_ERROR("Current Crane framework version[%s] is below than the version[%s] plugin library required.", 
                         CRANE_FRAMEWORK_VERION, pluginDesc.fwVer.c_str());
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         } 
-
-        //插件动态库对象存入_pluginLibMap
-        if (CRANE_SUCC != _addPluginLibMap(lib)) {
-            return shared_ptr<PluginInterfaceInfo>(nullptr);
-        }
 
         //Create plugin interface instance.
         shared_ptr<PluginInterfaceInfo> spItfInfo = make_shared<PluginInterfaceInfo>(pluginDesc.itfType, 
@@ -329,20 +337,21 @@ namespace NS_CRANE {
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         }
 
+        //Add lib instance of the plugin into the map of the plugin lib with the pair of absolute filename and lib instance.
+        if (CRANE_SUCC != _addPluginLibMap(std::move(lib))) {
+            return shared_ptr<PluginInterfaceInfo>(nullptr);
+        }
         return spItfInfo;
     }
 
     unsigned CraneRegistry::clearPlugin(const string& type, const string& pluginName) {
-        LOG_ENTER();
-        shared_ptr<PluginInterfaceInfo> itf =  getPluginItfInfo(type);
+        shared_ptr<PluginInterfaceInfo> itf =  findPluginItfInfo(type);
         if (!itf) {
             LOG_ERROR("Cannot find the interface type:{ %s } in the registry.", type.c_str());
             return CRANE_FAIL;
         }
-        LOG_DEBUG("==========itf { %s %s }============", itf->type().c_str(), itf->curVersion().c_str());
 
         string filename = itf->findPluginLibFileMap(pluginName);
-        LOG_DEBUG("==============filename { %s }================", filename.c_str());
         if (filename.empty()) { 
             LOG_ERROR("Plugin { %s } is not exist in _pluginLibFileMap.", pluginName);
             return CRANE_FAIL; 
@@ -351,7 +360,6 @@ namespace NS_CRANE {
         itf->delPluginFactory(pluginName);
 
         _delPluginLibMap(filename);
-        LOG_EXIT();
         return CRANE_SUCC;
     }
     
@@ -378,7 +386,7 @@ namespace NS_CRANE {
             itf.AddMember("ver", Value().SetString(itr->second->curVersion().c_str(), a).Move(), a);
             itf.AddMember("reqFwVer", Value().SetString(itr->second->requireFwVer().c_str(), a).Move(), a);
             
-            PluginInterfaceInfo::PluginLibFileMap libFiles = itr->second->getPluginLibFileMap();
+            PluginInterfaceInfo::PluginLibFileMap libFiles = itr->second->pluginLibFileMap();
             for (auto f : libFiles) {
                 library.AddMember("pluginName", Value().SetString(f.first.c_str(), a).Move(), a);
                 library.AddMember("absoluteFilename", Value().SetString(f.second.c_str(), a).Move(), a);

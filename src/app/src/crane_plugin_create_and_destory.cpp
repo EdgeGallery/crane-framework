@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-09-22 11:33:15
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-27 19:04:37
+ * @LastEditTime: 2020-10-21 17:11:13
  */
 
 //***Include crane h file.
@@ -30,10 +30,9 @@ int main(int argc, char** argv) {
     if (playerCD == nullptr) {
         return 0;
     }
-    
     playerCD->play("Playing now......");
 
+    //*** Release "PlayerImplCD" plugin instance.
     pPluginFrame->destory(playerCD);
     return 0;
-    
 }

@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-09-09 16:53:13
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-10 18:01:12
+ * @LastEditTime: 2020-10-12 20:03:37
  */
 #ifndef __PLUGIN_CRANEOBSERVER_H__
 #define __PLUGIN_CRANEOBSERVER_H__
@@ -57,7 +57,6 @@ class CraneObserver {
          * @Return:         CRANE_SUCC/CRANE_FAIL 
          */       
         unsigned notify(const CraneTopic& topic, shared_ptr<CraneMsg> data) {
-            //shared_ptr<D> specialData = dynamic_pointer_cast<D>(data);
             doNotify(topic, data);
             return CRANE_SUCC;
         }

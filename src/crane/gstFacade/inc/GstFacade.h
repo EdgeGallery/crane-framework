@@ -4,11 +4,11 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-15 11:18:48
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-06-20 14:55:38
+ * @LastEditTime: 2020-10-12 18:58:56
  */ 
 
-#ifndef GSTFACADE_H
-#define GSTFACADE_H
+#ifndef __GSTFACADE_H__
+#define __GSTFACADE_H__
 
 extern "C" {
     #include <gst/gst.h>

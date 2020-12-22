@@ -18,9 +18,7 @@ include_directories("${PROJECT_SOURCE_DIR}/src/plugins/crane/playcd/wrap/inc")
 #set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib/plugins")
 set(CMAKE_SWIG_FLAGS "")
 
-message("CMAKE_CXX_FLAGS:=============== ${CMAKE_CXX_FLAGS}")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++14")
-message("CMAKE_CXX_FLAGS:=============== ${CMAKE_CXX_FLAGS}")
 
 set_source_files_properties(playcd.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(playcd.i PROPERTIES SWIG_FLAGS "-includeall")

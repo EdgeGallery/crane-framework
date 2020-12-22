@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2020-06-09 16:45:44
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2020-09-27 11:36:39
+ * @LastEditTime: 2020-10-09 17:45:14
  */ 
 
 #ifndef __CRANE_ABSPLUGINFRAME_H__
@@ -78,85 +78,7 @@ namespace NS_CRANE {
             virtual void unload(const string& type, const string& pluginName) = 0;
 
             virtual ~AbstractPluginFrame() {std::cout<<"~AbstractPluginFrame()"<<std::endl;}
-/*
-            template <typename Result, typename Cls, typename... Args, typename Obj>
-            void setServerRoutes(HttpMethod method, const string& path, Result (Cls::*func)(Args...), Obj obj) {
-                switch (method) {
-                    case HttpMethod::POST:
-                        Rest::Routes::Post(_server->router, path, Rest::Routes::bind(func, obj));
-                        break;
-
-                    case HttpMethod::PUT:
-                        Rest::Routes::Put(_server->router, path, Rest::Routes::bind(func, obj));
-                        break;
-                    
-                    case HttpMethod::GET:
-                        Rest::Routes::Get(_server->router, path, Rest::Routes::bind(func, obj));
-                        break;
-                    
-                    case HttpMethod::DELETE:
-                        Rest::Routes::Delete(_server->router, path, Rest::Routes::bind(func, obj));
-                        break;
-                    
-                    default:
-                        LOG_ERROR("Invalid http method[ %u ]\n", static_cast<unsigned>(method));
-                        break;
-                }
-                return;
-            }
-
-            template <typename Result, typename Cls, typename... Args, typename Obj>
-            void setServerRoutes(HttpMethod method, const string& path, Result (Cls::*func)(Args...), shared_ptr<Obj> objPtr) {
-                switch (method) {
-                    case HttpMethod::POST:
-                        Rest::Routes::Post(_server->router, path, Rest::Routes::bind(func, objPtr));
-                        break;
-
-                    case HttpMethod::PUT:
-                        Rest::Routes::Put(_server->router, path, Rest::Routes::bind(func, objPtr));
-                        break;
-                    
-                    case HttpMethod::GET:
-                        Rest::Routes::Get(_server->router, path, Rest::Routes::bind(func, objPtr));
-                        break;
-                    
-                    case HttpMethod::DELETE:
-                        Rest::Routes::Delete(_server->router, path, Rest::Routes::bind(func, objPtr));
-                        break;
-                    
-                    default:
-                        LOG_ERROR("Invalid http method[ %u ]\n", static_cast<unsigned>(method));
-                        break;
-                }
-                return;
-            }
-
-            template <typename Result, typename... Args>
-            void setServerRoutes(HttpMethod method, const string& path, Result (*func)(Args...)) {
-                switch (method) {
-                    case HttpMethod::POST:
-                        Rest::Routes::Post(_server->router, path, Rest::Routes::bind(func));
-                        break;
-
-                    case HttpMethod::PUT:
-                        Rest::Routes::Put(_server->router, path, Rest::Routes::bind(func));
-                        break;
-                    
-                    case HttpMethod::GET:
-                        Rest::Routes::Get(_server->router, path, Rest::Routes::bind(func));
-                        break;
-                    
-                    case HttpMethod::DELETE:
-                        Rest::Routes::Delete(_server->router, path, Rest::Routes::bind(func));
-                        break;
-                    
-                    default:
-                        LOG_ERROR("Invalid http method[ %u ]\n", static_cast<unsigned>(method));
-                        break;
-                }
-                return;
-            }
-*/
+            
         private:
             class Garbo {
 
@@ -179,8 +101,7 @@ namespace NS_CRANE {
         private:
             static AbstractPluginFrame* _instance;
             
-            static Garbo _garbo;
-
+            static Garbo                _garbo;
     };
 
     
