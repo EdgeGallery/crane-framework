@@ -1,16 +1,20 @@
 ## 环境配置
+```shell
 cmake 3.10.2
+```
+```shell
 apt-get update
-
+```
 ### Gstreamer 安装
 #### 步骤一：下载
+```shell
 git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gstreamer.git
 git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git
 git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git
 git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git
 git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git
 git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-libav.git
-
+```
 #### 步骤二：安装依赖
 sudo apt-get install -y autoconf
 sudo apt-get install -y autopoint
