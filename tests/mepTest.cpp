@@ -28,5 +28,5 @@ TEST(MEP, MepBaisc) {
 
     cout<<"mep { "<<mep<<" }"<<endl;
 
-    mep->invoke();    
+    mep->invoke();
 }

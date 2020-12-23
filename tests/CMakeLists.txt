@@ -33,7 +33,6 @@ configure_file("certs/client.crt" "certs/client.crt" COPYONLY)
 
 
 crane_test(jsontest)
-crane_test(resttest)
 crane_test(coreTest)
 crane_test(srvTest)
 crane_test(msgCenterTest)
