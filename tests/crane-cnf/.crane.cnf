@@ -1,0 +1,33 @@
+{
+    "name": "Demo",
+    "log": {
+	"level": "DEBUG",
+	"target": "CONSOLE"
+    },
+    "regServices": [
+        "regService1",
+	"regService2",
+	"regService3"],
+    "dsvServices": [
+        "dsvService1",
+	"dsvService2",
+	"dsvService3"],
+    "subServices": [
+        "subService1",
+	"subService2",
+	"subService3"],
+    "server": {
+        "port": 8080,
+	"threadNum": 2,
+	"maxRequestSize": 4096,
+	"maxResponseSize": 4096
+    },
+    "tls": {
+	"serverTls": false,
+	"certFile": "/root/crane/certfile",
+	"privateKey": "/root/crane/keyfile",
+	"clientAuth": false,
+	"caFile": "/root/crane/cafile",
+	"compression": false 
+    }
+}

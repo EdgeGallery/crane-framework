@@ -1,0 +1,16 @@
+{
+    "server": {
+        "port": 8080,
+	"threadNum": 2,
+	"maxRequestSize": 4096,
+	"maxResponseSize": 4096
+    },
+    "tls": {
+	"serverTls": false,
+	"certFile": "/home/dongyin/certs/server.crt",
+	"privateKey": "/home/dongyin/certs/server.key",
+	"clientAuth": false,
+	"caFile": "/home/dongyin/certs/rootCA.crt",
+	"compression": false 
+    }
+}

@@ -1,0 +1,14 @@
+{
+    "regServices": [
+        "regService1",
+	"regService2",
+	"regService3"],
+    "dsvServices": [
+        "dsvService1",
+	"dsvService2",
+	"dsvService3"],
+    "subServices": [
+        "subService1",
+	"subService2",
+	"subService3"]
+}
