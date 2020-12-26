@@ -53,7 +53,7 @@ crane-framework将可复用的计算和软件功能抽象成插件，APP开发�
    export APP_INSTANCE_ID=682a2fb92b224029b0d02205231b8450
    export CRANE_SYS_PLUGIN_PATH=/home/lxy/crane-framework/buildlib/crane
    export CRANE_APP_PLUGIN_PATH=/home/lxy/crane-framework/build/lib/plugins
-   export CRANE_INIT_MODE=LIB License.\r\n */
+   export CRANE_INIT_MODE=LIB
    ```
 6. make test
 7. 编译完成后，在build/lib和build/bin目录下生成相应的so文件和可执行文件
