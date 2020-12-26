@@ -51,7 +51,7 @@ crane-framework将可复用的计算和软件功能抽象成插件，APP开发�
    export MEP_APIGW_ENDPOINT=127.0.0.1:8443
    export MEP_APIGW_NOTIFY_URL=127.0.0.1:9090
    export APP_INSTANCE_ID=682a2fb92b224029b0d02205231b8450
-   export CRANE_SYS_PLUGIN_PATH=/home/lxy/crane-framework/buildlib/crane
+   export CRANE_SYS_PLUGIN_PATH=/home/lxy/crane-framework/build/lib/crane
    export CRANE_APP_PLUGIN_PATH=/home/lxy/crane-framework/build/lib/plugins
    export CRANE_INIT_MODE=LIB
    ```
