@@ -45,8 +45,18 @@ crane-framework将可复用的计算和软件功能抽象成插件，APP开发�
 2. cd build;
 3. cmake -DCRANE_BUILD_TESTS=true -DCMAKE_BUILD_TYPE=Release ..
 4. make
-5. make test
-6. 编译完成后，在build/lib和build/bin目录下生成相应的so文件和可执行文件
+5. 在进行测试之前，需要将测试需要的crane相关配置文件拷贝到工作目录下/root下，并设置环境变量（注意修改样例中实际代码路径）
+   ```
+   cp ../tests/crane-cnf/.crane.cnf ../tests/crane-cnf/.crane_cache ../tests/crane-cnf/.crane_plugin_mep.cnf ../tests/crane-cnf/.crane_plugin_srv.cnf /root
+   export MEP_APIGW_ENDPOINT=127.0.0.1:8443
+   export MEP_APIGW_NOTIFY_URL=127.0.0.1:9090
+   export APP_INSTANCE_ID=682a2fb92b224029b0d02205231b8450
+   export CRANE_SYS_PLUGIN_PATH=/home/lxy/crane-framework/buildlib/crane
+   export CRANE_APP_PLUGIN_PATH=/home/lxy/crane-framework/build/lib/plugins
+   export CRANE_INIT_MODE=LIB License.\r\n */
+   ```
+6. make test
+7. 编译完成后，在build/lib和build/bin目录下生成相应的so文件和可执行文件
 
 - ### Crane框架和Crane插件安装到/usr/local目录
 1. sudo make install
