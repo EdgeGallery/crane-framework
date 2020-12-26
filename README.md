@@ -1,4 +1,5 @@
-#crane-framework
+# crane-framework
+
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Jenkins](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fjenkins.edgegallery.org%2Fview%2FMEC-PLATFORM-BUILD%2Fjob%2Fdeveloper-backend-docker-image-build-update-daily-master%2F)
 
 crane-framework将可复用的计算和软件功能抽象成插件，APP开发者面向使用插件进行MEC APP开发。这样屏蔽了和MEC平台交互的细节，实现MCE APP和MEC平台的松耦合。而且插件框架基础能力可裁剪，按需提供最小的APP系统。
