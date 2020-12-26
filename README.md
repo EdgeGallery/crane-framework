@@ -1,107 +1,45 @@
-## 环境配置
-```shell
-cmake 3.10.2
-```
-```shell
-apt-get update
-```
-### Gstreamer 安装
-#### 步骤一：下载
-```shell
-git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gstreamer.git
-git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git
-git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git
-git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad.git
-git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git
-git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-libav.git
-```
-#### 步骤二：安装依赖
-sudo apt-get install -y autoconf
-sudo apt-get install -y autopoint
-sudo apt-get install -y bison
-sudo apt-get install -y flex
-sudo apt-get install -y glib2.0
-sudo apt-get install -y yasm
-sudo apt-get install -y libgtk-3-dev
-sudo apt-get install -y libssl-dev
+#crane-framework
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Jenkins](https://img.shields.io/jenkins/build?jobUrl=http%3A%2F%2Fjenkins.edgegallery.org%2Fview%2FMEC-PLATFORM-BUILD%2Fjob%2Fdeveloper-backend-docker-image-build-update-daily-master%2F)
 
-#### 步骤三：将版本切换到gcc5和g++5
-sudo apt-get install -y gcc-5
-sudo apt-get install -y g++-5
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 100 --slave /usr/bin/g++ g++ /usr/bin/g++-5
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50 --slave /usr/bin/g++ g++ /usr/bin/g++-7
-sudo update-alternatives --config gcc
+crane-framework将可复用的计算和软件功能抽象成插件，APP开发者面向使用插件进行MEC APP开发。这样屏蔽了和MEC平台交互的细节，实现MCE APP和MEC平台的松耦合。而且插件框架基础能力可裁剪，按需提供最小的APP系统。
 
-#### 步骤四：在各个目录下执行编译、安装
-./autogen.sh --disable-gtk-doc
+## 特性介绍
 
-Configuration
-        Version                    : 1.16.2
-        Source code location       : .
-        Prefix                     : /usr/local
-        Compiler                   : gcc
-        Package name               : GStreamer source release
-        Package origin             : Unknown package origin
+为了方便开发者进行APP的开发，我们提供crane插件框架，主要包含以下能力：
 
-        API Documentation          : no
+- **插件制作** 
+    
+    插件框架提供了单例插件和多例插件模型，开发者可以基于框架模型制作自己的插件，将自己的插件贡献到平台上。
 
-        Debug logging              : yes
-        Tracing subsystem hooks    : yes
-        Command-line parser        : yes
-        Option parsing in gst_init : yes
-        Plugin registry            : yes
-        Plugin support             : yes
-        Static plugins             :
-        Unit testing support       : yes
-        PTP clock support          : yes
-        libunwind support          : no
-        libdw support              : no
+- **插件管理** 
+    
+    插件框架帮助开发者进行快速开发，提供插件的注册、加载、卸载等能力，并且插件可持续更新。
 
-        Debug                      : yes
-        Profiling                  : no
+- **系统插件** 
+    
+    插件框架向开发者提供实用的插件，目前提供的系统插件有mep、msg、httpserver。
 
-        Building benchmarks        : yes
-        Building examples          : yes
-        Building test apps         : yes
-        Building tests that fail   : yes
-        Building tools             : yes
+## 编译运行
 
-Now type 'make' to compile gstreamer.
+  crane-framework作为动态库对外提供，同时该框架支持gstreamer框架，开发者可以基于该框架进行二次开发。
 
+- ### 环境准备
+  
+    |  Name     | Version   |
+    |  ----     | ----  |
+    | python3.8 |3.8xxx or above |
+    | SWIG |3.0 |
+    | rapidjson |v1.1.0 |
+    | Openssl | 1.1.1 |
+    | cpprestsdk  | 2.10.2 |
+    | pistache  | VERSION_GIT_DATE 20200708 |
+    | gtest  | 1.10.x |
+    | curl  | 7.58.0 |
+    | gstreamer  | 1.0 |
 
-make -j
-sudo make install
+    三方件的安装可以参考[env-pre.sh](https://gitee.com/edgegallery/crane-framework/blob/master/crane-env-pre.sh)
 
-
-Libraries have been installed in:
-   /usr/local/lib/gstreamer-1.0
-
-If you ever happen to want to link against installed libraries
-in a given directory, LIBDIR, you must either use libtool, and
-specify the full pathname of the library, or use the '-LLIBDIR'
-flag during linking and do at least one of the following:
-   - add LIBDIR to the 'LD_LIBRARY_PATH' environment variable
-     during execution
-   - add LIBDIR to the 'LD_RUN_PATH' environment variable
-     during linking
-   - use the '-Wl,-rpath -Wl,LIBDIR' linker flag
-   - have your system administrator add LIBDIR to '/etc/ld.so.conf'
-
-See any operating system documentation about shared libraries for
-more information, such as the ld(1) and ld.so(8) manual pages.
-
-### 安装cmake 3.10.2及以上版本
-sudo apt-get install -y cmake
-
-### 其他开源项目依赖
-1. python3.8
-2. SWIG 3.0
-3. rapidjson v 1.1.0
-4. pistache VERSION_GIT_DATE 20200708
-5. Openssl 1.1.1
-6. cpprestsdk 2.10.2
-
-## Crane框架和Crane插件、app源文件编译
+- ### Crane框架和Crane插件、app源文件编译
 1. cd src/..; mkdir build
 2. cd build;
 3. cmake -DCRANE_BUILD_TESTS=true -DCMAKE_BUILD_TYPE=Release ..
@@ -109,19 +47,19 @@ sudo apt-get install -y cmake
 5. make test
 6. 编译完成后，在build/lib和build/bin目录下生成相应的so文件和可执行文件
 
-## Crane框架和Crane插件安装到/usr/local目录
+- ### Crane框架和Crane插件安装到/usr/local目录
 1. sudo make install
 2. sudo cmake --build . --target install-playcd-python
    sudo cmake --build . --target install-crane-python
 3. 安装完成后，在/usr/local/include/crane、/usr/local/lib/crane目录下生成相应的h文件和插件框架、Crane系统插件的so文件
 
-## Gstreamer插件编译
+- ### Gstreamer插件编译
 1. cd src/plugins/gst;
 2. ./autogen.sh
 3. make; make install
 4. 编译、安装完成后，Gstreamer插件的so文件安装到/usr/local/lib/gstreamer-1.0
 
-## Demo程序运行
+- ### Demo程序运行
 1. cd src/../build/bin;
 2. ./run_crane_plugin_create_and_destory.out
 3. ./run_crane_plugin_create_singleton.out
