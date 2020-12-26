@@ -34,23 +34,15 @@ link_directories("${PROJECT_BINARY_DIR}/lib/crane")
 
 #链接静态库
 link_libraries(stdc++)
-#替换下面的东东
-#add_executable(craneapp ${app_src})
-
-#target_link_libraries(craneapp craneadapter cranecore gstfacade common dl gstreamer-1.0 gobject-2.0 glib-2.0)
-#替换下面的东东
-#target_link_libraries(craneapp crane dl gstreamer-1.0 gobject-2.0 glib-2.0 boost_system crypto ssl cpprest)
 
 function(crane_example example_name)
     set(EXAMPLE_EXECUTABLE run_${example_name}.out)
     set(EXAMPLE_SOURCE src/${example_name}.cpp)
 
     add_executable(${EXAMPLE_EXECUTABLE} ${EXAMPLE_SOURCE})
-    target_link_libraries(${EXAMPLE_EXECUTABLE} crane dl gstreamer-1.0 gobject-2.0 glib-2.0 boost_system crypto ssl cpprest)
+    target_link_libraries(${EXAMPLE_EXECUTABLE} crane dl boost_system crypto ssl cpprest)
 endfunction()
 
 crane_example(crane_plugin_create_and_destory)
 crane_example(crane_plugin_create_singleton)
 crane_example(crane_plugin_http_server)
-#crane_example(main) //暂时关闭
-#crane_example(img) //暂时关闭
