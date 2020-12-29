@@ -54,22 +54,13 @@ namespace NS_CRANE
     };
 
    class Util {
-      private:
-          /**
-           * @Descripttion: 将版本的string格式转换成unsigned数组
-           * @Param: 
-           * @Return: 
-           */        
-          static void cvtVer2I(std::string ver, unsigned* iv, unsigned len);
-
-      public:
-          /**
-           * @Descripttion: 版本比较
-           * @Param: 
-           * @Return: CRANE_HIGHER:   ver1版本高于ver2
-           *          CRANE_LOWER:    ver1版本低于ver2   
-           *          CRANE_EQUAL:    ver1和ver2的版本相等
-           */        
+    public:
+        /**
+         * @Descripttion: 版本比较
+         * @Return: CRANE_HIGHER:   ver1版本高于ver2
+         *          CRANE_LOWER:    ver1版本低于ver2
+         *          CRANE_EQUAL:    ver1和ver2的版本相等
+         */
         static int compareVersion(const std::string ver1, const std::string ver2);
 
         static unsigned parseJsonFile(const string& absoluteFilename, Document& d);
@@ -91,8 +82,10 @@ namespace NS_CRANE
         static string uuid(void);
 
         static unsigned char* hexstr2uint8(string&, size_t* len);
-
-   }; 
+    private:
+        // 将版本的string格式转换成unsigned数组
+        static void cvtVer2I(std::string ver, unsigned* iv, unsigned len);
+   };
 } // namespace 
 
 #endif

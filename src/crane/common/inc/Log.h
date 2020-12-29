@@ -34,13 +34,10 @@
 #include <mutex>
 
 #include "craneMacro.h"
-//#include "Util.h"
 
 using namespace std;
 
 namespace NS_CRANE {
-
-
     #define gettid() syscall(__NR_gettid)
     
     #define FILENAME(x) strrchr(x,'\\')?strrchr(x,'\\')+1:x
