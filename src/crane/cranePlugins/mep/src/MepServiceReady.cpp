@@ -29,7 +29,6 @@ namespace NS_CRANE {
     
     void MepServiceReady::doInteraction(MepProduceType type) {
         result_ = {type, CRANE_FAIL};
-        //result_ = CRANE_FAIL;
 
         //Report app ready info to api-gw.
         try {

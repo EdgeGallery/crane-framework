@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     string newName = string("dongkezhen");
     singleton1->setName(newName);
     singleton1->showName();
-    
+
     //*** Create "SingletonImpl" instance of crane singtonImpl plugin again.
     Itf_Singleton* singleton2 = dynamic_cast<Itf_Singleton*>(
         pPluginFrame->create("Itf_Singleton", "SingletonImpl", "test crane singleton plugin"));
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     if (singleton2 == nullptr) {
         return 0;
     }
-    
+
     singleton2->showName();
 
     cout<<"singleton1: "<<singleton1<<std::endl;
@@ -56,5 +56,4 @@ int main(int argc, char** argv) {
 
     pPluginFrame->destory(singleton2);
     return 0;
-    
 }

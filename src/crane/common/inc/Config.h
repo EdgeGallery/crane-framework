@@ -65,8 +65,7 @@ namespace NS_CRANE {
         private:
             void _parseConfigFile();
 
-            
     };
 }
 
-#endif    
+#endif

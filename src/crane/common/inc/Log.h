@@ -59,96 +59,95 @@ namespace NS_CRANE {
     public:
         enum class Level
         {
-        	NONE,
-        	ERROR,     // error
-        	WARNING,   // warning
-        	INFO,      // info	
-        	DEBUG,     // debug
+            NONE,
+            ERROR,     // error
+            WARNING,   // warning
+            INFO,      // info
+            DEBUG,     // debug
         };
-    
+
         enum class Target
         {
-        	NONE      = 0x00,
-        	CONSOLE   = 0x01,
-        	FILE      = 0x10
+            NONE      = 0x00,
+            CONSOLE   = 0x01,
+            FILE      = 0x10
         };
 
-    	void init(Level level, Target target);
+        void init(Level level, Target target);
 
-    	void uninit();
-    
-    	int createFile();
-    
-    	static Log* getInstance();
-    
-    	// Log级别
-    	Level getLevel();
-    	void setLevel(Level level);
-    
-    	// Log输出位置
-    	Target getTarget();
-    	void setTarget(Target target);
-    
-    	// 打log
-    	static int writeLog(
-    		Level loglevel,         // Log级别
-    		unsigned char* fileName,   // 函数所在文件名
-    		unsigned char* function,   // 函数名
-    		int lineNumber,            // 行号
-    		const char* format,        // 格式化
-    		...);                      // 变量
-    
-    	// 输出log
-    	static void outputToTarget();
+        void uninit();
+
+        int createFile();
+
+        static Log* getInstance();
+
+        // Log级别
+        Level getLevel();
+        void setLevel(Level level);
+
+        // Log输出位置
+        Target getTarget();
+        void setTarget(Target target);
+
+        // 打log
+        static int writeLog(
+            Level loglevel,         // Log级别
+            unsigned char* fileName,   // 函数所在文件名
+            unsigned char* function,   // 函数名
+            int lineNumber,            // 行号
+            const char* format,        // 格式化
+            ...);                      // 变量
+
+        // 输出log
+        static void outputToTarget();
         
-		Level cvtLevel(string &level);
+        Level cvtLevel(string &level);
 
         Target cvtTarget(string &target);
 
     private:
-    	Log();
+        Log();
 
-    	virtual ~Log();
-		
-    	static Log* instance;
+        virtual ~Log();
+        
+        static Log* instance;
 
-    	// 互斥锁		
+        // 互斥锁		
         static mutex log_write_mutex;
-    	// 临界区
+        // 临界区
         static mutex log_create_mutex; 
-    
-    	// 存储log的buffer
-    	static string logBuffer;
-    	// 已写的log长度
-    	static string::size_type writtenSize;
-    
-    	// Log级别
-    	Level level;
-    
-    	// Log输出位置
-    	Target target;
-    
-    	// Handle
+
+        // 存储log的buffer
+        static string logBuffer;
+        // 已写的log长度
+        static string::size_type writtenSize;
+
+        // Log级别
+        Level level;
+
+        // Log输出位置
+        Target target;
+
+        // Handle
         static int mFileHandle;
 
         array<pair<string, Level>, 5> _LevelEnumArray;
         void _initializeLevleArray()
         {
-           _LevelEnumArray[0] = std::make_pair("NONE",    Level::NONE);
-           _LevelEnumArray[1] = std::make_pair("ERROR",   Level::ERROR);
-           _LevelEnumArray[2] = std::make_pair("WARNING", Level::WARNING);
-           _LevelEnumArray[3] = std::make_pair("INFO",    Level::INFO);
-           _LevelEnumArray[4] = std::make_pair("DEBUG",   Level::DEBUG);
-		}
+            _LevelEnumArray[0] = std::make_pair("NONE",    Level::NONE);
+            _LevelEnumArray[1] = std::make_pair("ERROR",   Level::ERROR);
+            _LevelEnumArray[2] = std::make_pair("WARNING", Level::WARNING);
+            _LevelEnumArray[3] = std::make_pair("INFO",    Level::INFO);
+            _LevelEnumArray[4] = std::make_pair("DEBUG",   Level::DEBUG);
+        }
 
         array<pair<string, Target>, 3> _TargetEnumArray;
-		void _initializeTargetArray() {
-           _TargetEnumArray[0] = std::make_pair("NONE",    Target::NONE);
-           _TargetEnumArray[1] = std::make_pair("CONSOLE", Target::CONSOLE);
-           _TargetEnumArray[2] = std::make_pair("FILE",    Target::FILE);
-		}
+        void _initializeTargetArray() {
+            _TargetEnumArray[0] = std::make_pair("NONE",    Target::NONE);
+            _TargetEnumArray[1] = std::make_pair("CONSOLE", Target::CONSOLE);
+            _TargetEnumArray[2] = std::make_pair("FILE",    Target::FILE);
+        }
     };
-}
+    }
 
-
-#endif
+    #endif

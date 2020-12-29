@@ -61,5 +61,4 @@ namespace NS_CRANE {
     };
 }
 
-
 #endif

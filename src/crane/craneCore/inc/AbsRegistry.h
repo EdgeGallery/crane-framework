@@ -17,8 +17,6 @@
 #ifndef CRANE_ABSREGISTRY_H
 #define CRANE_ABSREGISTRY_H
 
-//#define __x86_64__
-
 #include <string>
 #include <map>
 #include "AbsLibrary.h"

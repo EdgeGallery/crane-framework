@@ -17,7 +17,6 @@
 #ifndef __CRANE_ABSINTERFACEINFO_H_
 #define __CRANE_ABSINTERFACEINFO_H_
 
-//#define __x86_64__
 #include <string>
 
 using namespace std;

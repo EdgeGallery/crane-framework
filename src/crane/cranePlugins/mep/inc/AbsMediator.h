@@ -20,10 +20,6 @@
 #include <iostream>
 #include <memory>
 
-//#include <pistache/client.h>
-//#include <pistache/http.h>
-//#include <pistache/net.h>
-
 #include <cpprest/http_client.h>
 #include <cpprest/uri.h>
 #include <cpprest/details/basic_types.h>

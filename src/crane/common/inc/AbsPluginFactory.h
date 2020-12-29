@@ -94,7 +94,6 @@ class AbstractPluginFactory {
         //单例插件的互斥锁
         static mutex SingletonLock;
 };
-
 }
 
 #endif

@@ -113,8 +113,6 @@ namespace NS_CRANE {
             
             Rest::Router    _router;
 
-            
-
     };
 }
 

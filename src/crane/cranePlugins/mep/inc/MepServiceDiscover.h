@@ -17,11 +17,6 @@
 #ifndef __CRANE_MEPSERVICEDISCOVER_H__
 #define __CRANE_MEPSERVICEDISCOVER_H__
 
-
-//#include <pistache/client.h>
-//#include <pistache/http.h>
-//#include <pistache/net.h>
-
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stream.h>
@@ -75,6 +70,5 @@ namespace NS_CRANE {
             unsigned                _commpleted = 0;//Commpleted service discover process number.
     };
 }
-
 
 #endif

@@ -160,7 +160,6 @@ namespace NS_CRANE {
         return string(buffer.GetString());
     }
 
-
     void Util::printJson(Document& document)
     {
         string str = Json2String(document);

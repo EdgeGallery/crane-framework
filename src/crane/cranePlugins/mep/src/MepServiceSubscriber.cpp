@@ -236,11 +236,6 @@ namespace NS_CRANE {
             }
 
            ++_commpleted;
-           /*
-           for (Document::ConstValueIterator i = services.Begin(); i != services.End(); ++i) {
-               _servicesStatus.insert(make_pair(string(i->GetString()), ServiceStatus::PENDING));
-           }
-           */
         }
     }
 
@@ -249,5 +244,4 @@ namespace NS_CRANE {
         //result_ = CRANE_FAIL;
         mediator_->MepServiceResult(shared_from_this());
     }
-    
 }

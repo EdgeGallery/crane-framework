@@ -175,14 +175,4 @@ namespace NS_CRANE {
     void MepMediator::feedServicesSubscriberInfo(void* servicesInfo) {
         _servicesSubscriberInfo = *(static_cast<ServicesSubscriberInfo*>(servicesInfo));
     }
-/*
-    void  MepMediator::feedServicesSubscriberInfo(const ServicesSubscriberInfo& servicesInfo) {
-        _servicesSubscriberInfo = servicesInfo;
-    }
-*/    
-    /*
-    const Pistache::Http::Client& MepMediator::getClient() {
-        return _client;      
-    }
-    */
 }

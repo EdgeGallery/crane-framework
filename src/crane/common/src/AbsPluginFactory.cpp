@@ -29,5 +29,4 @@ namespace NS_CRANE {
     const string& AbstractPluginFactory::getPluginName() const {
         return pluginName;
     }
-    
 }

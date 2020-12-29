@@ -496,6 +496,6 @@ TEST(jsontest, writeJsonFile) {
     Writer<FileWriteStream> writer(os);
     d.Accept(writer);
  
-    fclose(fp);    
+    fclose(fp);
 
 }

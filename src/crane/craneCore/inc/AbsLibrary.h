@@ -63,10 +63,5 @@ class AbsLibrary {
         void* handle_ = nullptr;
 
 };
-/*
-string& AbsLibrary::name() {
-    return name;
-}
-*/
 }
 #endif

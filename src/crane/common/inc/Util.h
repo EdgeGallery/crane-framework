@@ -86,6 +86,6 @@ namespace NS_CRANE
         // 将版本的string格式转换成unsigned数组
         static void cvtVer2I(std::string ver, unsigned* iv, unsigned len);
    };
-} // namespace 
+} // namespace
 
 #endif
