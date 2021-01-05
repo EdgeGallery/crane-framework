@@ -33,18 +33,19 @@ using namespace web::http;
 using namespace web::http::client;
 
 struct HelloHandlerBasic : public Http::Handler {
-  HTTP_PROTOTYPE(HelloHandlerBasic)
+    HTTP_PROTOTYPE(HelloHandlerBasic)
 
-  void onRequest(const Http::Request & request, Http::ResponseWriter writer) override {
-    cout<<"------>Receive request with RURI: "<<endl;
-    cout<<"------>"<<request.address().host()<<":"<<request.address().port()<<request.resource()<<request.query().as_str()<<endl;
+    void onRequest(const Http::Request & request, Http::ResponseWriter writer) override {
+        cout << "------>Receive request with RURI: " << endl;
+        cout << "------>" << request.address().host() << ":" << request.address().port() << endl;
+        cout << "------>" << request.resource() << request.query().as_str() << endl;
 
-    if (request.method() == Http::Method::Post) {
-      cout<<"------>Method: Post"<<endl;
+        if (request.method() == Http::Method::Post) {
+            cout << "------>Method: Post" << endl;
+        }
+
+        writer.send(Http::Code::Ok, "Hello, World!");
     }
-
-    writer.send(Http::Code::Ok, "Hello, World!");
-  }
 };
 
 
@@ -52,17 +53,17 @@ struct HelloHandlerBasic : public Http::Handler {
 #if 0
 template <typename... Args>
 Pistache::Rest::Route::Handler mybind(Pistache::Rest::Route::Result (*func)(Args...)) {
-  return [=](const Rest::Request &request, Http::ResponseWriter response) {
-    func(request, std::move(response));
+    return [=](const Rest::Request &request, Http::ResponseWriter response) {
+        func(request, std::move(response));
 
-    return Pistache::Rest::Route::Result::Ok;
-  };
+        return Pistache::Rest::Route::Result::Ok;
+    };
 }
 #endif
 
 TEST(SRV, http_basic)
 {
-    cout<<"Enter http_basic()"<<endl; 
+    cout << "Enter http_basic()" << endl;
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     Itf_CraneSrv* srv = nullptr;
 
@@ -77,12 +78,12 @@ TEST(SRV, http_basic)
 
         srv->start(Itf_CraneSrv::ThreadMode::NEW_THREAD);
     } catch (exception &e) {
-        cout<<e.what()<<endl;
+        cout << e.what() << endl;
     }
 
-    cout<<"Client connect to Server"<<endl;
+    cout << "Client connect to Server" << endl;
     http_client_config config;
-    config.set_validate_certificates(false);    
+    config.set_validate_certificates(false);
     shared_ptr<http_client> client;
     client = make_shared<http_client>(U("http://127.0.0.1:8080/"), config);
 
@@ -90,8 +91,8 @@ TEST(SRV, http_basic)
     uri_builder builder(U("/api/v1/img/dongyin"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
-    
-    ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
+
+    ASSERT_TRUE(response.status_code() == status_codes::OK) << "Receive status code: " << response.status_code() << endl;
 
     srv->shutdown();
     pPluginFrame->destory(srv);
@@ -100,14 +101,14 @@ TEST(SRV, http_basic)
 Pistache::Rest::Route::Result postProcess(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response)
 {
     unused(request);
-    cout<<"Enter postProcess function."<<endl;
+    cout << "Enter postProcess function." << endl;
     response.send(Pistache::Http::Code::Ok);
     return Pistache::Rest::Route::Result::Ok;
 }
 
 TEST(SRV, http_router_func)
 {
-    cout<<"Enter http_basic()"<<endl; 
+    cout << "Enter http_basic()" << endl;
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     Itf_CraneSrv* srv = nullptr;
 
@@ -122,10 +123,10 @@ TEST(SRV, http_router_func)
         srv->handler();
         srv->start(Itf_CraneSrv::ThreadMode::NEW_THREAD);
     } catch (exception &e) {
-        cout<<e.what()<<endl;
+        cout << e.what() << endl;
     }
 
-    cout<<"Client connect to Server"<<endl;
+    cout << "Client connect to Server" << endl;
     http_client_config config;
     config.set_validate_certificates(false);
     shared_ptr<http_client> client;
@@ -135,7 +136,7 @@ TEST(SRV, http_router_func)
     uri_builder builder(U("/api/v1/img/dongyin"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
-    ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
+    ASSERT_TRUE(response.status_code() == status_codes::OK) << "Receive status code: " << response.status_code() << endl;
 
     srv->shutdown();
     pPluginFrame->destory(srv);
@@ -153,7 +154,7 @@ public:
 
 TEST(SRV, http_router_obj)
 {
-    cout<<"Enter http_basic()"<<endl; 
+    cout << "Enter http_basic()" << endl;
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     Itf_CraneSrv* srv = nullptr;
 
@@ -170,10 +171,10 @@ TEST(SRV, http_router_obj)
         
         srv->start(Itf_CraneSrv::ThreadMode::NEW_THREAD);
     } catch (exception &e) {
-        cout<<e.what()<<endl;
+        cout << e.what() << endl;
     }
 
-    cout<<"Client connect to Server"<<endl;
+    cout << "Client connect to Server" << endl;
     http_client_config config;
     config.set_validate_certificates(false);
     shared_ptr<http_client> client;
@@ -183,7 +184,7 @@ TEST(SRV, http_router_obj)
     uri_builder builder(U("/api/v1/img/dongyin"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
-    ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
+    ASSERT_TRUE(response.status_code() == status_codes::OK) << "Receive status code: " << response.status_code() << endl;
 
     srv->shutdown();
     pPluginFrame->destory(srv);
@@ -191,7 +192,7 @@ TEST(SRV, http_router_obj)
 
 TEST(SRV, http_router_shared_ptr)
 {
-    cout<<"Enter http_basic()"<<endl; 
+    cout << "Enter http_basic()" << endl;
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     Itf_CraneSrv* srv = nullptr;
 
@@ -208,10 +209,10 @@ TEST(SRV, http_router_shared_ptr)
         
         srv->start(Itf_CraneSrv::ThreadMode::NEW_THREAD);
     } catch (exception &e) {
-        cout<<e.what()<<endl;
+        cout << e.what() << endl;
     }
 
-    cout<<"Client connect to Server"<<endl;
+    cout << "Client connect to Server" << endl;
     http_client_config config;
     config.set_validate_certificates(false);
     shared_ptr<http_client> client;
@@ -221,7 +222,7 @@ TEST(SRV, http_router_shared_ptr)
     uri_builder builder(U("/api/v1/img/dongyin"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
-    ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
+    ASSERT_TRUE(response.status_code() == status_codes::OK) << "Receive status code: " << response.status_code() << endl;
 
     srv->shutdown();
     pPluginFrame->destory(srv);
@@ -229,7 +230,7 @@ TEST(SRV, http_router_shared_ptr)
 
 TEST(SRV, http_init_by_code)
 {
-    cout<<"Enter http_basic()"<<endl;
+    cout << "Enter http_basic()" << endl;
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     Itf_CraneSrv* srv = nullptr;
 
@@ -256,10 +257,10 @@ TEST(SRV, http_init_by_code)
         
         srv->start(Itf_CraneSrv::ThreadMode::NEW_THREAD);
     } catch (exception &e) {
-        cout<<e.what()<<endl;
+        cout << e.what() << endl;
     }
 
-    cout<<"Client connect to Server"<<endl;
+    cout << "Client connect to Server" << endl;
     http_client_config config;
     config.set_validate_certificates(false);
     shared_ptr<http_client> client;
@@ -269,7 +270,7 @@ TEST(SRV, http_init_by_code)
     uri_builder builder(U("/api/v1/img/dongyin"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
-    ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
+    ASSERT_TRUE(response.status_code() == status_codes::OK) << "Receive status code: " << response.status_code() << endl;
 
     srv->shutdown();
     pPluginFrame->destory(srv);
@@ -309,7 +310,7 @@ TEST(SRV, https_basic)
     uri_builder builder(U("/api/v1/img/dongyin"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
-    ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
+    ASSERT_TRUE(response.status_code() == status_codes::OK) << "Receive status code: " << response.status_code() << endl;
 
     srv->shutdown();
     pPluginFrame->destory(srv);

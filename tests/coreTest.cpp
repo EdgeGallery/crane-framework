@@ -37,14 +37,14 @@ class coreTest : public testing::Test {
 
         static void SetUpTestCase()
         {
-            cout<<"SetUpTestCase"<<endl;
+            cout << "SetUpTestCase" << endl;
             char* cwd = NULL;
             if ((cwd = getcwd(NULL, 0)) == NULL) {
-                cout<<"Get current path failed."<<endl;
+                cout << "Get current path failed." << endl;
                 free(cwd);
                 return;
             } else {
-                cout<<"Current path: "<<cwd<<endl;
+                cout << "Current path: " << cwd << endl;
             }
 
             string s_cwd(cwd);
@@ -54,8 +54,8 @@ class coreTest : public testing::Test {
 
             s_oldfile += string("/../lib/plugins/libcranepluginplayermp3.so");
             s_newfile += string("/plugins/libcranepluginplayermp3.so");
-            cout<<"s_oldfile: "<<s_oldfile<<endl;
-            cout<<"s_newfile: "<<s_newfile<<endl;
+            cout << "s_oldfile: " << s_oldfile << endl;
+            cout << "s_newfile: " << s_newfile << endl;
 
             if (access("plugins", F_OK|R_OK|W_OK|X_OK)) {
                 int ret = mkdir("plugins", MODE);
@@ -81,7 +81,7 @@ class coreTest : public testing::Test {
 
         static void TearDownTestCase()
         {
-            cout<<"TearDownTestCase"<<endl;
+            cout << "TearDownTestCase" << endl;
             if (!access("plugins/libcranepluginplayermp3.so", F_OK)) {
                 if (!rename(s_newfile.c_str(), s_oldfile.c_str())) {
                     cout << "Error: " << strerror(errno) << endl;
@@ -99,13 +99,12 @@ class coreTest : public testing::Test {
 
         virtual void SetUp()
         {
-            cout<<"SetUp()"<<endl;
+            cout << "SetUp()" << endl;
         }
 
         virtual void TearDown()
         {
-            cout<<"TearDown()"<<endl;
-
+            cout << "TearDown()" << endl;
         }
 
         static string _s_cwd;
@@ -119,17 +118,21 @@ TEST_F(coreTest, load_specail_plugin)
 
     Itf_Player* playerMP3 = dynamic_cast<Itf_Player*>(
         pPluginFrame->create("Itf_Player", "PlayerImplMP3", "my first plugin instance"));
-    if (playerMP3) { playerMP3->play("play mp3...");}
+    if (playerMP3) {
+        playerMP3->play("play mp3...");
+    }
 
     Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
         pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
-    if (playerCD) { playerCD->play("play cd...");}
+    if (playerCD) {
+        playerCD->play("play cd...");
+    }
 }
 
 TEST_F(coreTest, unload_specail_plugin)
 {
     string plugin_filename = _s_cwd + string("/plugins/libcranepluginplayermp3.so");
-    cout<<"plugin filename: "<<plugin_filename<<endl;
+    cout << "plugin filename: " << plugin_filename<<endl;
     pPluginFrame->unload("Itf_Player", "PlayerImplMP3");
     pPluginFrame->unload("Itf_Player", "PlayerImplCD");
 }
@@ -144,9 +147,13 @@ TEST_F(coreTest, reload_special_plugin) {
 
     Itf_Player* playerMP3 = dynamic_cast<Itf_Player*>(
         pPluginFrame->create("Itf_Player", "PlayerImplMP3", "my first plugin instance"));
-    if (playerMP3) { playerMP3->play("play mp3..."); }
+    if (playerMP3) {
+        playerMP3->play("play mp3...");
+    }
 
     Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
         pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
-    if (playerCD) { playerCD->play("play cd...");}
+    if (playerCD) {
+        playerCD->play("play cd...");
+    }
 }

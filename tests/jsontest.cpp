@@ -72,7 +72,7 @@ TEST(jsontest, test1) {
                 (char*)rapidjson::GetParseErrorFunc(d.GetParseError()));
     }
     ASSERT_STREQ(d["serName"].GetString(), "ExampleService");
-    ASSERT_STREQ(d["state"].GetString(), "ACTIVE") <<"error!!!!!!"<<d["state"].GetString()<<std::endl;
+    ASSERT_STREQ(d["state"].GetString(), "ACTIVE") << "error!!!!!!" << d["state"].GetString() << std::endl;
 
     auto it = d.FindMember("serName");
     ASSERT_NE(it, d.MemberEnd());
@@ -80,76 +80,56 @@ TEST(jsontest, test1) {
 
     it = d.FindMember("isLocal");
     ASSERT_NE(it, d.MemberEnd());
-    ASSERT_TRUE(it->value.IsBool()) <<"error!!!!!! it is not bool."<<std::endl;
-    
+    ASSERT_TRUE(it->value.IsBool()) << "error!!!!!! it is not bool." << std::endl;
+
     it = d.FindMember("transportInfo");
     ASSERT_NE(it, d.MemberEnd());
     ASSERT_TRUE(it->value.IsObject());
     rapidjson::Document::MemberIterator endpoint = it->value.FindMember("endpoint");
     
-    ASSERT_TRUE(endpoint->value.IsObject())<<endpoint->value.GetType()<<std::endl;
-    ASSERT_TRUE(endpoint->value.FindMember("addresses")->value.IsArray())<<"addresses.value'type: "<<endpoint->value.FindMember("addresses")->value.GetType()<<std::endl;
+    ASSERT_TRUE(endpoint->value.IsObject()) << endpoint->value.GetType() << std::endl;
+    ASSERT_TRUE(endpoint->value.FindMember("addresses")->value.IsArray()) << "addresses.value'type: " << endpoint->value.FindMember("addresses")->value.GetType() << std::endl;
     auto& addresses = endpoint->value.FindMember("addresses")->value;
 
-    //rapidjson::Document::Array addrs = endpoint->value.GetArray();
-    for (rapidjson::Document::ValueIterator itr = addresses.Begin(); itr != addresses.End(); ++itr) {        
-        //ASSERT_TRUE(itr->IsObject())<<itr->GetType()<<std::endl;
-       /* 
-        for (rapidjson::Document::ConstMemberIterator i = itr->MemberBegin(); i != itr->MemberEnd(); ++i) {
-            if (i->value.HasMember("host")) {
-                ASSERT_STREQ(i->value.FindMember("host")->value.GetString(), "1.1.1.1")<<"Error!!!!!!"<<i->value.FindMember("host")->value.GetString()<<std::endl;
-            }
-            //ASSERT_STREQ(i->name.GetString(), "host")<<"Error!!!!"<<i->name.GetString()<<std::endl;
-
-        }
-        */
+    // rapidjson::Document::Array addrs = endpoint->value.GetArray();
+    for (rapidjson::Document::ValueIterator itr = addresses.Begin(); itr != addresses.End(); ++itr) {
         ASSERT_STREQ(itr->FindMember("host")->value.GetString(), "1.1.1.1");
         ASSERT_STREQ(itr->FindMember("port")->value.GetString(), "8080");
 
-        ASSERT_TRUE((*itr).IsObject())<<"Error!!!!!!"<<(*itr).GetType()<<std::endl;
+        ASSERT_TRUE((*itr).IsObject()) << "Error!!!!!!" << (*itr).GetType() << std::endl;
         for (rapidjson::Document::ConstMemberIterator i = itr->MemberBegin(); i != itr->MemberEnd(); ++i) {\
             if (!std::string("host").compare(i->name.GetString())) {
-                ASSERT_STREQ(i->value.GetString(), "1.1.1.1")<<"Error!!!!!!"<<i->value.GetString()<<i->value.GetType()<<std::endl;
+                ASSERT_STREQ(i->value.GetString(), "1.1.1.1") << "Error!!!!!!" << i->value.GetString() << i->value.GetType() << std::endl;
             }
-            //ASSERT_STREQ(i->name.GetString(), "port")<<"Error!!!!!!"<<i->name.GetString()<<i->value.GetType()<<std::endl;
-
         }
     }
 
-
-    //auto& result1 = crane::Util::readJsonString(it->value, name1);
     auto result1 = crane::Util::fatchJsonValue(it->value, list<string>{"version"});
-    ASSERT_STREQ(result1->GetString(), "2.0")<<"Error!!!!!!"<<result1->GetString()<<endl;
+    ASSERT_STREQ(result1->GetString(), "2.0") << "Error!!!!!!" << result1->GetString() << endl;
 
-    //auto& result2 = crane::Util::readJsonString(d, name2);
     auto result2 = crane::Util::fatchJsonValue(d, list<string>{"version"});
-    ASSERT_STREQ(result2->GetString(), "ServiceVersion1")<<"Error!!!!!!"<<result2->GetString()<<std::endl;
-    //std::string result2 = crane::Util::readJsonString<std::string>(d, name2);
-    //ASSERT_STREQ(result2.c_str(), "version1")<<"Error!!!!!!"<<result2.c_str()<<std::endl;
-    
-    //auto& result3 = crane::Util::readJsonString(d, name3);
-    auto result3 = crane::Util::fatchJsonValue(d, list<string>{"isLocal"});
-    ASSERT_TRUE(result3->IsBool())<<"Error!!!!!!"<<result3->IsBool()<<std::endl;
-    ASSERT_TRUE(result3->GetBool())<<"Error!!!!!!"<<result3->GetBool()<<std::endl;
+    ASSERT_STREQ(result2->GetString(), "ServiceVersion1") << "Error!!!!!!" << result2->GetString() << std::endl;
 
-    
-    //ASSERT_STREQ(result4->value.FindMember("host")->value.GetString(), "1.1.1.1")<<"Error!!!!!!"<<result4->value.FindMember("host")->value.GetString()<<std::endl;
-    /////////////////////////修改内容////////////////////////
-    //1. 修改transportId
+    auto result3 = crane::Util::fatchJsonValue(d, list<string>{"isLocal"});
+    ASSERT_TRUE(result3->IsBool()) << "Error!!!!!!" << result3->IsBool() << std::endl;
+    ASSERT_TRUE(result3->GetBool()) << "Error!!!!!!" << result3->GetBool() << std::endl;
+
+    ///////////////////////// 修改内容 ////////////////////////
+    // 1. 修改transportId
     it = d.FindMember("transportId");
     std::string newTransportId = "Rest2";
     it->value.SetString(newTransportId.c_str(), static_cast<rapidjson::SizeType>(newTransportId.size()), d.GetAllocator());
-    ASSERT_STREQ(it->value.GetString(), newTransportId.c_str())<<"Error!!!!!!"<<it->value.GetString()<<std::endl;
+    ASSERT_STREQ(it->value.GetString(), newTransportId.c_str()) << "Error!!!!!!" << it->value.GetString() << std::endl;
 
-    //2. 新增数组
+    // 2. 新增数组
     rapidjson::Value array(rapidjson::kArrayType);
     rapidjson::Value addr(rapidjson::kObjectType);
     addr.AddMember("host", "2.2.2.2", d.GetAllocator());
     addr.AddMember("port", "9090", d.GetAllocator());
     addresses.PushBack(addr, d.GetAllocator());
 
-    //3. 修改数组
-    for (rapidjson::Document::ValueIterator itr = addresses.Begin(); itr != addresses.End(); ++itr) {        
+    // 3. 修改数组
+    for (rapidjson::Document::ValueIterator itr = addresses.Begin(); itr != addresses.End(); ++itr) {
        if (itr->FindMember("host")->value == rapidjson::Value("1.1.1.1")) {
            addresses.Erase(itr);
        }
@@ -158,7 +138,7 @@ TEST(jsontest, test1) {
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    std::cout<<"Result Json: "<<buffer.GetString()<<std::endl;
+    std::cout<<"Result Json: " << buffer.GetString() << std::endl;
 }
 
 
@@ -168,21 +148,21 @@ TEST(jsontest, fatchJsonValue) {
 
     list<string> h = {"serCategory","version"};
     rapidjson::Value* v = Util::fatchJsonValue(d, h);
-    ASSERT_STREQ(v->GetString(), "version1")<<"version = "<<v->GetString()<<std::endl;
+    ASSERT_STREQ(v->GetString(), "version1") << "version = " << v->GetString() << std::endl;
 
     h = {"transportId"};
     v = Util::fatchJsonValue(d, h);
-    ASSERT_STREQ(v->GetString(), "Rest1")<<"transportId = "<<v->GetString()<<std::endl;
+    ASSERT_STREQ(v->GetString(), "Rest1") << "transportId = " << v->GetString() << std::endl;
 
     h = {"transportInfo","security","oAuth2Info","tokenEndpoint"};
     v = Util::fatchJsonValue(d, h);
-    ASSERT_STREQ(v->GetString(), "/mecSerMgmtApi/security/TokenEndPoint")<<"transportId = "<<v->GetString()<<std::endl;
+    ASSERT_STREQ(v->GetString(), "/mecSerMgmtApi/security/TokenEndPoint") << "transportId = " << v->GetString() << std::endl;
     v->SetString("dongyin", d.GetAllocator());
     
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    std::cout<<"Result Json: "<<std::endl<<buffer.GetString()<<std::endl;
+    std::cout << "Result Json: " << std::endl << buffer.GetString() << std::endl;
 }
 
 TEST(jsontest, cleanJsonArray) {
@@ -231,7 +211,7 @@ const std::string jsonBody = "{\
     rapidjson::StringBuffer buffer;
     rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
     d.Accept(writer);
-    std::cout<<"Result Json: "<<std::endl<<buffer.GetString()<<std::endl;
+    std::cout << "Result Json: " << std::endl << buffer.GetString() << std::endl;
 }
 
 TEST(jsontest, parseArray) {
@@ -318,38 +298,31 @@ const std::string jsonBody = "[\
     ASSERT_TRUE(d.IsArray());
 
     for (rapidjson::Value::ValueIterator itr = d.Begin(); itr!= d.End(); ++itr) {
-        //auto i = itr->FindMember("serInstanceId");
-        //ASSERT_STREQ(v->GetString(), "ServiceInstance123")<<"transportId = "<<v->GetString()<<std::endl;
-        //cout<<"serInstanceId: "<<i->value.GetString()<<endl;
-
         list<string> h = {"serInstanceId"};
         rapidjson::Value* v = Util::fatchJsonValue((*itr), h);
-        ASSERT_STREQ(v->GetString(), "ServiceInstance123")<<"serInstanceId = "<<v->GetString()<<std::endl;
-        cout<<"-------------------------serInstanceId: "<<v->GetString()<<endl;
+        ASSERT_STREQ(v->GetString(), "ServiceInstance123") << "serInstanceId = " << v->GetString() << std::endl;
+        cout << "-------------------------serInstanceId: " << v->GetString() << endl;
 
         h = {"serCategory", "id"};
         v = Util::fatchJsonValue((*itr), h);
-        ASSERT_STREQ(v->GetString(), "id12345")<<"serCategory.id= "<<v->GetString()<<std::endl;
-        cout<<"-------------------------serCategory.id: "<<v->GetString()<<endl;
+        ASSERT_STREQ(v->GetString(), "id12345")<<"serCategory.id= " << v->GetString() << std::endl;
+        cout << "-------------------------serCategory.id: " << v->GetString() << endl;
 
         h = {"transportInfo", "endpoint", "addresses"};
         v = Util::fatchJsonValue((*itr), h);
         for (rapidjson::Document::ValueIterator itr = v->Begin(); itr != v->End(); ++itr) {
             for (rapidjson::Document::ConstMemberIterator i = itr->MemberBegin(); i != itr->MemberEnd(); ++i) {
                 if (!std::string("host").compare(i->name.GetString())) {
-                    cout<<"-------------------------transportInfo.endpoint.addresses.host: "<<i->value.GetString()<<endl;
-                    ASSERT_STREQ(i->value.GetString(), "192.0.2.0")<<"Error!!!!!!"<<i->value.GetString()<<i->value.GetType()<<std::endl;
+                    cout << "-------------------------transportInfo.endpoint.addresses.host: " << i->value.GetString() << endl;
+                    ASSERT_STREQ(i->value.GetString(), "192.0.2.0")<<"Error!!!!!!" << i->value.GetString() << i->value.GetType() << std::endl;
                 }
 
                 if (!string("port").compare(i->name.GetString())) {
-                    cout<<"-------------------------transportInfo.endpoint.addresses.port: "<<i->value.GetInt()<<endl;
-                    ASSERT_EQ(i->value.GetInt(), 8080)<<"Error!!!!!!"<<i->value.GetInt()<<i->value.GetType()<<endl;
+                    cout << "-------------------------transportInfo.endpoint.addresses.port: " << i->value.GetInt() << endl;
+                    ASSERT_EQ(i->value.GetInt(), 8080)<<"Error!!!!!!" << i->value.GetInt() << i->value.GetType() << endl;
                 }
-                //ASSERT_STREQ(i->name.GetString(), "port")<<"Error!!!!!!"<<i->name.GetString()<<i->value.GetType()<<std::endl;
-
             }
         }
-
     }
 }
 
@@ -390,7 +363,7 @@ TEST(jsontest, writeJson) {
     Value* v;
     list<string> h;
 
-    //set serName.
+    // set serName.
     string s = "dy";
     h = {"serName"};
     v = Util::fatchJsonValue(d, h);
@@ -398,9 +371,9 @@ TEST(jsontest, writeJson) {
         v->SetString(s.c_str(), a);
     }
     v = Util::fatchJsonValue(d, h);
-    ASSERT_STREQ(v->GetString(), "dy")<<"Error!!!!!!"<<v->GetString()<<endl;
+    ASSERT_STREQ(v->GetString(), "dy") << "Error!!!!!!" << v->GetString() << endl;
 
-    //set addresses
+    // set addresses
     h = {"transportInfo", "endpoint", "addresses"};
     v = Util::cleanJsonArray(d, h);
     if ((v != nullptr) && (v->IsArray())) {
@@ -408,7 +381,6 @@ TEST(jsontest, writeJson) {
         Value addr(rapidjson::kObjectType);
         Value ipv(ip.c_str(), static_cast<SizeType>(ip.size()), a);
         Value portv(port);
-        //Value portv(port.c_str(), static_cast<SizeType>(port.size()), a);
         addr.AddMember("host", ipv, a); 
         addr.AddMember("port", portv, a);
         v->PushBack(addr, a);
@@ -416,49 +388,47 @@ TEST(jsontest, writeJson) {
     v = Util::fatchJsonValue(d, h);
     for (auto itr = v->Begin(); itr != v->End(); ++itr) {
         if (itr->HasMember("host")) {
-            ASSERT_STREQ(itr->FindMember("host")->value.GetString(), "2.2.2.2")<<"ERROR!!!!!!"<<itr->FindMember("host")->value.GetString()<<endl;
+            ASSERT_STREQ(itr->FindMember("host")->value.GetString(), "2.2.2.2") << "ERROR!!!!!!" << itr->FindMember("host")->value.GetString() << endl;
         }
-        if (itr->HasMember("port")) {        
-            ASSERT_EQ(itr->FindMember("port")->value.GetUint(), 9090)<<"ERROR!!!!!!"<<itr->FindMember("port")->value.GetUint()<<endl;
+        if (itr->HasMember("port")) {
+            ASSERT_EQ(itr->FindMember("port")->value.GetUint(), 9090) << "ERROR!!!!!!" << itr->FindMember("port")->value.GetUint() << endl;
         }
     }
-            
 }
 
 #include "rapidjson/filewritestream.h"
 TEST(jsontest, writeJsonFile) {
-/*
-{
-	"interface": [{
-		"name": "",
-		"ver": "",
-		"requireFwVer": "",
-		"factorys": [{
-				"pluginName": ""
-			},
-			{
-				"pluginName": ""
-			}
-		]
-	},
-	{
-		"name": "",
-		"ver": "",
-		"requireFwVer": "",
-		"factorys": [{
-				"pluginName": ""
-			},
-			{
-				"pluginName": ""
-			}
-		]
-	}]
-}    
-*/
+    /*
+    {
+    "interface": [{
+        "name": "",
+        "ver": "",
+        "requireFwVer": "",
+        "factorys": [{
+                "pluginName": ""
+            },
+            {
+                "pluginName": ""
+            }
+        ]
+    },
+    {
+        "name": "",
+        "ver": "",
+        "requireFwVer": "",
+        "factorys": [{
+                "pluginName": ""
+            },
+            {
+                "pluginName": ""
+            }
+        ]
+    }]
+    }
+    */
     Document d;
     Document::AllocatorType& a = d.GetAllocator();
     d.SetObject();
-    //d.SetArray();
 
     Value itfArray(kArrayType);
     Value itf(kObjectType);
@@ -467,35 +437,29 @@ TEST(jsontest, writeJsonFile) {
 
     itf.AddMember("name", StringRef(string("interface_1").c_str()), a);
     itf.AddMember("ver", StringRef(string("ver_1").c_str()), a);
-    //itf.AddMember("reqFwVer", StringRef(string("require_fw_ver_1").c_str()), a); //使用下面的写法来清楚乱码问题
     itf.AddMember("reqFwVer", Value().SetString(string("require_fw_ver_1").c_str(), a).Move(), a);
 
-    
     factory.AddMember("pluginName", StringRef(string("plugin_name_1").c_str()), a);
     factoryArray.PushBack(factory,a);
-    
+
     itf.AddMember("factorys", factoryArray, a);
 
     itfArray.PushBack(itf, a);
-    
 
-    //d.AddMember("abc", itfArray, a);
-    
     d.AddMember("itfs", itfArray, a);
-    
+
     rapidjson::StringBuffer stringBuffer;
     rapidjson::Writer<rapidjson::StringBuffer> stringWriter(stringBuffer);
     d.Accept(stringWriter);
     string json = stringBuffer.GetString();
 
-    cout<<"===================================="<<json<<endl;
+    cout << "====================================" << json << endl;
 
     FILE* fp = fopen("output.json", "w");
     char writeBuffer[65536];
     FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
     Writer<FileWriteStream> writer(os);
     d.Accept(writer);
- 
-    fclose(fp);
 
+    fclose(fp);
 }

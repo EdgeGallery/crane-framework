@@ -27,9 +27,8 @@ namespace NS_CRANE {
         } else {
             LOG_DEBUG("Plugin absolute filename: { %s }", filename.c_str());
         }
-        void* handle = nullptr;
 
-        handle = ::dlopen(filename.c_str(), RTLD_NOW);
+        void* handle = ::dlopen(filename.c_str(), RTLD_NOW);
         //handle = ::dlopen(filename.c_str(), RTLD_LAZY);
         if (!handle){
             const char* err = ::dlerror();

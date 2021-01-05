@@ -83,13 +83,13 @@ class AbstractPluginFactory {
         const string& getVersion() const;
     protected:
         //插件所实现的接口名称，该名称和接口定义的名称相同
-        string interfaceType = "";
+        string interfaceType;
 
         //插件接口实现类的名称，该名称和插件类的名称相同
-        string pluginName = "";
+        string pluginName;
 
         //插件接口的版本
-        string version = "";
+        string version;
 
         //单例插件的互斥锁
         static mutex SingletonLock;
