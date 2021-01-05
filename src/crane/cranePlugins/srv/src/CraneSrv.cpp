@@ -145,12 +145,11 @@ namespace NS_CRANE {
             return CRANE_FAIL;
         }
 
-        Value* v = nullptr;
         list<string> h;
 
         //fatch app server config info.
         h = {"server", "port"};
-        v = Util::fatchJsonValue(d, h);
+        Value* v = Util::fatchJsonValue(d, h);
         if (v != nullptr) {
             _serverPort = static_cast<short unsigned>(v->GetUint());
         }

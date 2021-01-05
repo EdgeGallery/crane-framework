@@ -35,12 +35,6 @@ struct HelloHandlerBasic : public Http::Handler
         if (request.method() == Http::Method::Post) {
             cout<<"------>Method: Post"<<endl;
         }
-        /*
-        thread worker([](Http::ResponseWriter w) { 
-            w.send(Http::Code::Ok, "Hello, World!");
-        }, std::move(writer));
-        worker.detach();
-        */
         writer.send(Http::Code::Ok, "Hello, World!");
     }
 };

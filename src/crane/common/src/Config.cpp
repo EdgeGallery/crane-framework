@@ -61,13 +61,11 @@ namespace NS_CRANE {
             return ;
         }
 
-        Value* v = nullptr;
-
         list<string> h;
 
         //fetch Demo name.
         h = {"name"};
-        v = Util::fatchJsonValue(d, h);
+        Value* v = Util::fatchJsonValue(d, h);
         if (v != nullptr) {
             appName = string(v->GetString());
         }

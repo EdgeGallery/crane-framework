@@ -60,13 +60,15 @@ Pistache::Rest::Route::Handler mybind(Pistache::Rest::Route::Result (*func)(Args
 }
 #endif
 
-TEST(SRV, http_basic) {
+TEST(SRV, http_basic)
+{
     cout<<"Enter http_basic()"<<endl; 
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
-    int argc = 1; char **argv = nullptr;
     Itf_CraneSrv* srv = nullptr;
 
     try {
+        int argc = 1;
+        char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
         srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
@@ -95,26 +97,29 @@ TEST(SRV, http_basic) {
     pPluginFrame->destory(srv);
 }
 
-Pistache::Rest::Route::Result postProcess(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response) {
-  unused(request);
-  cout<<"Enter postProcess function."<<endl;
-  response.send(Pistache::Http::Code::Ok);
-  return Pistache::Rest::Route::Result::Ok;
+Pistache::Rest::Route::Result postProcess(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response)
+{
+    unused(request);
+    cout<<"Enter postProcess function."<<endl;
+    response.send(Pistache::Http::Code::Ok);
+    return Pistache::Rest::Route::Result::Ok;
 }
-TEST(SRV, http_router_func) {
+
+TEST(SRV, http_router_func)
+{
     cout<<"Enter http_basic()"<<endl; 
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
-    int argc = 1; char **argv = nullptr;
     Itf_CraneSrv* srv = nullptr;
 
     try {
+        int argc = 1;
+        char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
         srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
 
         srv->router(HttpMethod::POST, string("/api/v1/img/dongyin"), Rest::Routes::bind(postProcess));
         srv->handler();
-        
         srv->start(Itf_CraneSrv::ThreadMode::NEW_THREAD);
     } catch (exception &e) {
         cout<<e.what()<<endl;
@@ -122,7 +127,7 @@ TEST(SRV, http_router_func) {
 
     cout<<"Client connect to Server"<<endl;
     http_client_config config;
-    config.set_validate_certificates(false);    
+    config.set_validate_certificates(false);
     shared_ptr<http_client> client;
     client = make_shared<http_client>(U("http://127.0.0.1:8080/"), config);
 
@@ -133,28 +138,28 @@ TEST(SRV, http_router_func) {
     ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
 
     srv->shutdown();
-    pPluginFrame->destory(srv);  
+    pPluginFrame->destory(srv);
 }
 
 class Http_handler {
-    public:
-        void postHandler(const Rest::Request& request, Http::ResponseWriter response) {
-            unused(request);
-            response.send(Http::Code::Ok, to_string(100));
-        }
+public:
+    void postHandler(const Rest::Request& request, Http::ResponseWriter response)
+    {
+        unused(request);
+        response.send(Http::Code::Ok, to_string(100));
+    }
 
-        void getHandler(const Rest::Request& request, Http::ResponseWriter response) {
-            unused(request);
-            response.send(Http::Code::Ok, "Hello World!");
-        }
 };
-TEST(SRV, http_router_obj) {
+
+TEST(SRV, http_router_obj)
+{
     cout<<"Enter http_basic()"<<endl; 
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
-    int argc = 1; char **argv = nullptr;
     Itf_CraneSrv* srv = nullptr;
 
     try {
+        int argc = 1;
+        char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
         srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
@@ -170,7 +175,7 @@ TEST(SRV, http_router_obj) {
 
     cout<<"Client connect to Server"<<endl;
     http_client_config config;
-    config.set_validate_certificates(false);    
+    config.set_validate_certificates(false);
     shared_ptr<http_client> client;
     client = make_shared<http_client>(U("http://127.0.0.1:8080/"), config);
 
@@ -181,18 +186,18 @@ TEST(SRV, http_router_obj) {
     ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
 
     srv->shutdown();
-    pPluginFrame->destory(srv);  
+    pPluginFrame->destory(srv);
 }
 
-
-
-TEST(SRV, http_router_shared_ptr) {
+TEST(SRV, http_router_shared_ptr)
+{
     cout<<"Enter http_basic()"<<endl; 
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
-    int argc = 1; char **argv = nullptr;
     Itf_CraneSrv* srv = nullptr;
 
     try {
+        int argc = 1;
+        char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
         srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
@@ -208,29 +213,30 @@ TEST(SRV, http_router_shared_ptr) {
 
     cout<<"Client connect to Server"<<endl;
     http_client_config config;
-    config.set_validate_certificates(false);    
+    config.set_validate_certificates(false);
     shared_ptr<http_client> client;
     client = make_shared<http_client>(U("http://127.0.0.1:8080/"), config);
 
     // Build request URI and start the request.
     uri_builder builder(U("/api/v1/img/dongyin"));
-    //builder.append_query(U("q"), U("cpprestsdk github"));
 
     auto response = client->request(methods::POST, builder.to_string()).get();
     ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
 
     srv->shutdown();
-    pPluginFrame->destory(srv);  
+    pPluginFrame->destory(srv);
 }
 
-TEST(SRV, http_init_by_code) {
-    constexpr unsigned short port = 8000;
-    cout<<"Enter http_basic()"<<endl; 
+TEST(SRV, http_init_by_code)
+{
+    cout<<"Enter http_basic()"<<endl;
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
-    int argc = 1; char **argv = nullptr;
     Itf_CraneSrv* srv = nullptr;
 
     try {
+        constexpr unsigned short port = 8000;
+        int argc = 1;
+        char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
         srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
@@ -255,7 +261,7 @@ TEST(SRV, http_init_by_code) {
 
     cout<<"Client connect to Server"<<endl;
     http_client_config config;
-    config.set_validate_certificates(false);    
+    config.set_validate_certificates(false);
     shared_ptr<http_client> client;
     client = make_shared<http_client>(U("http://127.0.0.1:8000/"), config);
 
@@ -266,10 +272,11 @@ TEST(SRV, http_init_by_code) {
     ASSERT_TRUE(response.status_code() == status_codes::OK)<<"Receive status code: "<<response.status_code()<<endl;
 
     srv->shutdown();
-    pPluginFrame->destory(srv);    
+    pPluginFrame->destory(srv);
 }
 
-TEST(SRV, https_basic) {
+TEST(SRV, https_basic)
+{
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     int argc = 1;
     char **argv = nullptr;

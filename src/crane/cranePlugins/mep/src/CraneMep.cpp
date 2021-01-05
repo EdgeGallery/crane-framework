@@ -83,12 +83,10 @@ namespace NS_CRANE {
             return CRANE_FAIL;    
         }
 
-        Value* v = nullptr;
         list<string> h;
-
         //fatch service discover list.
         h = {"dsvServices"};
-        v = Util::fatchJsonValue(d, h);
+        Value* v = Util::fatchJsonValue(d, h);
         if ((v != nullptr) && v->IsArray()) {
             for (auto itr = v->Begin(); itr != v->End(); ++itr) {
                 _dsvServices.push_back(string(itr->GetString()));
