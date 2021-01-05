@@ -29,11 +29,12 @@ struct HelloHandlerBasic : public Http::Handler
 
     void onRequest(const Http::Request & request, Http::ResponseWriter writer) override
     {
-        cout<<"------>Receive request with RURI: "<<endl;
-        cout<<"------>"<<request.address().host()<<":"<<request.address().port()<<request.resource()<<request.query().as_str()<<endl;
+        cout << "------>Receive request with RURI: " << endl;
+        cout << "------>" << request.address().host() << ":" << request.address().port() << endl;
+        cout << "------>" << request.resource() << request.query().as_str() << endl;
 
         if (request.method() == Http::Method::Post) {
-            cout<<"------>Method: Post"<<endl;
+            cout << "------>Method: Post" << endl;
         }
         writer.send(Http::Code::Ok, "Hello, World!");
     }

@@ -33,7 +33,7 @@ TEST(MEP, MepBaisc) {
 
     Itf_CraneMep* mep = dynamic_cast<Itf_CraneMep*>(pPluginFrame->create("Itf_CraneMep", "CraneMep", "Crane MEP."));
 
-    cout<<"mep { "<<mep<<" }"<<endl;
+    cout << "mep { " << mep << " }" << endl;
 
     mep->invoke();
 }
