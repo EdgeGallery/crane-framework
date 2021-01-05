@@ -160,7 +160,6 @@ namespace NS_CRANE {
         return string(buffer.GetString());
     }
 
-
     void Util::printJson(Document& document)
     {
         string str = Json2String(document);
@@ -196,7 +195,7 @@ namespace NS_CRANE {
 
         size_t dlength = slength / 2;
 
-        unsigned char* data = (uint8_t*)malloc(dlength);
+        unsigned char* data = new uint8_t[dlength];
 
         memset(data, 0, dlength);
         *len = dlength;
@@ -212,7 +211,8 @@ namespace NS_CRANE {
             } else if (c >= 'a' && c <= 'f') {
                 value = (10 + (c - 'a'));
             } else {
-                free(data);
+                delete[] data;
+                data = nullptr;
                 return nullptr;
             }
 

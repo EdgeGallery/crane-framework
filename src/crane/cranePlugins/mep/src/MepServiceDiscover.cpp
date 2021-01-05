@@ -30,12 +30,6 @@ namespace NS_CRANE {
     
     void MepServiceDiscover::doInteraction(MepProduceType type) {
         result_ = { type, CRANE_FAIL };
-        //result_ = CRANE_FAIL;
-
-        //vector<Async::Promise<Http::Response>> responses;
-        //atomic<size_t> completedRequests(0);
-        //atomic<size_t> failedRequests(0);
-
         _commpleted = 0;
 
         //完成和MEP APIGW的服务发现交互过程

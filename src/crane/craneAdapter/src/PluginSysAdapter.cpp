@@ -143,6 +143,5 @@ namespace NS_CRANE {
 
     PluginSysAdapter::~PluginSysAdapter() {
         cout<<"~PluginSysAdapter()"<<endl;
-        //if (_mepMediator != nullptr) {delete _mepMediator;}
     }
 }

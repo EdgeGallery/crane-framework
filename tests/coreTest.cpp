@@ -66,7 +66,6 @@ class coreTest : public testing::Test {
                 plugins_dir = opendir("plugins");
             }
 
-
             if (access("plugins/libcranepluginplayermp3.so", F_OK)) {
                 int ret = rename(s_oldfile.c_str(), s_newfile.c_str());
                 if (ret != 0) {
@@ -77,9 +76,11 @@ class coreTest : public testing::Test {
 
             pPluginFrame = AbstractPluginFrame::getPluginFrame();
             int argc = 1; char **argv = nullptr;
-            pPluginFrame->init(argc, argv, CRANE_CRN);            
+            pPluginFrame->init(argc, argv, CRANE_CRN);
         }
-        static void TearDownTestCase() {
+
+        static void TearDownTestCase()
+        {
             cout<<"TearDownTestCase"<<endl;
             if (!access("plugins/libcranepluginplayermp3.so", F_OK)) {
                 if (!rename(s_newfile.c_str(), s_oldfile.c_str())) {
@@ -96,13 +97,14 @@ class coreTest : public testing::Test {
             }
         }
 
-        
-        virtual void SetUp() {
-            cout<<"SetUp()"<<endl;            
+        virtual void SetUp()
+        {
+            cout<<"SetUp()"<<endl;
         }
 
-        virtual void TearDown() {
-            cout<<"TearDown()"<<endl;            
+        virtual void TearDown()
+        {
+            cout<<"TearDown()"<<endl;
 
         }
 

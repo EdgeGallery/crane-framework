@@ -145,8 +145,6 @@ namespace NS_CRANE {
         const char* format,              // 格式化
         ...)
     {
-        int ret = 0;
-    
         if (level > Log::getInstance()->getLevel()) {
             return -1;
         }
@@ -170,7 +168,7 @@ namespace NS_CRANE {
         // [进程号][线程号][Log级别][文件名][函数名:行号]
         char locInfo[256];
         const char* format2 = "[PID:%4d][TID:%4d][%s][%-s][%s:%4d]";
-        ret = printfToBuffer(locInfo, 256, format2,
+        int ret = printfToBuffer(locInfo, 256, format2,
             getpid(),
             gettid(),
             cLogLevel,
@@ -197,12 +195,10 @@ namespace NS_CRANE {
 
     void Log::outputToTarget()
     {
-        int ret = 0;
-        ssize_t size = 0;
         if (static_cast<int>(Log::getInstance()->getTarget()) & (int)Target::FILE) {
             lseek(mFileHandle, 0, SEEK_END);
-            size = write(mFileHandle, logBuffer.c_str(), logBuffer.length());
-            ret = syncfs(mFileHandle);
+            ssize_t size = write(mFileHandle, logBuffer.c_str(), logBuffer.length());
+            int ret = syncfs(mFileHandle);
             LOG_DEBUG("size[ %d ]", size);
             LOG_DEBUG("ret[ %d ]", ret);
         }

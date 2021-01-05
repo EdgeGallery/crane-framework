@@ -26,8 +26,8 @@ namespace NS_CRANE {
      * @Return: 
      */   
     //TODO:需要在看一下这个函数 
-    unsigned CraneRegistry::registry_(shared_ptr<PluginInterfaceInfo> spItfInfo) {
-        bool insertFactoryAndPluginNameFlags = false;
+    unsigned CraneRegistry::registry_(shared_ptr<PluginInterfaceInfo> spItfInfo)
+    {
         shared_ptr<PluginInterfaceInfo> tmpItfInfo;
         const string& type = spItfInfo->type();
 
@@ -35,6 +35,7 @@ namespace NS_CRANE {
         if (itr !=  _pluginItfMap.end()) {
             LOG_DEBUG("This plugin interface[ %s ] has existed in the registry.", type.c_str());
             LOG_INFO("Check the plugin interface[ %s ] version...", type.c_str());
+            bool insertFactoryAndPluginNameFlags = false;
             auto oItfInfo = (*itr).second;
             int result = Util::compareVersion(oItfInfo->curVersion(), spItfInfo->curVersion());
             if (result >= CRANE_EQUAL) {
@@ -171,7 +172,6 @@ namespace NS_CRANE {
         const char* appPath = getenv("CRANE_APP_PLUGIN_PATH");
         if ((sysPath == NULL) || (appPath == NULL)) {
             throw std::runtime_error("Obtain the plugin path from environment variable failed.");
-            return;
         }
         _crane_sys_plugin_path = string(sysPath);
         _crane_app_plugin_path = string(appPath);
@@ -450,12 +450,11 @@ namespace NS_CRANE {
             return CRANE_FAIL;
         }
 
-        Value* v = nullptr;
         list<string> h;
 
         //fatch app server config info.
         h = {"itfs"};
-        v = Util::fatchJsonValue(d, h);
+        Value* v = Util::fatchJsonValue(d, h);
         if (v == nullptr) { return CRANE_FAIL; }
         if (!v->IsArray()) {
             LOG_ERROR("Type of v is not array.");

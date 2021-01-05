@@ -31,8 +31,4 @@ unsigned load(const std::string& filename);
 
 void unload(const std::string& type, const std::string& pluginName);
 
-//TODO:
-//unsigend setSeverHandler();
-
-
 #endif

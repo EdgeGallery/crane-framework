@@ -121,19 +121,4 @@ namespace NS_CRANE {
 
 }
 
-// Client 实现
-/*
-namespace NS_CRANE {
-    AbstractMediator* mepMediator = new MepMediator();
-    //创建MepService对象
-    mepMediator->CreateMepService();
-    //触发
-    mepMediator->doAction();
-
-}
-*/
-
-
-
-
 #endif

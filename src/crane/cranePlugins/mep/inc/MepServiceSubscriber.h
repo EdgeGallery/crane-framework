@@ -34,19 +34,6 @@ using namespace Pistache;
 using namespace rapidjson;
 
 namespace NS_CRANE {
-/*
-    class ServiceSubscriberInfo {
-        public:
-            ServiceSubscriberInfo(const string& sn, const string& ref, const ServiceStatus st)
-                :serviceName(sn), callbackRef(ref), status(st) {}
-
-            string              serviceName;
-            string              callbackRef;
-            ServiceStatus       status;
-    };
-
-    using ServicesSubscriberInfo = map<string, shared_ptr<ServiceSubscriberInfo>>;
-*/
     class MepServiceSubscriber : public AbstractMepService, public enable_shared_from_this<MepServiceSubscriber> {
         public:
             static const std::string clazzType;

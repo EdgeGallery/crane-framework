@@ -27,10 +27,10 @@
 //////////////////////////////////////////////////////////////////////
 void wrapperGstPluginCallback(char*, unsigned char*)
 {
-    // gstPluginCallback(key, result); // TODO: delete temporarily 9-12.    
+
 }
 
 void wrapperTestFunc()
 {
-    // testFunc(); // TODO: delete temporarily 9-12
+
 }

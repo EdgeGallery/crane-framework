@@ -42,9 +42,8 @@ namespace NS_CRANE {
     }
 
     void DlLibrary::getPluginDesc() {
-        Func_Crane_Plugin_Desc getPluginDescFunc = nullptr;
         string funcName(CRANE_PLUGIN_DESC_FUNC_SYMBOL);
-        getPluginDescFunc = reinterpret_cast<Func_Crane_Plugin_Desc>(symbol(funcName));
+        Func_Crane_Plugin_Desc getPluginDescFunc = reinterpret_cast<Func_Crane_Plugin_Desc>(symbol(funcName));
         if (getPluginDescFunc != nullptr) { 
             _pluginDesc = *getPluginDescFunc();
         } else {
@@ -53,9 +52,8 @@ namespace NS_CRANE {
     }
 
     shared_ptr<AbstractPluginFactory> DlLibrary::createPluginFactory() {
-        Func_Crane_Create_Plugin_Factory createFactory = nullptr;
         string funcName = string(CRANE_PLUGIN_FACTORY_FUNC_SYMBOL);
-        createFactory = reinterpret_cast<Func_Crane_Create_Plugin_Factory>(symbol(funcName)); 
+        Func_Crane_Create_Plugin_Factory createFactory = reinterpret_cast<Func_Crane_Create_Plugin_Factory>(symbol(funcName));
         if (createFactory == nullptr) {
             LOG_ERROR("Cannot get factory func of plugin: { %s }", _name.c_str());
             return shared_ptr<AbstractPluginFactory>(nullptr);
@@ -70,8 +68,7 @@ namespace NS_CRANE {
             LOG_ERROR("Cannot inspect library symbols, library of plugin{ %s } is not loaded.", _name.c_str());
             return nullptr;
         }
-        void* symbolHandle = nullptr;
-        symbolHandle = (void*)(::dlsym(_handle, symbolName.c_str()));
+        void* symbolHandle = (void*)(::dlsym(_handle, symbolName.c_str()));
         if (!symbolHandle){
             const char* err = ::dlerror();
             LOG_ERROR("Symbol{ %s } in library of plugin filename{ %s } is not found with error: { %s }", symbolName.c_str(), _name.c_str(), err);
@@ -90,5 +87,4 @@ namespace NS_CRANE {
             }
         }
     }
-        
 }

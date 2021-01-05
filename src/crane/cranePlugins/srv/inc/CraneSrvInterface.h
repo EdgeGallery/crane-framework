@@ -34,20 +34,6 @@ class Itf_CraneSrv : public PluginBaseInterface {
             MAIN_THREAD = 0,
             NEW_THREAD,
         };
-        //template <typename Result, typename Cls, typename... Args, typename Obj>
-        
-        //virtual unsigned router(HttpMethod method, const string& path, Result (Cls::*func)(Args...), Obj obj) = 0;
-
-        //template <typename Result, typename Cls, typename... Args, typename Obj>
-
-        //void router(HttpMethod method, const string& path, Result (Cls::*func)(Args...), shared_ptr<Obj> objPtr) = 0;
-
-       
-        //void router(HttpMethod method, const string& path, Result (*func)(Args...)) = 0;
-
-        //virtual unsigned router(HttpMethod method, const string& path, 
-                            /*void (*func)(const Pistache::Rest::Request&, Pistache::Http::ResponseWriter)) = 0;*/
-                            //Pistache::Rest::Router::Result (*func)(Args...) ) = 0;
 
         virtual unsigned create(unsigned short port) = 0;
 

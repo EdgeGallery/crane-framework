@@ -49,6 +49,4 @@ namespace NS_CRANE {
         _httpEndpoint->setHandler(_router.handler());
         _httpEndpoint->serve();
     }
-
-
 }

@@ -246,35 +246,8 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
-    /*
-    unsigned CraneMsgCenter::pull(const CraneMsg::Key key, shared_ptr<CraneMsg>& data) {
-        data = _datasPool.get(key);
-        if (data == shared_ptr<CraneMsg>()) {
-            LOG_ERROR("Pull data with key { % } failed.", to_string(key).c_str());
-            return CRANE_FAIL;
-        }
-        return CRANE_SUCC;
-    }
-    */
-   /*
-    unsigned CraneMsgCenter::pull(const CraneMsg::Key key, shared_ptr<CraneMsg>& data) {
-        data = _datasPool.get(key);
-        if (data == shared_ptr<CraneMsg>()) {
-            LOG_ERROR("Pull data with key { % } failed.", to_string(key).c_str());
-            return CRANE_SUCC;
-        }
-        return CRANE_FAIL;
-    }
-    */
     const shared_ptr<CraneMsg>& CraneMsgCenter::pull(const CraneMsg::Key key) {
         return _datasPool.get(key);
-        /*
-        if (data == shared_ptr<CraneMsg>()) {
-            LOG_ERROR("Pull data with key { % } failed.", to_string(key).c_str());
-            return CRANE_SUCC;
-        }
-        return CRANE_FAIL;
-        */
     }
 
     CRANE_PLUGIN_DEFINE_SINGLETON("1.0.0",    //插件接口版本
