@@ -2,9 +2,9 @@
  * @Descripttion: 
  * @Version: 1.0
  * @Author: dongyin@huawei.com
- * @Date: 2021-02-23 15:59:47
+ * @Date: 2021-02-23 17:17:25
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-02-23 17:28:59
+ * @LastEditTime: 2021-02-23 18:10:48
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -22,27 +22,25 @@
  *    limitations under the License.
  */
 
-#ifndef __CRANE_CRANE_H__
-#define __CRANE_CRANE_H__
+#include "gtest/gtest.h"
 
-//Crane basic
-#include "common.h"
-#include "craneMacro.h"
-#include "Util.h"
+#include "crane.h"
 
-//Crane plugins
-#include "AbsPluginFactory.h"
-#include "PluginBaseInterface.h"
+#include "playerInterface.h"
 
-//Crane framework interfaces
-#include "AbsPluginFrame.h"
-#include "PluginSysAdapter.h"
-#include "Wrapper.h"
+using namespace std;
+using namespace NS_CRANE;
 
-//Crane system plugins
-#include "CraneMsgCenterPlugin.h"
-#include "CraneMep.h"
-#include "CraneSrv.h"
+TEST(Wrapper, basic) {
+    cout << "Enter Wrapper basic()" << endl;
+    AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
 
+    pPluginFrame->init(1, nullptr, CRANE_CRN);
 
-#endif
+    Wrapper<Itf_Player> player_mp3 = Wrapper<Itf_Player>("Itf_Player", "PlayerImplMP3", "my first plugin instance");
+    player_mp3->play("play mp3...");
+
+    Wrapper<Itf_Player> player_cd = Wrapper<Itf_Player>("Itf_Player", "PlayerImplCD", "my first plugin instance");
+    player_cd->play("play cd...");
+
+}
