@@ -49,6 +49,9 @@ class CraneRegistry {
 
         ~CraneRegistry() {
             cout<<"~CraneRegistry()"<<endl;
+            // Release the plugin instance explicitly, before release _pluginItfMap and _pluginLibMap.
+            _pluginInstanceMap.clear();
+
             //TAKE CARE: itfMap must release before libMap, because itfMap contain the pointer of the plugin factory.
             //When I release(::dlclose) the library first and then release pointer of the plugin factroy, process can 
             //not find memory of plugin factory.
@@ -68,7 +71,7 @@ class CraneRegistry {
          * @Param: plugin interface name 
          * @Return: a copy of the shared_ptr<PluginInterfaceInfo>
          */        
-        shared_ptr<PluginInterfaceInfo> findPluginItfInfo(const string&);
+        shared_ptr<PluginInterfaceInfo> findPluginItfInfo(const string&) const;
         
         /**
          * @Descripttion: Create a new Itf object through absolute library file name.
@@ -87,7 +90,25 @@ class CraneRegistry {
          * @Return: CRANE_SUCC/CRANE_FAIL
          */        
         unsigned clearPlugin(const string& type, const string& pluginName);
+        // #if 0 // dongyin 2-27 
+        unsigned addPluginInstance(const string& uuid, shared_ptr<PluginBaseInterface>, const string& itfType, const string& pluginName);
 
+        unsigned delPluginInstance(const string& uuid);
+
+        bool isExistPluginInstance(const string& uuid);
+
+        pair<string, string> getPluginItfAndImplName(const string& uuid);
+
+        shared_ptr<PluginBaseInterface> getPluginInstance(const string& uuid);
+
+        const string getPluginId(const string& itfType, const string& pluginName) const;
+
+        shared_ptr<PluginBaseInterface> getPluginInstance(const string& itfType, const string& pluginName);
+
+        void releasePluginInstance(const string& uuid);
+
+        void releasePluginInstance();
+        // #endif 
     protected:
         /**
          * @Descripttion: Add plugin interface info into the registry. 
@@ -100,8 +121,13 @@ class CraneRegistry {
         using PluginInterfaceMap = map<string /*interface name*/, shared_ptr<PluginInterfaceInfo>>;
         PluginInterfaceMap _pluginItfMap; //map contain pair of interface name and interface instance.
 
-        using PluginImplementMap = map<string /*libName*/,  unique_ptr<DlLibrary>>; //libName is ABCD which is extracted from libcranepluginABCD.so
-        PluginImplementMap _pluginLibMap; //map contain pair of library file name and library handle.
+        using PluginLibMap = map<string /*libName*/,  unique_ptr<DlLibrary>>; //libName is ABCD which is extracted from libcranepluginABCD.so
+        PluginLibMap _pluginLibMap; //map contain pair of library file name and library handle.
+
+        // #if 0 // dongyin 2-27
+        using PluginInstanceMap = map<string /*uuid*/, pair<shared_ptr<PluginBaseInterface>/*plugin instance*/, pair<string/*interface name*/, string/*pluginName(class name of the plugin)*/>>>;
+        PluginInstanceMap _pluginInstanceMap; // Contained the plugin instance.
+        // #endif
         
         static const string     _CACHE_FILE;
         static const string     _CACHE_FILE_TMP;
@@ -126,6 +152,8 @@ class CraneRegistry {
          * @Return: CRANE_SUCC/CRANE_FAIL 
          */        
         unsigned _delPluginLibMap(const string& filename);
+
+        unsigned _clearPluginIdInItfInfo(const string& itfType, const string& pluginName, const string& id);
 
         bool _isValidLibName(const string& path);
         

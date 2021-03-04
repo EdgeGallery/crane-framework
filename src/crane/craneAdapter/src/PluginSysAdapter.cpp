@@ -102,12 +102,37 @@ namespace NS_CRANE {
         LOG_INFO("Create plugin[%s] of Itf[%s] successfully", pluginName.c_str(), itfType.c_str());
         return plugin;
     }
+    //#if 0 // dongyin 2-27
+    shared_ptr<PluginBaseInterface> PluginSysAdapter::create(const string& type, const string& pluginName, string& uuid, const string& description) {
+        if (uuid.empty()) { uuid = Util::uuid(); }
+
+        PluginBaseInterface* plugin = create(type, pluginName, description);
+        if (plugin == nullptr) {
+            return shared_ptr<PluginBaseInterface>(nullptr);
+        }
+        shared_ptr<PluginBaseInterface> plugin_shared_ptr;
+        plugin_shared_ptr.reset(plugin);
+         
+        if (CRANE_SUCC != addPluginInstance(uuid, plugin_shared_ptr, type, pluginName)) {
+            // plugin_shared_ptr will release when leave the scope of this function.
+            // so raw pointer of plugin will be delete.
+            return shared_ptr<PluginBaseInterface>(nullptr);
+        }
+
+        return plugin_shared_ptr;
+    }
+    //#endif
 
     void PluginSysAdapter::destory(PluginBaseInterface* cranePlugin) {
         if (cranePlugin != nullptr) {
             delete cranePlugin;
         }
     }
+    //#if 0 // dongyin 2-27
+    void PluginSysAdapter::destory(const string& id) {
+        releasePluginInstance(id);
+    }
+    //#endif 
 
     void* PluginSysAdapter::create(const string& gstFactoryName, const string& name) {
         void* plugin;
@@ -140,6 +165,19 @@ namespace NS_CRANE {
         clearPlugin(type, pluginName);
         return;
     }
+    //#if 0 // dongyin 2-27
+    shared_ptr<PluginBaseInterface> PluginSysAdapter::instance(const string& id) {
+        return getPluginInstance(id);
+    }
+
+    shared_ptr<PluginBaseInterface> PluginSysAdapter::instance(const string& itfType, const string& pluginName) {
+        return getPluginInstance(itfType, pluginName);
+    }
+
+    const string PluginSysAdapter::id(const string& itfType, const string& pluginName) const {
+        return getPluginId(itfType, pluginName);
+    }
+    //#endif
 
     PluginSysAdapter::~PluginSysAdapter() {
         cout<<"~PluginSysAdapter()"<<endl;

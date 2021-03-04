@@ -36,6 +36,8 @@ class PluginInterfaceInfo {
 
         using PluginLibFileMap = map<string/*pluginName(class name of the plugin)*/, string /*absolute library filename*/>;
 
+        using PluginInstanceIdMap = map<string/*pluginName(class name of the plugin)*/, list<string> /*list of instance id*/>;
+
         PluginInterfaceInfo(const string& type, const string& curVer, const string& reqFwVer) 
                             : _type(type), _curVer(curVer), _reqFwVer(reqFwVer) {}
 
@@ -100,19 +102,30 @@ class PluginInterfaceInfo {
         unsigned addPluginFactory(const PluginFactoryList&);
 
         unsigned delPluginFactory(const string& pluginName);
+        // #if 0 // dongyin 2-27 
+        unsigned addPluginInstanceId(const string& pluginName, const string& uuid);
+
+        unsigned delPluginInstanceId(const string& pluginName, const string& uuid);
+
+        list<string> getPluginInstanceIds(const string& pluginName) const;
+        // #endif 
 
         shared_ptr<AbstractPluginFactory> pluginFactory(const string& pluginName);
 
     private:
-        string              _type;              //plugin interface name
+        string              _type;              // plugin interface name
 
-        string              _curVer;            //plugin interface version
+        string              _curVer;            // plugin interface version
 
-        string              _reqFwVer;          //plugin framework version required by this interface.
+        string              _reqFwVer;          // plugin framework version required by this interface.
 
-        PluginFactoryList   _pluginFactoryList; //Contained the plugin factory instance of plugin interface implement.
+        PluginFactoryList   _pluginFactoryList; // Contained the plugin factory instance of plugin interface implement.
 
-        PluginLibFileMap    _pluginLibFileMap;  //Contained the plugin name(class name of the plugin implemention) and absolute filename of library. 
+        PluginLibFileMap    _pluginLibFileMap;  // Contained the plugin name(class name of the plugin implemention) and absolute filename of library.
+        //#if 0 // dongyin 2-27
+        PluginInstanceIdMap _pluginInstanceIdMap; // Contained the list of plugin instance id which are belong to special plugin name(class name of the plugin implemention).
+        // #enfif
+
 };
 
 }

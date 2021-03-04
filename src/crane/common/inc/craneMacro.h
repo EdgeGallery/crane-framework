@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-04 17:51:24
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,6 +67,17 @@
 ///////////////////////////////////////////////////////////
 #define HTTPS                       "https://"
 #define HTTP                        "http://"
+
+
+///////////////////////////////////////////////////////////
+/// Length of LINUX UUID
+///////////////////////////////////////////////////////////
+#define UUID_LEN 64
+
+///////////////////////////////////////////////////////////
+/// NULL PLUGIN ID
+///////////////////////////////////////////////////////////
+#define NULL_PLUGIN_ID "__NULL_PLUGIN_INSTANCE_ID__"
 
 ///////////////////////////////////////////////////////////
 ///和C语言混合编译的相关宏

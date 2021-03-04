@@ -77,12 +77,24 @@ namespace NS_CRANE {
              */            
             PluginBaseInterface* create(const string& type, const string& pluginName, const string& description) override;
 
+            //#if 0 // dongyin 2-27
+            shared_ptr<PluginBaseInterface> create(const string& type, const string& pluginName, string& uuid, const string& description) override;
+            //#endif
+
             /**
              * @Descripttion: Release the plugin throuth the point.
              * @Param: the pointer of the plugin instance.
              * @Return: null
              */            
             void destory(PluginBaseInterface*) override;
+            //#if 0 // dongyin 2-27
+            /**
+             * @Descripttion:   Release the shared_ptr<PluginBaseInterface>
+             * @Param:          id: plugin instance id 
+             * @Return:         null 
+             */
+            void destory(const string& id) override;
+            //#endif
 
             /**
              * @Descripttion: Create Gestreamer plugin, this method just wrap the function of Gstreamer. 
@@ -115,7 +127,24 @@ namespace NS_CRANE {
              * @Return: null
              */            
             void unload(const string& type, const string& pluginName) override;
+            //#if 0 // dongyin 2-27
+            /**
+             * @Descripttion: Fetch a plugin instance by id.
+             * @Param: id: plugin instance id.
+             * @Return: shared_ptr<PluginBaseInterface>
+             */            
+            shared_ptr<PluginBaseInterface> instance(const string& id) override;
 
+            /**
+             * @Descripttion: Fetch a plugin instance by plugin interface type and plugin name.
+             * @Param: itfType: plugin interface type. 
+             * @Param: pluginName: plugin implemention class name. 
+             * @Return: shared_ptr<PluginBaseInterface>
+             */            
+            shared_ptr<PluginBaseInterface> instance(const string& itfType, const string& pluginName) override; 
+
+            const string id(const string& itfType, const string& pluginName) const override;
+            //#endif
         public:
             ~PluginSysAdapter() override;
 

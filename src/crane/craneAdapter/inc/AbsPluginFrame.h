@@ -51,14 +51,40 @@ namespace NS_CRANE {
             
             /**
              * @Descripttion:   创建Crane插件的实例
-             * @Param:          itfType: 插件接口类型 
+             * @Param:          type: 插件接口类型 
              * @Param:          pluginName: 插件名称
-             * @Param[out]:     ppPluginObj: 插件对象的指针的指针 
+             * @Param:          description: description of the plugin instance
+             * @Return:         Raw pointer of plugin instance
+             */
+            virtual PluginBaseInterface* create(const string& type, const string& pluginName, const string& description) = 0;
+
+            //#if 0 // dongyin 2-27
+            /**
+             * @Descripttion:   创建Crane插件的实例
+             * @Param:          type: 插件接口类型 
+             * @Param:          pluginName: 插件名称
+             * @Param:          uuid: unique ID of plugin instance, if it is empty string, so plugin frame will generate it.
+             * @Param:          description: description of the plugin instance
              * @Return:         CRANE_SUCC/CRANE_FAIL 
              */
-            virtual PluginBaseInterface* create(const string& type, const string& pluginName, const string& name) = 0;
+            virtual shared_ptr<PluginBaseInterface> create(const string& type, const string& pluginName, string& uuid, const string&  description) = 0;
+            //#endif
 
+            /**
+             * @Descripttion:   Release the raw pointer of plugin instance.
+             * @Param:          Raw pointer of plugin instance. 
+             * @Return:         null
+             */
             virtual void destory(PluginBaseInterface*) = 0;
+            //#if 0 // dongyin 2-27
+            /**
+             * @Descripttion:   Release the shared_ptr<PluginBaseInterface>
+             * @Param:          id: plugin instance id 
+             * @Return:         null 
+             */
+            virtual void destory(const string& id) = 0;
+            //#endif
+
             /**
              * @Descripttion: 创建Gstreamer插件的实例
              * @Param:          gstFactoryName: gstreamer插件工厂名称
@@ -83,8 +109,26 @@ namespace NS_CRANE {
              * @Return: 
              */            
             virtual void unload(const string& type, const string& pluginName) = 0;
+            //#if 0 // dongyin 2-27
+            /**
+             * @Descripttion: Fetch a plugin instance by id.
+             * @Param: id: plugin instance id.
+             * @Return: shared_ptr<PluginBaseInterface>
+             */            
+            virtual shared_ptr<PluginBaseInterface> instance(const string& id) = 0;
 
-            virtual ~AbstractPluginFrame() {std::cout<<"~AbstractPluginFrame()"<<std::endl;}
+            /**
+             * @Descripttion: Fetch a plugin instance by plugin interface type and plugin name.
+             * @Param: itfType: plugin interface type. 
+             * @Param: pluginName: plugin implemention class name. 
+             * @Return: shared_ptr<PluginBaseInterface>
+             */            
+            virtual shared_ptr<PluginBaseInterface> instance(const string& itfType, const string& pluginName) = 0;
+
+            virtual const string id(const string& itfType, const string& pluginName) const = 0;
+            //#endif
+
+            virtual ~AbstractPluginFrame() { std::cout<<"~AbstractPluginFrame()"<<std::endl; }
             
         private:
             class Garbo {

@@ -138,5 +138,45 @@ namespace NS_CRANE {
             return string();
         }
     }
+    // #if 0 // dongyin 2-27
+    unsigned PluginInterfaceInfo::addPluginInstanceId(const string& pluginName, const string& uuid) {
+        PluginInstanceIdMap::iterator itr;
+        itr = _pluginInstanceIdMap.find(pluginName);
+        if (itr == _pluginInstanceIdMap.end()) {
+            auto ret = _pluginInstanceIdMap.insert(make_pair(pluginName, list<string>{}));
+            if (!ret.second) { return CRANE_FAIL; }
+            itr = ret.first;
+        }
+
+        itr->second.push_back(uuid);
+        return CRANE_SUCC;
+    }
+
+    unsigned PluginInterfaceInfo::delPluginInstanceId(const string& pluginName, const string& uuid) {
+        PluginInstanceIdMap::iterator itr;
+        itr = _pluginInstanceIdMap.find(pluginName);
+        if (itr == _pluginInstanceIdMap.end()) {
+            LOG_ERROR("Delete plugin instance id { %s } of pluginName { %s } failed,", uuid.c_str(), pluginName.c_str());
+            return CRANE_FAIL;
+        }
+
+        itr->second.remove(uuid);
+
+        if (itr->second.empty()) { _pluginInstanceIdMap.erase(itr); }
+
+        return CRANE_SUCC;
+    }
+
+    list<string> PluginInterfaceInfo::getPluginInstanceIds(const string& pluginName) const {
+        PluginInstanceIdMap::const_iterator itr = _pluginInstanceIdMap.find(pluginName);
+        if (itr == _pluginInstanceIdMap.cend()) {
+            LOG_ERROR("Itf name { %s } does not contain plugin instance with plugin name { %s }", _type.c_str(), pluginName.c_str());
+            return list<string>();
+        }
+
+        // TODO: this is copy constructor, there is performance problem.
+        return itr->second;
+    }
+    // #endif
 
 }

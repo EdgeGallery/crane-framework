@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-02-25 15:12:42
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,23 +31,31 @@
 using namespace NS_CRANE;
 
 int main(int argc, char** argv) {
-    //*** Create a singleton object of plugin frame.
-    AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
+    try {
+        //*** Create a singleton object of plugin frame.
+        AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
 
-    //*** Initialize Crane system only.
-    pPluginFrame->init(argc, argv, CRANE_CRN);
+        //*** Initialize Crane system only.
+        pPluginFrame->init(argc, argv, CRANE_CRN);
 
-    //*** Create "PlayerImplCD" instance of crane plugin.
-    Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
+        //*** Create "PlayerImplCD" instance of crane plugin.
+        Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
+            pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
     
-    //*** Using the "PlayerImplCD" plugin instance.
-    if (playerCD == nullptr) {
-        return 0;
-    }
-    playerCD->play("Playing now......");
+        //*** Using the "PlayerImplCD" plugin instance.
+        if (playerCD == nullptr) {
+            return 0;
+        }
+        playerCD->play("Playing now......");
 
-    //*** Release "PlayerImplCD" plugin instance.
-    pPluginFrame->destory(playerCD);
+        //*** Release "PlayerImplCD" plugin instance.
+        pPluginFrame->destory(playerCD);
+    } catch (exception& e) {
+        cout<<"Excption: "<<e.what()<<endl;
+    }
+
+    ///////////////////////////////////////////////////
+    //Wrapper<Itf_Player> player_cd1 = Wrapper<Itf_Player>("Itf_Player", "PlayerImplCD", "my first plugin instance");
+    //player_cd1->play("play cd...");
     return 0;
 }

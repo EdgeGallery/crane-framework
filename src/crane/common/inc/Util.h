@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-02-24 11:19:25
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,6 +88,8 @@ namespace NS_CRANE
         static string jsonReadString(rapidjson::Document d, const std::string name, const rapidjson::Type type, const unsigned level);
 
         static string uuid(void);
+
+        //static string uuid(void);
 
         static unsigned char* hexstr2uint8(string&, size_t* len);
     private:
