@@ -54,6 +54,10 @@ class CraneMsgCenter : public Itf_CraneMsgCenter {
          */        
         unsigned init() override;
 
+        unsigned start() override;
+
+        unsigned stop() noexcept override;
+
         /**
          * @Descripttion:   Subscribe a special topic with Observer implement class instance.
          * @Param:          topic: Topic of the data. 

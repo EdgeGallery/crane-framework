@@ -21,6 +21,7 @@
 #include <mutex>
 
 #include "PluginBaseInterface.h"
+#include "PluginSwappable.h"
 #include "AbsPluginFactory.h"
 
 using namespace std;

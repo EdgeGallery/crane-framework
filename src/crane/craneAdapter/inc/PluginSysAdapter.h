@@ -39,6 +39,8 @@
 #include "GstFacade.h"
 #include "CraneRegistry.h"
 
+#include "Wrapper.h"
+
 #include "CraneMsgCenterInterface.h"
 
 #ifdef BUILD_IMG 
@@ -114,6 +116,15 @@ namespace NS_CRANE {
             /**
              * @Descripttion: Load the plugin throuth the absolute library file name. 
              *                This method is used after Crane has initialized.
+             * @Param: filename: Absolute filename of the library of the plugin.
+             * @Param[out]: desc:  Description of the plugin.
+             * @Return: CRANE_SUCC/CRANE_FAIL 
+             */            
+            unsigned load(const string& filename, PluginDesc& desc) override;
+
+            /**
+             * @Descripttion: Load the plugin throuth the absolute library file name. 
+             *                This method is used after Crane has initialized.
              * @Param: filename: absolute library file name.
              * @Return: CRANE_SUCC/CRANE_FAIL 
              */            
@@ -145,6 +156,15 @@ namespace NS_CRANE {
 
             const string id(const string& itfType, const string& pluginName) const override;
             //#endif
+
+            // Add Swap dongyin 3-5
+            //shared_ptr<Wrapper<PluginBaseInterface>> createSwappablePlugin(const string& itfType, const string& pluginName, const string& description) override;
+            shared_ptr<Wrapper> createSwappablePlugin(const string& itfType, const string& pluginName, string& id, const string& desc) override;
+            shared_ptr<Wrapper> createSwappablePlugin(const string& pluginId, string& id, const string& desc) override; 
+            shared_ptr<Wrapper> fetchSwappablePlugin(const string& id) override;
+            unsigned swapByFilename(const string& id, const string& freshAbsolutePluginFilename) override;
+            unsigned swapById(const string& swappable_plugin_id, const string& plugin_id) override;
+            ///////////////////////////////////////////////////////////
         public:
             ~PluginSysAdapter() override;
 

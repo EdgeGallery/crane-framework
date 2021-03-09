@@ -1,0 +1,52 @@
+/*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-03-08 14:18:34
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-08 20:12:34
+ */
+/*
+ *    Copyright 2020 Huawei Technologies Co., Ltd.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+#ifndef __PLUGIN_VEHICLE_IMPL_CAR_H__
+#define __PLUGIN_VEHICLE_IMPL_CAR_H__
+
+#include "vehicle.h"
+
+class Car : public Itf_Vechile {
+public:
+    unsigned init() override;
+    unsigned start() override;
+    unsigned stop() noexcept override;
+
+    unsigned swap_up(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) override;
+    unsigned swap_down(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) override;
+
+    const string vechileType() const override;
+    void licensePlateNum(const string&)  override;
+    const string licensePlateNum() const override;
+    long long mileage() const override;
+    void mileage(const long long m) override;
+    void run() override;
+
+public:
+    ~Car();
+private:
+    static const string     _VECHILE_TYPE;
+};
+
+#endif

@@ -37,6 +37,16 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
+    unsigned CraneMep::start() {
+        cout << "CraneMep plugin is start..." << endl;
+        return CRANE_SUCC;
+    }
+
+    unsigned CraneMep::stop() noexcept {
+        cout << "CraneMep plugin is stop..." << endl;
+        return CRANE_SUCC;
+    }
+
     unsigned CraneMep::invoke() {
         _mepMediator->doAction();
         return CRANE_SUCC;

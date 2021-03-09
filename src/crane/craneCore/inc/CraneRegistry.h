@@ -37,6 +37,7 @@
 #include "AbsRegistry.h"
 #include "DlLibrary.h"
 #include "PluginInterfaceInfo.h"
+#include "Wrapper.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -45,7 +46,11 @@ namespace NS_CRANE {
 
 class CraneRegistry {
     public:
-        CraneRegistry() = default;
+        CraneRegistry() {
+            // Add add null swappable plugin instance in order to return it when cannot find instance by id.
+            _pluginSwappableInstanceMap.insert(make_pair(NULL_PLUGIN_SWAPPABLE_ID, make_pair(make_shared<Wrapper>(), NULL_PLUGIN_SWAPPABLE_ID)));
+        }
+
 
         ~CraneRegistry() {
             cout<<"~CraneRegistry()"<<endl;
@@ -72,6 +77,15 @@ class CraneRegistry {
          * @Return: a copy of the shared_ptr<PluginInterfaceInfo>
          */        
         shared_ptr<PluginInterfaceInfo> findPluginItfInfo(const string&) const;
+
+        // Add Swap dongyin 3-5
+        /**
+         * @Descripttion: Create a new Itf object through absolute library file name.
+         * @Param: absoluteFileName: Absolute library file name of the plugin.
+         * @Param[out]: desc:  Description of the plugin.
+         * @Return: shared_ptr<PluginInterfaceInfo>
+         */        
+        shared_ptr<PluginInterfaceInfo> createItfInfo(const string& absoluteFileName, PluginDesc& desc);
         
         /**
          * @Descripttion: Create a new Itf object through absolute library file name.
@@ -79,6 +93,7 @@ class CraneRegistry {
          * @Return: shared_ptr<PluginInterfaceInfo>
          */        
         shared_ptr<PluginInterfaceInfo> createItfInfo(const string& absoluteFileName);
+
 
         /**
          * @Descripttion: Clear the data related with the plugin library file which has been load before.
@@ -109,6 +124,12 @@ class CraneRegistry {
 
         void releasePluginInstance();
         // #endif 
+
+        // Add Swap dongyin 3-5
+        unsigned addPluginSwappableInstance(const string& id, shared_ptr<Wrapper> wsp, const string& description);
+        shared_ptr<Wrapper> getPluginSwappableInstance(const string& id);
+        void releasePluginSwappableInstance(const string& id);
+        //////////////////////////////////////////
     protected:
         /**
          * @Descripttion: Add plugin interface info into the registry. 
@@ -128,6 +149,11 @@ class CraneRegistry {
         using PluginInstanceMap = map<string /*uuid*/, pair<shared_ptr<PluginBaseInterface>/*plugin instance*/, pair<string/*interface name*/, string/*pluginName(class name of the plugin)*/>>>;
         PluginInstanceMap _pluginInstanceMap; // Contained the plugin instance.
         // #endif
+
+        // Add Swap dongyin 3-5
+        using PluginSwappableInstanceMap = map<string /*id*/, pair<shared_ptr<Wrapper>, string>>;
+        PluginSwappableInstanceMap _pluginSwappableInstanceMap;
+        /////////////////////////////////////////////////////////////////////
         
         static const string     _CACHE_FILE;
         static const string     _CACHE_FILE_TMP;

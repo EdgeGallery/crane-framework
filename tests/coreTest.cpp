@@ -39,6 +39,7 @@ class coreTest : public testing::Test {
         {
             cout << "SetUpTestCase" << endl;
             char* cwd = NULL;
+            // Get current work dir.
             if ((cwd = getcwd(NULL, 0)) == NULL) {
                 cout << "Get current path failed." << endl;
                 free(cwd);
@@ -51,25 +52,29 @@ class coreTest : public testing::Test {
             s_oldfile = cwd; s_newfile = cwd;
             _s_cwd = s_cwd;
             free(cwd);
-
+            
+            // Generate original plugin absulote file name.
             s_oldfile += string("/../lib/plugins/libcranepluginplayermp3.so");
+            // Generate new plugin absulote file name.
             s_newfile += string("/plugins/libcranepluginplayermp3.so");
             cout << "s_oldfile: " << s_oldfile << endl;
             cout << "s_newfile: " << s_newfile << endl;
 
+            // Create plugins dir below the current path.
             if (access("plugins", F_OK|R_OK|W_OK|X_OK)) {
                 int ret = mkdir("plugins", MODE);
                 if (ret != 0) {
-                    cout << "Error: " << strerror(errno) << endl;
+                    cout << "mkdir Error: " << strerror(errno) << endl;
                     return;
                 }
                 plugins_dir = opendir("plugins");
             }
 
+            // Check whether new plugin file is exist.
             if (access("plugins/libcranepluginplayermp3.so", F_OK)) {
                 int ret = rename(s_oldfile.c_str(), s_newfile.c_str());
                 if (ret != 0) {
-                    cout << "Error: " << strerror(errno) << endl;
+                    cout << "rename Error: " << strerror(errno) << endl;
                     return;
                 }
             }
@@ -83,8 +88,8 @@ class coreTest : public testing::Test {
         {
             cout << "TearDownTestCase" << endl;
             if (!access("plugins/libcranepluginplayermp3.so", F_OK)) {
-                if (!rename(s_newfile.c_str(), s_oldfile.c_str())) {
-                    cout << "Error: " << strerror(errno) << endl;
+                if (rename(s_newfile.c_str(), s_oldfile.c_str())) {
+                    cout << "rename Error: " << strerror(errno) << endl;
                     return;
                 }
             }
@@ -92,7 +97,7 @@ class coreTest : public testing::Test {
                 closedir(plugins_dir);
                 int ret = rmdir("plugins");
                 if (!ret) {
-                    cout << "Error: " << strerror(errno) << endl;
+                    cout << "rmdir Error: " << strerror(errno) << endl;
                 }
             }
         }

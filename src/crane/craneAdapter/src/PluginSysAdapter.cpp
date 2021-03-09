@@ -97,7 +97,12 @@ namespace NS_CRANE {
         PluginBaseInterface* plugin = factory->create();
         if (plugin == nullptr) { return nullptr; }
 
-        if (factory->isAllowInit()) { plugin->init(); }
+        if (factory->isAllowInit()) { 
+            if (CRANE_SUCC != plugin->init()) {
+                LOG_ERROR("init() is failed");
+                return nullptr;
+            }
+        }
 
         LOG_INFO("Create plugin[%s] of Itf[%s] successfully", pluginName.c_str(), itfType.c_str());
         return plugin;
@@ -145,6 +150,20 @@ namespace NS_CRANE {
             gstDestory(gstPlugin);
         }
     }
+    unsigned PluginSysAdapter::load(const string& filename, PluginDesc& desc) {
+        unsigned ret;
+        {
+            lock_guard<mutex> lock(_mtx);
+            shared_ptr<PluginInterfaceInfo> newItfInfo = createItfInfo(filename, desc);
+            const string type = newItfInfo->type();
+            ret = registry_(newItfInfo);
+        }
+        if (CRANE_SUCC != ret) {
+            LOG_ERROR("Load library: { %s } into registry failed.", filename.c_str());
+        }
+        return ret;
+
+    }
 
     unsigned PluginSysAdapter::load(const string& filename) {
         unsigned ret;
@@ -178,6 +197,99 @@ namespace NS_CRANE {
         return getPluginId(itfType, pluginName);
     }
     //#endif
+
+    // Add Swap dongyin 3-5
+    /*
+    shared_ptr<Wrapper<PluginBaseInterface>> PluginSysAdapter::createSwappablePlugin(const string& itfType, const string& pluginName, const string& description) {
+        string id {};
+        shared_ptr<PluginBaseInterface> p = create(itfType, pluginName, id, description);
+        shared_ptr<Wrapper<PluginBaseInterface>> wp = make_shared<Wrapper<PluginBaseInterface>>(Wrapper<PluginBaseInterface>(p));
+        return wp;
+    }
+    */
+    shared_ptr<Wrapper> PluginSysAdapter::createSwappablePlugin(const string& itfType, const string& pluginName, string& id, const string& desc) {
+        string pluginId = Util::uuid();
+        shared_ptr<PluginBaseInterface> p = create(itfType, pluginName, pluginId, desc);
+        //Wrapper wp = Wrapper(p);
+        shared_ptr<Wrapper> wp = make_shared<Wrapper>(p);
+        if (id.empty()) { id = Util::uuid(); }
+        addPluginSwappableInstance(id, wp, desc);
+        return getPluginSwappableInstance(id);
+    }
+
+    shared_ptr<Wrapper> PluginSysAdapter::createSwappablePlugin(const string& pluginId, string& id, const string& desc) {
+        // Wrapper wp = Wrapper(instance(pluginId));
+        shared_ptr<Wrapper> wp = make_shared<Wrapper>(instance(pluginId));
+        if (id.empty()) { id = Util::uuid(); }
+        addPluginSwappableInstance(id, wp, desc);
+        return getPluginSwappableInstance(id);
+
+    }
+    
+    shared_ptr<Wrapper> PluginSysAdapter::fetchSwappablePlugin(const string& id) {
+        return getPluginSwappableInstance(id);
+    }
+
+    unsigned PluginSysAdapter::swapByFilename(const string& id, const string& filename) {
+        unsigned ret = CRANE_FAIL; 
+        PluginDesc desc;
+        ret = load(filename, desc);
+        if (CRANE_SUCC != ret) { return ret; }
+
+        string newPluginInstanceId {};
+        shared_ptr<PluginBaseInterface> freshPlugin = create(desc.itfType, desc.pluginName,  newPluginInstanceId, "");
+        //Wrapper& stableWrappedPlugin = getPluginSwappableInstance(id);
+        shared_ptr<Wrapper> stableWrappedPlugin = getPluginSwappableInstance(id);
+
+        {
+            // lock the wrapper plugin.
+            lock_guard<mutex> lock(stableWrappedPlugin->_mtx);
+
+            // Stop stable plugin...
+            stableWrappedPlugin->_plugin->stop();
+
+            // swap_down stale plugin...
+            dynamic_pointer_cast<PluginSwappable>(stableWrappedPlugin->_plugin)->swap_down(stableWrappedPlugin->_plugin, freshPlugin);
+            //plugin_cast<PluginSwappable>(stableWrappedPlugin)->swap_down(plugin_cast<PluginBaseInterface>(stableWrappedPlugin), freshPlugin);
+
+            // swap_up fresh plugin...
+            dynamic_pointer_cast<PluginSwappable>(freshPlugin)->swap_up(stableWrappedPlugin->_plugin, freshPlugin);
+
+            // Start fresh plugin...
+            freshPlugin->start();
+
+            //stableWrappedPlugin->rp() = freshPlugin;
+            stableWrappedPlugin->_p(freshPlugin);
+        }
+        
+        return CRANE_SUCC;
+    }
+    unsigned PluginSysAdapter::swapById(const string& swappable_plugin_id, const string& plugin_id) {
+        shared_ptr<PluginBaseInterface> freshPlugin = instance(plugin_id);
+        shared_ptr<Wrapper> stableWrappedPlugin = getPluginSwappableInstance(swappable_plugin_id);
+        {
+            // lock the wrapper plugin.
+            lock_guard<mutex> lock(stableWrappedPlugin->_mtx);
+
+            // Stop stable plugin...
+            stableWrappedPlugin->_plugin->stop();
+
+            // swap_down stale plugin...
+            //dynamic_pointer_cast<PluginSwappable>(stableWrappedPlugin->_plugin)->swap_down(stableWrappedPlugin->_plugin, freshPlugin);
+            //plugin_cast<PluginSwappable>(stableWrappedPlugin)->swap_down(plugin_cast<PluginBaseInterface>(stableWrappedPlugin), freshPlugin);
+
+            // swap_up fresh plugin...
+            //dynamic_pointer_cast<PluginSwappable>(freshPlugin)->swap_up(stableWrappedPlugin->_plugin, freshPlugin);
+
+            // Start fresh plugin...
+            freshPlugin->start();
+
+            //stableWrappedPlugin->rp() = freshPlugin;
+            stableWrappedPlugin->_p(freshPlugin);
+        }        
+        return CRANE_SUCC;
+    }
+    ///////////////////////////////////////////////
 
     PluginSysAdapter::~PluginSysAdapter() {
         cout<<"~PluginSysAdapter()"<<endl;

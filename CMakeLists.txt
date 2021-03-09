@@ -30,6 +30,11 @@ if (CRANE_BUILD_IMG)
     add_definitions(-DBUILD_IMG)
 endif()
 
+#关闭Wrapper插件包装类中和直接创建插件相关的构造函数 和 与之相关的测试代码。
+if (CRANE_BUILD_WRAPPER_CONSTRUCTOR)
+    add_definitions(-DBUILD_WRAPPER_CONSTRUCTOR)
+endif()
+
 link_directories("/usr/local/lib")
 include_directories("/usr/include/glib-2.0")
 include_directories("/usr/lib/x86_64-linux-gnu/glib-2.0/include")
@@ -60,6 +65,8 @@ add_subdirectory(src/plugins/crane/fetchImgInfo)
 
 add_subdirectory(src/plugins/crane/singleton)
 
+add_subdirectory(src/plugins/crane/swappable)
+
 #application example 
 add_subdirectory(src/app)
 
@@ -83,7 +90,7 @@ endif()
 link_directories(${PROJECT_BINARY_DIR}/lib)
 
 #####################################################
-message("CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+message("-- Install path: ${CMAKE_INSTALL_PREFIX}")
 message("CMAKE_INSTALL_FULL_LIBDIR: ${CMAKE_INSTALL_FULL_LIBDIR}")
 message("CMAKE_INSTALL_FULL_INCLUDEDIR: ${CMAKE_INSTALL_FULL_INCLUDEDIR}")
 

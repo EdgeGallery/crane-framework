@@ -19,6 +19,8 @@ function(crane_test test_name)
     include_directories("${PROJECT_SOURCE_DIR}/src/plugins/crane/playcd/cpp/inc")
     include_directories("${PROJECT_SOURCE_DIR}/src/plugins/crane/playmp3/cpp/inc")
 
+    include_directories("${PROJECT_SOURCE_DIR}/src/plugins/crane/swappable/inc")
+
     #link_libraries(stdc++)
     add_executable(${TEST_EXECUTABLE} ${TEST_SOURCE})
     target_link_libraries(${TEST_EXECUTABLE} stdc++ gtest gtest_main crane dl curl pthread gstreamer-1.0 gobject-2.0 glib-2.0 boost_system crypto ssl cpprest)
@@ -33,9 +35,10 @@ configure_file("certs/client.crt" "certs/client.crt" COPYONLY)
 
 
 #crane_test(jsontest)
-#crane_test(coreTest)
+crane_test(coreTest)
 #crane_test(srvTest)
 #crane_test(msgCenterTest)
 crane_test(pluginInstMgntTest)
 crane_test(wrapperTest)
+crane_test(swapTest)
 #crane_test(mepTest)

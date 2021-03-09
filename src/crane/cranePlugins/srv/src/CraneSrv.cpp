@@ -55,6 +55,16 @@ namespace NS_CRANE {
         }
         return CRANE_SUCC;
     }
+
+    unsigned CraneSrv::start() {
+        cout << "CraneSrv plugin is start..." << endl;
+        return CRANE_SUCC;
+    }
+
+    unsigned CraneSrv::stop() noexcept {
+        cout << "CraneSrv plugin is stop..." << endl;
+        return CRANE_SUCC;
+    }
     
     unsigned CraneSrv::create(unsigned short port) {
         Address addr(Ipv4::any(), port);

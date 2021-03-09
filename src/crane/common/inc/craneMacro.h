@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 10:31:02
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-04 17:51:24
+ * @LastEditTime: 2021-03-05 17:14:56
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -78,6 +78,7 @@
 /// NULL PLUGIN ID
 ///////////////////////////////////////////////////////////
 #define NULL_PLUGIN_ID "__NULL_PLUGIN_INSTANCE_ID__"
+#define NULL_PLUGIN_SWAPPABLE_ID "__NULL_PLUGIN_SWAPPABLE_INSTANCE_ID__"
 
 ///////////////////////////////////////////////////////////
 ///和C语言混合编译的相关宏

@@ -175,7 +175,8 @@ namespace NS_CRANE {
     string Util::uuid() {
         boost::uuids::uuid a_uuid = boost::uuids::random_generator()();
         string uuid = boost::uuids::to_string(a_uuid);
-        return uuid;
+        return std::move(uuid);
+        //return uuid;
     }
 
     /*

@@ -27,8 +27,9 @@
 #include "craneMacro.h"
 #include "Log.h"
 #include "Util.h"
+#include "cranePlugin.h"
 #include "PluginBaseInterface.h"
-//#include "RestServer.h"
+#include "Wrapper.h"
 
 using namespace std;
 using namespace Pistache;
@@ -94,7 +95,20 @@ namespace NS_CRANE {
              */        
             virtual void* create(const string& gstFactoryName, const string& name) = 0;
 
+            /**
+             * @Descripttion: 销毁Gstreamer插件的实例
+             * @Param: 插件对象指针的指针
+             * @Return:         null 
+             */        
             virtual void destory(void*) = 0;
+
+            /**
+             * @Descripttion: 
+             * @Param: filename: Absolute filename of the library of the plugin.
+             * @Param[out]: desc:  Description of the plugin.
+             * @Return: 
+             */            
+            virtual unsigned load(const string& filename, PluginDesc& desc) = 0;
 
             /**
              * @Descripttion: 
@@ -127,6 +141,37 @@ namespace NS_CRANE {
 
             virtual const string id(const string& itfType, const string& pluginName) const = 0;
             //#endif
+
+            // Add Swap dongyin 3-5
+            //virtual shared_ptr<Wrapper<PluginBaseInterface>> createSwappablePlugin(const string& itfType, const string& pluginName, const string& description) = 0;
+            //virtual Wrapper<PluginBaseInterface>& createSwappablePlugin(const string& itfType, const string& pluginName, const string& description) = 0;
+            
+            /**
+             * @Descripttion: Create a Swappable plugin instance by plugin interface type and plugin name.
+             * @Param: itfType: plugin interface type. 
+             * @Param: pluginName: plugin implemention class name. 
+             * @Param: id: swappable plugin id. 
+             * @Param: desc:  description of the swappable plugin instance.
+             * @Return: reference of Wrapper which contain shared_ptr<PluginBaseInterface>
+             */            
+            //virtual Wrapper& createSwappablePlugin(const string& itfType, const string& pluginName, string& id, const string& desc) = 0;
+            virtual shared_ptr<Wrapper> createSwappablePlugin(const string& itfType, const string& pluginName, string& id, const string& desc) = 0;
+
+            /**
+             * @Descripttion: Create a Swappable plugin instance by plugin instance id.
+             * @Param: pluginId: plugin interface id. 
+             * @Param: id: swappable plugin id.
+             * @Param: desc:  description of the swappable plugin instance.
+             * @Return: reference of Wrapper which contain shared_ptr<PluginBaseInterface>
+             */            
+            //virtual Wrapper& createSwappablePlugin(const string& pluginId, string& id, const string& desc) = 0;
+            virtual shared_ptr<Wrapper> createSwappablePlugin(const string& pluginId, string& id, const string& desc) = 0;
+
+            virtual shared_ptr<Wrapper> fetchSwappablePlugin(const string& id) = 0;
+
+            virtual unsigned swapByFilename(const string& id, const string& freshAbsolutePluginFilename) = 0;
+            virtual unsigned swapById(const string& swappable_plugin_id, const string& plugin_id) = 0;
+            //////////////////////////////////////////////////
 
             virtual ~AbstractPluginFrame() { std::cout<<"~AbstractPluginFrame()"<<std::endl; }
             
