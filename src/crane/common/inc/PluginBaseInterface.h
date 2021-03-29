@@ -31,7 +31,7 @@
 
 namespace NS_CRANE {
 
-class PluginBaseInterface {
+class PluginBase {
     public:
         /**
          * @Descripttion: Invoked after plugin instance is created by framework.
@@ -60,7 +60,7 @@ class PluginBaseInterface {
         virtual unsigned stop() noexcept = 0;
 
     public:
-        virtual ~PluginBaseInterface() {};
+        virtual ~PluginBase() {};
     
 };
 

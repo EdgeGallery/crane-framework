@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-03-08 14:07:38
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-08 20:39:29
+ * @LastEditTime: 2021-03-27 08:56:56
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -34,7 +34,7 @@
 using namespace std;
 using namespace NS_CRANE;
 
-class Itf_Vechile : public PluginBaseInterface, public PluginSwappable {
+class Itf_Vechile : public PluginBase, public PluginSwappable {
 public:
     virtual const string vechileType() const = 0;
     virtual void licensePlateNum(const string&) = 0;

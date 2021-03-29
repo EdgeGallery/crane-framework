@@ -31,101 +31,160 @@ using namespace std;
 
 namespace NS_CRANE {
 class PluginInterfaceInfo {
-    public:
-        using PluginFactoryList = list<shared_ptr<AbstractPluginFactory>>;
+public:
+    using PluginFactoryList = list<shared_ptr<IPluginFactory>>;
 
-        using PluginLibFileMap = map<string/*pluginName(class name of the plugin)*/, string /*absolute library filename*/>;
+    using PluginLibFileMap = map<string/*pluginName(class name of the plugin)*/, 
+                                string /*absolute library filename*/>;
 
-        using PluginInstanceIdMap = map<string/*pluginName(class name of the plugin)*/, list<string> /*list of instance id*/>;
+    using PluginInstanceIdMap = map<string/*pluginName(class name of the plugin)*/, 
+                                    list<string> /*list of instance id*/>;
 
-        PluginInterfaceInfo(const string& type, const string& curVer, const string& reqFwVer) 
-                            : _type(type), _curVer(curVer), _reqFwVer(reqFwVer) {}
+    PluginInterfaceInfo(const string& type, const string& curVer, const string& reqFwVer) 
+                        : _type(type), _curVer(curVer), _reqFwVer(reqFwVer) {}
 
-        /**
-         * @Descripttion: Get plugin interface name which is the key of plugin interface in the registry.
-         * @Param: null
-         * @Return: plugin interface name.
-         */        
-        inline const string& type() const {
-            return _type;
-        }
+    /**
+     * @Descripttion: Get plugin interface name which is the key of plugin interface in the registry.
+     * @Param: null
+     * @Return: plugin interface name.
+     */        
+    inline const string& type() const {
+        return _type;
+    }
 
-        /**
-         * @Descripttion: Get the version of the interface of the plugin.
-         * @Param: null
-         * @Return: the version of tht interface.
-         */        
-        inline const string& curVersion() const {
-            return _curVer;
-        } 
+    /**
+     * @Descripttion: Get the version of the interface of the plugin.
+     * @Param: null
+     * @Return: the version of tht interface.
+     */        
+    inline const string& curVersion() const {
+        return _curVer;
+    } 
 
-        /**
-         * @Descripttion: Get the required the version of the Crane plugin framework for this plugin interface.
-         * @Param: null
-         * @Return: Required the version of Crane plugin framework.
-         */        
-        inline const string& requireFwVer() const {
-            return _reqFwVer;
-        }
+    /**
+     * @Descripttion: Get the required the version of the Crane plugin framework for this plugin interface.
+     * @Param: null
+     * @Return: Required the version of Crane plugin framework.
+     */        
+    inline const string& requireFwVer() const {
+        return _reqFwVer;
+    }
 
-        unsigned validateVersion(const string interfaceType) = delete;
+    unsigned validateVersion(const string interfaceType) = delete;
 
-        inline const PluginLibFileMap& pluginLibFileMap() const {
-            return _pluginLibFileMap;
-        }
+    inline const PluginLibFileMap& pluginLibFileMap() const {
+        return _pluginLibFileMap;
+    }
 
-        inline const PluginFactoryList& pluginFactoryList() const {
-            return _pluginFactoryList;
-        }
+    /**
+     * @Descripttion: Get plugin factory list in the interface info instance.
+     * @Param: null
+     * @Return: Reference of the _pluginFactoryList.
+     */        
+    inline const PluginFactoryList& pluginFactoryList() const {
+        return _pluginFactoryList;
+    }
 
-        /**
-         * @Descripttion: Insert a new pair of plugin name and absolute file name into the map
-         * @Param: pluginName: plugin class name
-         * @Param: filenname: absolute library file name of plugin.
-         * @Return: CRANE_SUCC/CRANE_FAIL
-         */        
-        unsigned addPluginLibFileMap(const string& pluginName, const string& filename);
+    /**
+     * @Descripttion: Insert a new pair of plugin name and absolute file name into the map
+     * @Param: pluginName: plugin class name
+     * @Param: filenname: absolute library file name of plugin.
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    unsigned addPluginLibFile(const string& pluginName, const string& filename);
 
-        /**
-         * @Descripttion: Merge maps together.
-         * @Param: : pluginLibFileMap: plugin library file map which will be merged together.  
-         * @Return: CRANE_SUCC/CRANE_FAIL
-         */        
-        unsigned addPluginLibFileMap(const PluginLibFileMap& pluginLibFileMap);
+    /**
+     * @Descripttion: Merge maps together.
+     * @Param: : pluginLibFileMap: plugin library file map which will be merged together.  
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    unsigned addPluginLibFile(const PluginLibFileMap& pluginLibFileMap);
 
-        string findPluginLibFileMap(const string& pluginName);
+    /**
+     * @Descripttion: Find the library file name through the plugin implement class name.
+     * @Param: : pluginName: plugin implement class name.  
+     * @Return: library file name. 
+     */        
+    const string findPluginLibFile(const string& pluginName);
 
-        unsigned delPluginLibFileMap(const string& pluginName);
+    /**
+     * @Descripttion: Delete the pair of library file name and
+     *               the plugin implement class name from the map.
+     * @Param: pluginName: plugin implement class name.  
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    unsigned delPluginLibFile(const string& pluginName);
 
-        unsigned addPluginFactory(shared_ptr<AbstractPluginFactory> pPluginFactory);
+    /**
+     * @Descripttion: Add a new plugin factory instance into the 
+     *              PluginFactoryList.
+     * @Param: plugin factory.  
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    unsigned addPluginFactory(shared_ptr<IPluginFactory> pPluginFactory);
 
-        unsigned addPluginFactory(const PluginFactoryList&);
+    /**
+     * @Descripttion: Copy a plugin factory list into the current PluginFactoryList.
+     * @Param: plugin factory list.
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    unsigned addPluginFactory(const PluginFactoryList&);
 
-        unsigned delPluginFactory(const string& pluginName);
-        // #if 0 // dongyin 2-27 
-        unsigned addPluginInstanceId(const string& pluginName, const string& uuid);
+    /**
+     * @Descripttion: Get the plugin factory through plugin name.
+     * @Param: pluginName: plugin class name
+     * @Return: plugin factory
+     */    
+    shared_ptr<IPluginFactory> getPluginFactory(const string& pluginName);
 
-        unsigned delPluginInstanceId(const string& pluginName, const string& uuid);
+    /**
+     * @Descripttion: Delete a plugin factory from PluginFactoryList through
+     *              the plugin name.
+     * @Param: plugin name.
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    unsigned delPluginFactory(const string& pluginName);
 
-        list<string> getPluginInstanceIds(const string& pluginName) const;
-        // #endif 
+    /**
+     * @Descripttion: Add plugin id into the list<id> of pluginName. If pluginName is not 
+     *              exist in the _pluginInstanceIdMap, then insert the pair of pluginName and
+     *              list<string> which contain the id.
+     * @Param: pluginName: plugin class name
+     * @Param: id: id of plugin instance.
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */            
+    unsigned addPluginInstanceId(const string& pluginName, const string& id);
 
-        shared_ptr<AbstractPluginFactory> pluginFactory(const string& pluginName);
+    /**
+     * @Descripttion: Delete plugin id from the list<id> of pluginName. If the id is the last one of 
+     *              the pluginName, then erase pluginName from the map.
+     * @Param: pluginName: plugin class name
+     * @Param: id: id of plugin instance.
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */    
+    unsigned delPluginInstanceId(const string& pluginName, const string& id);
 
-    private:
-        string              _type;              // plugin interface name
+    /**
+     * @Descripttion: Get the list of plugin id of the plugin name.
+     * @Param: pluginName: plugin class name
+     * @Param: id: list of plugin instance id
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */    
+    list<string> getPluginInstanceIds(const string& pluginName) const;
 
-        string              _curVer;            // plugin interface version
 
-        string              _reqFwVer;          // plugin framework version required by this interface.
+private:
+    string              _type;              // plugin interface name
 
-        PluginFactoryList   _pluginFactoryList; // Contained the plugin factory instance of plugin interface implement.
+    string              _curVer;            // plugin interface version
 
-        PluginLibFileMap    _pluginLibFileMap;  // Contained the plugin name(class name of the plugin implemention) and absolute filename of library.
-        //#if 0 // dongyin 2-27
-        PluginInstanceIdMap _pluginInstanceIdMap; // Contained the list of plugin instance id which are belong to special plugin name(class name of the plugin implemention).
-        // #enfif
+    string              _reqFwVer;          // plugin framework version required by this interface.
 
+    PluginFactoryList   _pluginFactoryList; // Contained the plugin factory instance of plugin interface implement.
+
+    PluginLibFileMap    _pluginLibFileMap;  // Contained the plugin name(class name of the plugin implemention) and absolute filename of library.
+
+    PluginInstanceIdMap _pluginInstanceIdMap; // Contained the list of plugin instance id which are belong to special plugin name(class name of the plugin implemention).
 };
 
 }

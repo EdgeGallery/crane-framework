@@ -77,21 +77,21 @@ namespace NS_CRANE {
              *          description: Description of this instance of the plugin.                      
              * @Return: pointer of the instance of the plugin.
              */            
-            PluginBaseInterface* create(const string& type, const string& pluginName, const string& description) override;
+            PluginBase* create(const string& type, const string& pluginName, const string& description) override;
 
             //#if 0 // dongyin 2-27
-            shared_ptr<PluginBaseInterface> create(const string& type, const string& pluginName, string& uuid, const string& description) override;
+            shared_ptr<PluginBase> create(const string& type, const string& pluginName, string& uuid, const string& description) override;
             //#endif
 
             /**
-             * @Descripttion: Release the plugin throuth the point.
+             * @Descripttion: Release the plugin throuth the raw point of plugin instance.
              * @Param: the pointer of the plugin instance.
              * @Return: null
              */            
-            void destory(PluginBaseInterface*) override;
+            void destory(PluginBase*) override;
             //#if 0 // dongyin 2-27
             /**
-             * @Descripttion:   Release the shared_ptr<PluginBaseInterface>
+             * @Descripttion:   Release the shared_ptr<PluginBaseInterface> through the plugin id.
              * @Param:          id: plugin instance id 
              * @Return:         null 
              */
@@ -138,13 +138,13 @@ namespace NS_CRANE {
              * @Return: null
              */            
             void unload(const string& type, const string& pluginName) override;
-            //#if 0 // dongyin 2-27
+
             /**
              * @Descripttion: Fetch a plugin instance by id.
              * @Param: id: plugin instance id.
              * @Return: shared_ptr<PluginBaseInterface>
              */            
-            shared_ptr<PluginBaseInterface> instance(const string& id) override;
+            shared_ptr<PluginBase> instance(const string& id) override;
 
             /**
              * @Descripttion: Fetch a plugin instance by plugin interface type and plugin name.
@@ -152,24 +152,83 @@ namespace NS_CRANE {
              * @Param: pluginName: plugin implemention class name. 
              * @Return: shared_ptr<PluginBaseInterface>
              */            
-            shared_ptr<PluginBaseInterface> instance(const string& itfType, const string& pluginName) override; 
+            shared_ptr<PluginBase> instance(const string& itfType, const string& pluginName) override; 
 
+            /**
+             * @Descripttion: Get plugin instance id by type and plugin name.
+             * @Param: itfType: plugin interface type. 
+             * @Param: pluginName: plugin implemention class name. 
+             * @Return: plugin id
+             */            
             const string id(const string& itfType, const string& pluginName) const override;
-            //#endif
 
-            // Add Swap dongyin 3-5
-            //shared_ptr<Wrapper<PluginBaseInterface>> createSwappablePlugin(const string& itfType, const string& pluginName, const string& description) override;
-            shared_ptr<Wrapper> createSwappablePlugin(const string& itfType, const string& pluginName, string& id, const string& desc) override;
-            shared_ptr<Wrapper> createSwappablePlugin(const string& pluginId, string& id, const string& desc) override; 
+            /**
+             * @Descripttion: Create a Swappable plugin instance by plugin interface type and plugin name.
+             * @Param: itfType: plugin interface type. 
+             * @Param: pluginName: plugin implemention class name. 
+             * @Param: id: swappable plugin id. 
+             * @Param: desc:  description of the swappable plugin instance.
+             * @Return: reference of Wrapper which contain shared_ptr<PluginBaseInterface>
+             */            
+            shared_ptr<Wrapper> createSwappablePlugin(const string& itfType, 
+                                                    const string& pluginName, 
+                                                    string& id, 
+                                                    const string& desc) override;
+
+            /**
+             * @Descripttion: Create a Swappable plugin instance by plugin instance id.
+             * @Param: pluginId: plugin interface id. 
+             * @Param: id: swappable plugin id.
+             * @Param: desc:  description of the swappable plugin instance.
+             * @Return: Wrapper object pointer which contain shared_ptr<Wrapper>
+             */            
+            shared_ptr<Wrapper> createSwappablePlugin(const string& pluginId, 
+                                                    string& id, 
+                                                    const string& desc) override;
+                                                    
+            /**
+             * @Descripttion: Fetch a Swappable plugin instance by swappable plugin instance id.
+             * @Param: id: swappable plugin id.
+             * @Return: Wrapper object pointer which contain shared_ptr<Wrapper>
+             */   
             shared_ptr<Wrapper> fetchSwappablePlugin(const string& id) override;
+
+            /**
+             * @Descripttion: Swapping a Swappable plugin by the absolute ELF filename of fresh plugin instance.
+             *              NOTE: wrapped plugin id will not changed, and no NEW
+             *              wrapped plugin id generated for the fresh plugin instance. 
+             * @Param: id: swappable plugin id.
+             * @Param: freshAbsolutePluginFilename: absolute ELF filename of fresh plugin instance. 
+             * @Return: CRANE_SUCC/CRANE_FAIL 
+             */              
             unsigned swapByFilename(const string& id, const string& freshAbsolutePluginFilename) override;
+
+            /**
+             * @Descripttion: Swapping a Swappable plugin by the plugin_id of fresh plugin instance.
+             *              NOTE: wrapped plugin id will not changed, and no NEW
+             *              wrapped plugin id generated for the fresh plugin instance. 
+             * @Param: id: swappable plugin id.
+             * @Param: plugin_id: plugin id of the fresh plugin instance. 
+             * @Return: CRANE_SUCC/CRANE_FAIL 
+             */
             unsigned swapById(const string& swappable_plugin_id, const string& plugin_id) override;
-            ///////////////////////////////////////////////////////////
+
         public:
             ~PluginSysAdapter() override;
 
         protected:
             PluginSysAdapter();
+
+        private:
+
+            /**
+             * @Descripttion: Handover origin wrapped plugin by the fresh plugin instance.
+             * @Param: statlePlugin: stale wrapped plugin 
+             *                  which's plugin instance will be handed down. 
+             * @Param: freshPlugin: plugin instance which will be handed up.
+             * @Return: CRANE_SUCC/CRANE_FAIL 
+             */            
+            unsigned _handover(shared_ptr<Wrapper> stalePlugin, shared_ptr<PluginBase> freshPlugin);
 
         private:
             shared_ptr<Config>          _config;

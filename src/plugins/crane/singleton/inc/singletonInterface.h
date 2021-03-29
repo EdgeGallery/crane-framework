@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-27 08:56:08
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +27,7 @@
 
 #include "PluginBaseInterface.h"
 
-class Itf_Singleton : public NS_CRANE::PluginBaseInterface {
+class Itf_Singleton : public NS_CRANE::PluginBase {
     public:
         virtual unsigned setName(std::string&) = 0;
         virtual unsigned showName() = 0;

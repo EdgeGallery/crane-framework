@@ -153,7 +153,7 @@ public:
      * @Descripttion: Construct a plugin wrapper instance through the shared_ptr<PT> instance of the plugin.
      * @Param: p: shared_ptr<PT> instance of the plugin.
      */         
-    Wrapper(shared_ptr<PluginBaseInterface> p) {
+    Wrapper(shared_ptr<PluginBase> p) {
         _plugin = p;
     }
     // #endif
@@ -180,11 +180,11 @@ public:
         return _plugin != nullptr;
     }
     
-    shared_ptr<PluginBaseInterface> operator->() const {
+    shared_ptr<PluginBase> operator->() const {
         return _plugin;
     }
 
-    shared_ptr<PluginBaseInterface> p() {
+    shared_ptr<PluginBase> p() {
         lock_guard<mutex> lock(_mtx);
         return _plugin;
     }
@@ -204,11 +204,11 @@ public:
     }
     
 private:
-    void _p(shared_ptr<PluginBaseInterface> p) {
+    void _p(shared_ptr<PluginBase> p) {
         _plugin = p;
     }
 
-    shared_ptr<PluginBaseInterface>             _plugin;
+    shared_ptr<PluginBase>             _plugin;
     string                                      _id = NULL_PLUGIN_ID;
     atomic<bool>                                _isSwapping{false};
     mutex                                       _mtx;

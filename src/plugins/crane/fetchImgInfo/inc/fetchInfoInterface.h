@@ -22,7 +22,7 @@
 
 using namespace std;
 
-class Itf_FetchInfo : public NS_CRANE::PluginBaseInterface {
+class Itf_FetchInfo : public NS_CRANE::PluginBase {
     public:
         typedef struct {
             std::string     picName;

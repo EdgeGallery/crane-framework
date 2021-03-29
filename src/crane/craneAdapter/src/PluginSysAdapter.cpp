@@ -54,7 +54,7 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
-    PluginBaseInterface* PluginSysAdapter::create(const string& itfType, const string& pluginName, const string& name) {
+    PluginBase* PluginSysAdapter::create(const string& itfType, const string& pluginName, const string& name) {
         LOG_INFO("Creating plugin[%s] of Itf[%s]...", pluginName.c_str(), itfType.c_str());
 
         unused(name);
@@ -68,13 +68,13 @@ namespace NS_CRANE {
             return nullptr;
         }
 
-        const string absoluteLibFilename = spItfInfo->findPluginLibFileMap(pluginName);
+        const string absoluteLibFilename = spItfInfo->findPluginLibFile(pluginName);
         if (absoluteLibFilename.empty()) {
             LOG_ERROR("Plugin { %s } is not in the registry.", pluginName.c_str());
             return nullptr;
         }
 
-        shared_ptr<AbstractPluginFactory> factory = spItfInfo->pluginFactory(pluginName);
+        shared_ptr<IPluginFactory> factory = spItfInfo->getPluginFactory(pluginName);
         if (!factory) {
             LOG_INFO("Library file of plugin [%s] is not loaded.", pluginName.c_str());
 
@@ -87,14 +87,14 @@ namespace NS_CRANE {
             spItfInfo->addPluginFactory(newItfInfo->pluginFactoryList());
 
             //After load the plugin library, get factory of plugin again.
-            factory = spItfInfo->pluginFactory(pluginName);
+            factory = spItfInfo->getPluginFactory(pluginName);
             if (!factory) {
                 LOG_ERROR("Get factory of PluginName: { %s } failed", pluginName.c_str());
                 return nullptr;
             }
         }
 
-        PluginBaseInterface* plugin = factory->create();
+        PluginBase* plugin = factory->create();
         if (plugin == nullptr) { return nullptr; }
 
         if (factory->isAllowInit()) { 
@@ -107,37 +107,39 @@ namespace NS_CRANE {
         LOG_INFO("Create plugin[%s] of Itf[%s] successfully", pluginName.c_str(), itfType.c_str());
         return plugin;
     }
-    //#if 0 // dongyin 2-27
-    shared_ptr<PluginBaseInterface> PluginSysAdapter::create(const string& type, const string& pluginName, string& uuid, const string& description) {
-        if (uuid.empty()) { uuid = Util::uuid(); }
 
-        PluginBaseInterface* plugin = create(type, pluginName, description);
+    shared_ptr<PluginBase> PluginSysAdapter::create(const string& type, 
+                                                    const string& pluginName, 
+                                                    string& id, 
+                                                    const string& description) {
+        if (id.empty()) { id = Util::uuid(); }
+
+        PluginBase* plugin = create(type, pluginName, description);
         if (plugin == nullptr) {
-            return shared_ptr<PluginBaseInterface>(nullptr);
+            return shared_ptr<PluginBase>(nullptr);
         }
-        shared_ptr<PluginBaseInterface> plugin_shared_ptr;
+        shared_ptr<PluginBase> plugin_shared_ptr;
         plugin_shared_ptr.reset(plugin);
          
-        if (CRANE_SUCC != addPluginInstance(uuid, plugin_shared_ptr, type, pluginName)) {
+        if (CRANE_SUCC != addPluginInstance(id, plugin_shared_ptr, type, pluginName)) {
+            // ATTENTION!!!
             // plugin_shared_ptr will release when leave the scope of this function.
             // so raw pointer of plugin will be delete.
-            return shared_ptr<PluginBaseInterface>(nullptr);
+            return shared_ptr<PluginBase>(nullptr);
         }
 
         return plugin_shared_ptr;
     }
-    //#endif
 
-    void PluginSysAdapter::destory(PluginBaseInterface* cranePlugin) {
+    void PluginSysAdapter::destory(PluginBase* cranePlugin) {
         if (cranePlugin != nullptr) {
             delete cranePlugin;
         }
     }
-    //#if 0 // dongyin 2-27
+
     void PluginSysAdapter::destory(const string& id) {
-        releasePluginInstance(id);
+        relPluginInstance(id);
     }
-    //#endif 
 
     void* PluginSysAdapter::create(const string& gstFactoryName, const string& name) {
         void* plugin;
@@ -150,6 +152,7 @@ namespace NS_CRANE {
             gstDestory(gstPlugin);
         }
     }
+    
     unsigned PluginSysAdapter::load(const string& filename, PluginDesc& desc) {
         unsigned ret;
         {
@@ -166,6 +169,9 @@ namespace NS_CRANE {
     }
 
     unsigned PluginSysAdapter::load(const string& filename) {
+        PluginDesc desc{};
+        return load(filename, desc);
+        /*
         unsigned ret;
         {
             lock_guard<mutex> lock(_mtx);
@@ -177,6 +183,7 @@ namespace NS_CRANE {
             LOG_ERROR("Load library: { %s } into registry failed.", filename.c_str());
         }
         return ret;
+        */
     }
 
     void PluginSysAdapter::unload(const string& type, const string& pluginName) {
@@ -185,45 +192,48 @@ namespace NS_CRANE {
         return;
     }
     //#if 0 // dongyin 2-27
-    shared_ptr<PluginBaseInterface> PluginSysAdapter::instance(const string& id) {
+    shared_ptr<PluginBase> PluginSysAdapter::instance(const string& id) {
         return getPluginInstance(id);
     }
 
-    shared_ptr<PluginBaseInterface> PluginSysAdapter::instance(const string& itfType, const string& pluginName) {
+    shared_ptr<PluginBase> PluginSysAdapter::instance(const string& itfType, const string& pluginName) {
         return getPluginInstance(itfType, pluginName);
     }
 
     const string PluginSysAdapter::id(const string& itfType, const string& pluginName) const {
         return getPluginId(itfType, pluginName);
     }
-    //#endif
 
-    // Add Swap dongyin 3-5
-    /*
-    shared_ptr<Wrapper<PluginBaseInterface>> PluginSysAdapter::createSwappablePlugin(const string& itfType, const string& pluginName, const string& description) {
-        string id {};
-        shared_ptr<PluginBaseInterface> p = create(itfType, pluginName, id, description);
-        shared_ptr<Wrapper<PluginBaseInterface>> wp = make_shared<Wrapper<PluginBaseInterface>>(Wrapper<PluginBaseInterface>(p));
-        return wp;
-    }
-    */
-    shared_ptr<Wrapper> PluginSysAdapter::createSwappablePlugin(const string& itfType, const string& pluginName, string& id, const string& desc) {
+    shared_ptr<Wrapper> PluginSysAdapter::createSwappablePlugin(
+        const string& itfType, 
+        const string& pluginName, 
+        string& id, 
+        const string& desc) {
+        // Generate the plugin instance id.
         string pluginId = Util::uuid();
-        shared_ptr<PluginBaseInterface> p = create(itfType, pluginName, pluginId, desc);
-        //Wrapper wp = Wrapper(p);
+
+        // Get plugin instance which has been holded by Registry's _pluginInstanceMap.
+        shared_ptr<PluginBase> p = create(itfType, pluginName, pluginId, desc);
+
         shared_ptr<Wrapper> wp = make_shared<Wrapper>(p);
         if (id.empty()) { id = Util::uuid(); }
-        addPluginSwappableInstance(id, wp, desc);
+        addPluginSwappableInstance(id, wp, pluginId, desc);
         return getPluginSwappableInstance(id);
     }
 
-    shared_ptr<Wrapper> PluginSysAdapter::createSwappablePlugin(const string& pluginId, string& id, const string& desc) {
-        // Wrapper wp = Wrapper(instance(pluginId));
-        shared_ptr<Wrapper> wp = make_shared<Wrapper>(instance(pluginId));
-        if (id.empty()) { id = Util::uuid(); }
-        addPluginSwappableInstance(id, wp, desc);
-        return getPluginSwappableInstance(id);
+    shared_ptr<Wrapper> PluginSysAdapter::createSwappablePlugin(
+        const string& pluginId, 
+        string& id, 
+        const string& desc) {
+        auto p = getPluginInstance(pluginId);
+        if (p) {
+            return shared_ptr<Wrapper>(nullptr);
+        }
 
+        shared_ptr<Wrapper> wp = make_shared<Wrapper>(p);
+        if (id.empty()) { id = Util::uuid(); }
+        addPluginSwappableInstance(id, wp, pluginId, desc);
+        return getPluginSwappableInstance(id);
     }
     
     shared_ptr<Wrapper> PluginSysAdapter::fetchSwappablePlugin(const string& id) {
@@ -237,59 +247,42 @@ namespace NS_CRANE {
         if (CRANE_SUCC != ret) { return ret; }
 
         string newPluginInstanceId {};
-        shared_ptr<PluginBaseInterface> freshPlugin = create(desc.itfType, desc.pluginName,  newPluginInstanceId, "");
-        //Wrapper& stableWrappedPlugin = getPluginSwappableInstance(id);
+        shared_ptr<PluginBase> freshPlugin = create(desc.itfType, desc.pluginName,  newPluginInstanceId, "");
         shared_ptr<Wrapper> stableWrappedPlugin = getPluginSwappableInstance(id);
 
-        {
-            // lock the wrapper plugin.
-            lock_guard<mutex> lock(stableWrappedPlugin->_mtx);
-
-            // Stop stable plugin...
-            stableWrappedPlugin->_plugin->stop();
-
-            // swap_down stale plugin...
-            dynamic_pointer_cast<PluginSwappable>(stableWrappedPlugin->_plugin)->swap_down(stableWrappedPlugin->_plugin, freshPlugin);
-            //plugin_cast<PluginSwappable>(stableWrappedPlugin)->swap_down(plugin_cast<PluginBaseInterface>(stableWrappedPlugin), freshPlugin);
-
-            // swap_up fresh plugin...
-            dynamic_pointer_cast<PluginSwappable>(freshPlugin)->swap_up(stableWrappedPlugin->_plugin, freshPlugin);
-
-            // Start fresh plugin...
-            freshPlugin->start();
-
-            //stableWrappedPlugin->rp() = freshPlugin;
-            stableWrappedPlugin->_p(freshPlugin);
-        }
+        ret = _handover(stableWrappedPlugin, freshPlugin);
+        if (CRANE_SUCC != ret) { return ret; }
         
         return CRANE_SUCC;
     }
     unsigned PluginSysAdapter::swapById(const string& swappable_plugin_id, const string& plugin_id) {
-        shared_ptr<PluginBaseInterface> freshPlugin = instance(plugin_id);
+        shared_ptr<PluginBase> freshPlugin = instance(plugin_id);
         shared_ptr<Wrapper> stableWrappedPlugin = getPluginSwappableInstance(swappable_plugin_id);
-        {
-            // lock the wrapper plugin.
-            lock_guard<mutex> lock(stableWrappedPlugin->_mtx);
-
-            // Stop stable plugin...
-            stableWrappedPlugin->_plugin->stop();
-
-            // swap_down stale plugin...
-            //dynamic_pointer_cast<PluginSwappable>(stableWrappedPlugin->_plugin)->swap_down(stableWrappedPlugin->_plugin, freshPlugin);
-            //plugin_cast<PluginSwappable>(stableWrappedPlugin)->swap_down(plugin_cast<PluginBaseInterface>(stableWrappedPlugin), freshPlugin);
-
-            // swap_up fresh plugin...
-            //dynamic_pointer_cast<PluginSwappable>(freshPlugin)->swap_up(stableWrappedPlugin->_plugin, freshPlugin);
-
-            // Start fresh plugin...
-            freshPlugin->start();
-
-            //stableWrappedPlugin->rp() = freshPlugin;
-            stableWrappedPlugin->_p(freshPlugin);
-        }        
+        unsigned ret = _handover(stableWrappedPlugin, freshPlugin);
+        if (CRANE_SUCC != ret) { return ret; }
+       
         return CRANE_SUCC;
     }
-    ///////////////////////////////////////////////
+
+    unsigned PluginSysAdapter::_handover(shared_ptr<Wrapper> stableWrappedPlugin, shared_ptr<PluginBase> freshPlugin) {
+        // lock the wrapper plugin.
+        lock_guard<mutex> lock(stableWrappedPlugin->_mtx);
+
+        // Stop stable plugin...
+        stableWrappedPlugin->_plugin->stop();
+
+        // swap_down stale plugin...
+        dynamic_pointer_cast<PluginSwappable>(stableWrappedPlugin->_plugin)->swap_down(stableWrappedPlugin->_plugin, freshPlugin);
+
+        // swap_up fresh plugin...
+        dynamic_pointer_cast<PluginSwappable>(freshPlugin)->swap_up(stableWrappedPlugin->_plugin, freshPlugin);
+
+        // Start fresh plugin...
+        freshPlugin->start();
+
+        stableWrappedPlugin->_p(freshPlugin);
+        return CRANE_SUCC;        
+    }
 
     PluginSysAdapter::~PluginSysAdapter() {
         cout<<"~PluginSysAdapter()"<<endl;

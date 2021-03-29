@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-03-07 15:52:10
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-09 11:48:46
+ * @LastEditTime: 2021-03-09 16:44:51
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -33,7 +33,6 @@ using namespace std;
 using namespace NS_CRANE;
 #define MODE (S_IRWXU | S_IRWXG | S_IRWXO)
 
-AbstractPluginFrame* pluginFrame;
 string s_oldfile, s_newfile;
 DIR* plugins_dir;
 
@@ -84,9 +83,9 @@ class swapTest : public testing::Test {
                 }
             }
 
-            pluginFrame = AbstractPluginFrame::getPluginFrame();
-            int argc = 1; char **argv = nullptr;
-            pluginFrame->init(argc, argv, CRANE_CRN);
+            // pluginFrame = AbstractPluginFrame::getPluginFrame();
+            // int argc = 1; char **argv = nullptr;
+            // pluginFrame->init(argc, argv, CRANE_CRN);
         }
 
         static void TearDownTestCase()
@@ -101,7 +100,7 @@ class swapTest : public testing::Test {
             if (!access("plugins", F_OK)) {
                 closedir(plugins_dir);
                 int ret = rmdir("plugins");
-                if (!ret) {
+                if (ret != 0) {
                     cout << "rmdir Error: " << strerror(errno) << endl;
                 }
             }
@@ -129,8 +128,12 @@ TEST_F(swapTest, swap_plugin_by_file) {
     cout << "Enter swap_plugin_by_file()" << endl;
     cout << endl << endl;
 
+    AbstractPluginFrame* pluginFrame;
+    pluginFrame = AbstractPluginFrame::getPluginFrame();
+    int argc = 1; char **argv = nullptr;
+    pluginFrame->init(argc, argv, CRANE_CRN);
+
     string id{};
-    // Wrapper& wrapper_vechile = pluginFrame->createSwappablePlugin("Itf_Vechile", "Car", id, "");
     shared_ptr<Wrapper> wrapper_vechile = pluginFrame->createSwappablePlugin("Itf_Vechile", "Car", id, "");
 
     cout << "Swappable plugin id: " << id << endl;
@@ -143,7 +146,7 @@ TEST_F(swapTest, swap_plugin_by_file) {
     cout << ":::::::->" <<wrapper_vechile->p().get() << endl;
     void* stale_p = wrapper_vechile->p().get();
 
-    this_thread::sleep_for(chrono::seconds(3));
+    this_thread::sleep_for(chrono::seconds(1));
 
     cout << "&&&&&&&&&&&" << "Swapping plugin from car to trunck now..." << "&&&&&&&&&&&" << endl;
     string fresh_plugin_filename = _s_cwd + string("/plugins/libcraneplugintrunck.so");
@@ -155,11 +158,11 @@ TEST_F(swapTest, swap_plugin_by_file) {
     }
     ASSERT_EQ(CRANE_SUCC, ret);
 
-    this_thread::sleep_for(chrono::seconds(3));
+    this_thread::sleep_for(chrono::seconds(1));
 
     cout << "Vechile Type: " << plugin_cast<Itf_Vechile>(wrapper_vechile)->vechileType() << endl;
     plugin_cast<Itf_Vechile>(wrapper_vechile)->licensePlateNum("鄂B 672KR");
-    this_thread::sleep_for(chrono::seconds(5));
+    this_thread::sleep_for(chrono::seconds(1));
     plugin_cast<Itf_Vechile>(wrapper_vechile)->stop();
     cout << ":::::::->" <<wrapper_vechile->p().get() << endl;
     void* fresh_p = wrapper_vechile->p().get();
@@ -171,16 +174,45 @@ TEST_F(swapTest, swap_plugin_by_id) {
     cout << "Enter swap_plugin_by_id()" << endl;
     cout << endl << endl;
 
+    AbstractPluginFrame* pluginFrame;
+    pluginFrame = AbstractPluginFrame::getPluginFrame();
+    int argc = 1; char **argv = nullptr;
+    pluginFrame->init(argc, argv, CRANE_CRN);
+
     string swappable_plugin_id {};
-    shared_ptr<Wrapper> wrapper_player = pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", swappable_plugin_id, "");
+    shared_ptr<Wrapper> wrapper_vechile = pluginFrame->createSwappablePlugin("Itf_Vechile", "Car", swappable_plugin_id, "");
     cout << "Swappable plugin id: " << swappable_plugin_id << endl;
-    plugin_cast<Itf_Player>(wrapper_player)->play("balabala...");
+    plugin_cast<Itf_Vechile>(wrapper_vechile)->start();
+    this_thread::sleep_for(chrono::seconds(1));
+
+    plugin_cast<Itf_Vechile>(wrapper_vechile)->licensePlateNum("粤A 672KR");
+    cout << " wrapper_player_cd use_count: " << wrapper_vechile->p().use_count() << endl;
+    cout << ":::::::->" <<wrapper_vechile->p().get() << endl;
+    void* stale_p = wrapper_vechile->p().get();
 
     string fresh_plugin_id {};
-    pluginFrame->create("Itf_Player", "PlayerImplMP3", fresh_plugin_id, "");
+    string fresh_plugin_filename = _s_cwd + string("/plugins/libcraneplugintrunck.so");
+    cout << "fresh_plugin_filename: " << fresh_plugin_filename << endl;
+    pluginFrame->load(fresh_plugin_filename);
+    pluginFrame->create("Itf_Vechile", "Trunck", fresh_plugin_id, "");
     cout << "Fresh plugin id: " << fresh_plugin_id << endl;
 
-    pluginFrame->swapById(swappable_plugin_id, fresh_plugin_id);
+    cout << "&&&&&&&&&&&" << "Swapping plugin from car to trunck now..." << "&&&&&&&&&&&" << endl;
+    unsigned ret = pluginFrame->swapById(swappable_plugin_id, fresh_plugin_id);
+    if (ret == CRANE_SUCC) {
+        cout << "&&&&&&&&&&&" << "Swapping plugin from car to trunck successfully..." << "&&&&&&&&&&&" << endl;
+    } else {
+        cout << "&&&&&&&&&&&" << "Swapping plugin from car to trunck unsuccessfully..." << "&&&&&&&&&&&" << endl;
+    }
+    ASSERT_EQ(CRANE_SUCC, ret);
 
-    plugin_cast<Itf_Player>(wrapper_player)->play("balabala...");
+    this_thread::sleep_for(chrono::seconds(1));
+
+    cout << "Vechile Type: " << plugin_cast<Itf_Vechile>(wrapper_vechile)->vechileType() << endl;
+    plugin_cast<Itf_Vechile>(wrapper_vechile)->licensePlateNum("鄂B 672KR");
+    this_thread::sleep_for(chrono::seconds(1));
+    plugin_cast<Itf_Vechile>(wrapper_vechile)->stop();
+    cout << ":::::::->" <<wrapper_vechile->p().get() << endl;
+    void* fresh_p = wrapper_vechile->p().get();
+    ASSERT_NE(stale_p, fresh_p);
 }

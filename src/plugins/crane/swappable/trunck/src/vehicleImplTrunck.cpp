@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-03-08 14:57:19
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-08 20:38:36
+ * @LastEditTime: 2021-03-27 08:57:04
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -45,14 +45,14 @@ unsigned Trunck::stop() noexcept {
     return CRANE_SUCC;
 }
 
-unsigned Trunck::swap_up(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) {
+unsigned Trunck::swap_up(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) {
     cout << "Crane plugin: Trunck is swapping up." << endl;
     long long m = dynamic_pointer_cast<Itf_Vechile>(stale)->mileage();
     dynamic_pointer_cast<Itf_Vechile>(fresh)->mileage(m);
     return CRANE_SUCC;
 }
 
-unsigned Trunck::swap_down(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) {
+unsigned Trunck::swap_down(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) {
     cout << "Crane plugin: Trunck is swapping down." << endl;
     touch(stale, fresh);
     return CRANE_SUCC;

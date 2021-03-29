@@ -36,12 +36,12 @@ unsigned init(unsigned init_type) {
     return ret;
 }
 
-PluginBaseInterface* create(string itfName, string pluginName, string description) {
+PluginBase* create(string itfName, string pluginName, string description) {
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
     return pPluginFrame->create(itfName, pluginName, description);
 }
 
-void destory(PluginBaseInterface* cranePlugin) {
+void destory(PluginBase* cranePlugin) {
     if (cranePlugin == nullptr) { return; }
 
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();

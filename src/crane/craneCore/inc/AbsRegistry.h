@@ -58,7 +58,7 @@ class AbsRegistry {
         using PluginLibMap = std::map<std::string,  AbsLibrary>;
         PluginLibMap pluginMap_;
 
-        using PluginInstanceMap = map<string /*uuid*/, shared_ptr<PluginBaseInterface>/*plugin instance*/>;
+        using PluginInstanceMap = map<string /*uuid*/, shared_ptr<PluginBase>/*plugin instance*/>;
         PluginInstanceMap pluginInstanceMap_; // Contained the plugin instance.
         
 };

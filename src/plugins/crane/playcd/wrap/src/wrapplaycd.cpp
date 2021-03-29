@@ -17,7 +17,7 @@
 #include "playImplCD.h"
 #include "wrapplaycd.h"
 
-unsigned playcd_play(crane::PluginBaseInterface* playcd, std::string str)
+unsigned playcd_play(crane::PluginBase* playcd, std::string str)
 {
     dynamic_cast<PlayerImplCD*>(playcd)->play(str);
     return 0;

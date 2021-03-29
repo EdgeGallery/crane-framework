@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-03-08 14:19:40
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-08 20:38:23
+ * @LastEditTime: 2021-03-27 08:56:44
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -45,13 +45,13 @@ unsigned Car::stop() noexcept {
     return CRANE_SUCC;
 }
 
-unsigned Car::swap_down(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) {
+unsigned Car::swap_down(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) {
     cout << "Crane plugin: Car is swapping down." << endl;
     touch(stale, fresh);
     return CRANE_SUCC;
 }
 
-unsigned Car::swap_up(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) {
+unsigned Car::swap_up(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) {
     cout << "Crane plugin: Car is swapping up." << endl;
     touch(stale, fresh);
     return CRANE_SUCC;

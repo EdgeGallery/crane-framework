@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 10:31:02
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-08 16:39:20
+ * @LastEditTime: 2021-03-27 08:57:22
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -27,7 +27,7 @@
 
 #include "PluginBaseInterface.h"
 
-class Itf_Player : public NS_CRANE::PluginBaseInterface {
+class Itf_Player : public NS_CRANE::PluginBase {
     public:
         virtual unsigned int play(std::string) = 0;
         virtual unsigned int pause() = 0;

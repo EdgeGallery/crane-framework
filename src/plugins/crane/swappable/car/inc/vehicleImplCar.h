@@ -33,8 +33,8 @@ public:
     unsigned start() override;
     unsigned stop() noexcept override;
 
-    unsigned swap_up(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) override;
-    unsigned swap_down(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) override;
+    unsigned swap_up(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) override;
+    unsigned swap_down(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) override;
 
     const string vechileType() const override;
     void licensePlateNum(const string&)  override;

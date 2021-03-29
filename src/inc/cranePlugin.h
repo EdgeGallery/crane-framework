@@ -36,16 +36,24 @@ typedef struct pluginDesc{
     string desc;
     string author;
     string license;
+
+    operator bool() const {
+        return (!fwVer.empty()) && 
+               (!itfType.empty()) &&
+               (!itfVer.empty()) &&
+               (!pluginName.empty()) &&
+               (!desc.empty()) &&
+               (!author.empty()) &&
+               (!license.empty());
+    }
 }PluginDesc;
 
 #define CRANE_STRIFY(a) #a
 #define CRANE_PASTE_ARGS(a,b) a##b
 #define CRANE_PASTE(a,b)    CRANE_PASTE_ARGS(a,b)
 
-
-
 #define CRANE_PLUGIN_FACTORY_SINGLETON(itfType, itfVer, pluginName) \
-class pluginName##Factory : public crane::AbstractPluginFactory { \
+class pluginName##Factory : public crane::IPluginFactory { \
     public: \
         itfType * create() { \
             lock_guard<mutex> guard(_lock); \
@@ -58,7 +66,7 @@ class pluginName##Factory : public crane::AbstractPluginFactory { \
             return _instance(); \
         } \
 \
-        pluginName##Factory() : crane::AbstractPluginFactory(#itfType, #pluginName, itfVer) { } \
+        pluginName##Factory() : crane::IPluginFactory(#itfType, #pluginName, itfVer) { } \
 \
         bool isAllowInit() { return *(_allowInit()); } \
     private: \
@@ -93,7 +101,7 @@ extern "C" const PluginDesc* crane_plugin_desc(void) \
 } \
 
 #define CRANE_PLUGIN_FACTORY_FUNC(pluginName) \
-extern "C" shared_ptr<crane::AbstractPluginFactory> createPluginFactory() {\
+extern "C" shared_ptr<crane::IPluginFactory> createPluginFactory() {\
     return make_shared<pluginName##Factory>();\
 }
 
@@ -119,10 +127,10 @@ extern "C" shared_ptr<crane::AbstractPluginFactory> createPluginFactory() {\
 ///////////////////////////////////////////////////////////////////////
 
 #define CRANE_PLUGIN_DEFINE(fwVer, itfType, itfVer, pluginName, desc, author, license) \
-class pluginName##Factory : public crane::AbstractPluginFactory { \
+class pluginName##Factory : public crane::IPluginFactory { \
     public: \
         pluginName * create() { return new pluginName(); } \
-        pluginName##Factory() : crane::AbstractPluginFactory(#itfType, #pluginName, itfVer) { } \
+        pluginName##Factory() : crane::IPluginFactory(#itfType, #pluginName, itfVer) { } \
         bool isAllowInit() { return true; } \
 }; \
 \
@@ -139,7 +147,7 @@ extern "C" const PluginDesc* crane_plugin_desc(void) \
 {\
     return &pluginDesc; \
 } \
-extern "C" shared_ptr<crane::AbstractPluginFactory> createPluginFactory() {\
+extern "C" shared_ptr<crane::IPluginFactory> createPluginFactory() {\
     return make_shared<pluginName##Factory>();\
 }
 

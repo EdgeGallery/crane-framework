@@ -44,7 +44,7 @@ class PluginSwappable {
          * @Param: null
          * @Return: CRANE_SUCC/CRANE_FAIL
          */        
-        virtual unsigned swap_up(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) = 0;
+        virtual unsigned swap_up(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) = 0;
 
         /**
          * @Descripttion: When the plugin should support hot swapping functionality, stale plugin developer 
@@ -53,7 +53,7 @@ class PluginSwappable {
          * @Param: null
          * @Return: CRANE_SUCC/CRANE_FAIL
          */        
-        virtual unsigned swap_down(shared_ptr<PluginBaseInterface> stale, shared_ptr<PluginBaseInterface> fresh) = 0;
+        virtual unsigned swap_down(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) = 0;
 
     public:
         virtual ~PluginSwappable() {};
