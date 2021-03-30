@@ -87,7 +87,6 @@ class CraneRegistry {
          */        
         shared_ptr<PluginInterfaceInfo> findPluginItfInfo(const string&) const;
 
-        // Add Swap dongyin 3-5
         /**
          * @Descripttion: Create a new Itf object through absolute library file name.
          * @Param: absoluteFileName: Absolute library file name of the plugin.

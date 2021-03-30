@@ -376,8 +376,6 @@ namespace NS_CRANE {
             return CRANE_FAIL;
         }
 
-        // TODO: Should check whether the plugin instance is still in the 
-        // PluginInstanceIdMap. If so, just return with error code.
         auto l = itf->getPluginInstanceIds(pluginName);
         if (!l.empty()) {
             LOG_WARNING("Instance of the plugin:{ %s } of the type: { %s } is \

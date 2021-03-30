@@ -54,10 +54,9 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
-    PluginBase* PluginSysAdapter::create(const string& itfType, const string& pluginName, const string& name) {
+    PluginBase* PluginSysAdapter::create(const string& itfType, const string& pluginName, string& id) {
         LOG_INFO("Creating plugin[%s] of Itf[%s]...", pluginName.c_str(), itfType.c_str());
-
-        unused(name);
+        
 
         lock_guard<mutex> lock(_mtx);
         
@@ -97,6 +96,10 @@ namespace NS_CRANE {
         PluginBase* plugin = factory->create();
         if (plugin == nullptr) { return nullptr; }
 
+        // Set plugin instance id.
+        if(id.empty()) { id = Util::uuid(); }
+        plugin->id(id);
+
         if (factory->isAllowInit()) { 
             if (CRANE_SUCC != plugin->init()) {
                 LOG_ERROR("init() is failed");
@@ -114,7 +117,7 @@ namespace NS_CRANE {
                                                     const string& description) {
         if (id.empty()) { id = Util::uuid(); }
 
-        PluginBase* plugin = create(type, pluginName, description);
+        PluginBase* plugin = create(type, pluginName, id);
         if (plugin == nullptr) {
             return shared_ptr<PluginBase>(nullptr);
         }
@@ -165,25 +168,11 @@ namespace NS_CRANE {
             LOG_ERROR("Load library: { %s } into registry failed.", filename.c_str());
         }
         return ret;
-
     }
 
     unsigned PluginSysAdapter::load(const string& filename) {
         PluginDesc desc{};
         return load(filename, desc);
-        /*
-        unsigned ret;
-        {
-            lock_guard<mutex> lock(_mtx);
-            shared_ptr<PluginInterfaceInfo> newItfInfo = createItfInfo(filename);
-            const string type = newItfInfo->type();
-            ret = registry_(newItfInfo);
-        }
-        if (CRANE_SUCC != ret) {
-            LOG_ERROR("Load library: { %s } into registry failed.", filename.c_str());
-        }
-        return ret;
-        */
     }
 
     void PluginSysAdapter::unload(const string& type, const string& pluginName) {
@@ -191,7 +180,7 @@ namespace NS_CRANE {
         clearPlugin(type, pluginName);
         return;
     }
-    //#if 0 // dongyin 2-27
+
     shared_ptr<PluginBase> PluginSysAdapter::instance(const string& id) {
         return getPluginInstance(id);
     }

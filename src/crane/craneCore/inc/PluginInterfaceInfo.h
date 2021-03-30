@@ -72,6 +72,11 @@ public:
 
     unsigned validateVersion(const string interfaceType) = delete;
 
+    /**
+     * @Descripttion: Get plugin library file map in the interface info instance.
+     * @Param: null
+     * @Return: Reference of the _pluginLibListMap.
+     */        
     inline const PluginLibFileMap& pluginLibFileMap() const {
         return _pluginLibFileMap;
     }
@@ -85,6 +90,10 @@ public:
         return _pluginFactoryList;
     }
 
+    /**
+     *  BEGIN: Methods of the plugin library file management, which is related with
+     *  PluginLibFileMap _pluginLibFileMap
+     */
     /**
      * @Descripttion: Insert a new pair of plugin name and absolute file name into the map
      * @Param: pluginName: plugin class name
@@ -114,7 +123,15 @@ public:
      * @Return: CRANE_SUCC/CRANE_FAIL
      */        
     unsigned delPluginLibFile(const string& pluginName);
+    /**
+     *  END: Methods of the plugin library file management, which is related with
+     *  PluginLibFileMap _pluginLibFileMap
+     */
 
+    /**
+     *  BEGIN: Methods of the plugin factory instance management, which is 
+     *  related with PluginFactoryList   _pluginFactoryList.
+     */
     /**
      * @Descripttion: Add a new plugin factory instance into the 
      *              PluginFactoryList.
@@ -144,7 +161,15 @@ public:
      * @Return: CRANE_SUCC/CRANE_FAIL
      */        
     unsigned delPluginFactory(const string& pluginName);
+    /**
+     *  ENG: Methods of the plugin factory instance management, which is 
+     *  related with PluginFactoryList   _pluginFactoryList.
+     */
 
+    /**
+     *  BEGIN: Methods of the plugin instance id management, which is 
+     *  related with PluginInstanceIdMap _pluginInstanceIdMap.
+     */
     /**
      * @Descripttion: Add plugin id into the list<id> of pluginName. If pluginName is not 
      *              exist in the _pluginInstanceIdMap, then insert the pair of pluginName and
@@ -171,6 +196,10 @@ public:
      * @Return: CRANE_SUCC/CRANE_FAIL
      */    
     list<string> getPluginInstanceIds(const string& pluginName) const;
+    /**
+     *  END: Methods of the plugin instance id management, which is 
+     *  related with PluginInstanceIdMap _pluginInstanceIdMap.
+     */
 
 
 private:

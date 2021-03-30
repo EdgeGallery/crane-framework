@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 09:32:49
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,8 +57,9 @@ int main(int argc, char** argv)
     pPluginFrame->init(argc, argv, CRANE_CRN);
 
     //*** Create "SingletonImpl" instance of crane singtonImpl plugin.
+    string id{"Crane HTTP Server"};
     Itf_CraneSrv* server = dynamic_cast<Itf_CraneSrv*>(
-        pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+        pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
     server->handler(Http::make_handler<HelloHandlerBasic>());
 

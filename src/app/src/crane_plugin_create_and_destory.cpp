@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 10:31:02
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-02-25 15:12:42
+ * @LastEditTime: 2021-03-30 09:30:40
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -39,8 +39,9 @@ int main(int argc, char** argv) {
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
         //*** Create "PlayerImplCD" instance of crane plugin.
+        string id{};
         Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
-            pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
+            pPluginFrame->create("Itf_Player", "PlayerImplCD", id));
     
         //*** Using the "PlayerImplCD" plugin instance.
         if (playerCD == nullptr) {

@@ -52,13 +52,14 @@ namespace NS_CRANE {
             virtual unsigned init(int, char**, unsigned) = 0;
             
             /**
-             * @Descripttion:   创建Crane插件的实例
-             * @Param:          type: 插件接口类型 
-             * @Param:          pluginName: 插件名称
-             * @Param:          description: description of the plugin instance
+             * @Descripttion:   Create Crane plugin instance without holded in
+             *                  the framework.
+             * @Param:          type: plugin interface type. 
+             * @Param:          pluginName: plugin implement class name.
+             * @Param:          id[IN/OUT]: the plugin instance id.
              * @Return:         Raw pointer of plugin instance
              */
-            virtual PluginBase* create(const string& type, const string& pluginName, const string& description) = 0;
+            virtual PluginBase* create(const string& type, const string& pluginName, string& id) = 0;
 
             /**
              * @Descripttion:   Create crane plugin instance

@@ -121,14 +121,16 @@ TEST_F(coreTest, load_specail_plugin)
     string plugin_filename = _s_cwd + string("/plugins/libcranepluginplayermp3.so");
     pPluginFrame->load(plugin_filename);
 
+    string id1 {"my first plugin instance of mp3"};
     Itf_Player* playerMP3 = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplMP3", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplMP3", id1));
     if (playerMP3) {
         playerMP3->play("play mp3...");
     }
 
+    string id2 {"my first plugin instance of cd"};
     Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplCD", id2));
     if (playerCD) {
         playerCD->play("play cd...");
     }
@@ -150,14 +152,16 @@ TEST_F(coreTest, reload_special_plugin) {
     plugin_filename = _s_cwd + string("/../lib/plugins/libcranepluginplayercd.so");
     pPluginFrame->load(plugin_filename);
 
+    string id1 {"my first plugin instance of mp3"};
     Itf_Player* playerMP3 = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplMP3", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplMP3", id1));
     if (playerMP3) {
         playerMP3->play("play mp3...");
     }
 
+    string id2 {"my first plugin instance of cd"};
     Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplCD", id2));
     if (playerCD) {
         playerCD->play("play cd...");
     }

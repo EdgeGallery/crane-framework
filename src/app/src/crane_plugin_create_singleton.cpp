@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 09:32:12
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +37,9 @@ int main(int argc, char** argv) {
     pPluginFrame->init(argc, argv, CRANE_CRN);
 
     //*** Create "SingletonImpl" instance of crane singtonImpl plugin.
+    string id1{};
     Itf_Singleton* singleton1 = dynamic_cast<Itf_Singleton*>(
-        pPluginFrame->create("Itf_Singleton", "SingletonImpl", "test crane singleton plugin"));
+        pPluginFrame->create("Itf_Singleton", "SingletonImpl", id1));
     
     //*** Using the "PlayerImplCD" plugin instance.
     if (singleton1 == nullptr) {
@@ -42,8 +51,9 @@ int main(int argc, char** argv) {
     singleton1->showName();
 
     //*** Create "SingletonImpl" instance of crane singtonImpl plugin again.
+    string id2{};
     Itf_Singleton* singleton2 = dynamic_cast<Itf_Singleton*>(
-        pPluginFrame->create("Itf_Singleton", "SingletonImpl", "test crane singleton plugin"));
+        pPluginFrame->create("Itf_Singleton", "SingletonImpl", id2));
 
     if (singleton2 == nullptr) {
         return 0;

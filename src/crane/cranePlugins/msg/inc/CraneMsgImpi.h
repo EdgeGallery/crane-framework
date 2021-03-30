@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 09:29:19
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,8 +60,11 @@ class CraneMsgImpi : public CraneMsg, public enable_shared_from_this<CraneMsgImp
 
     private:
         Itf_CraneMsgCenter* _msgCenter() {
+            string id{};
             static Itf_CraneMsgCenter* _msgCenter = dynamic_cast<Itf_CraneMsgCenter*>(
-                AbstractPluginFrame::getPluginFrame()->create("Itf_CraneMsgCenter", "CraneMsgCenter", ""));         
+                AbstractPluginFrame::getPluginFrame()->create("Itf_CraneMsgCenter", 
+                                                            "CraneMsgCenter", 
+                                                            id));
             return _msgCenter;
         }
 

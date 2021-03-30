@@ -98,8 +98,9 @@ shared_ptr<IPluginFactory> PluginInterfaceInfo::getPluginFactory(const string& p
 unsigned PluginInterfaceInfo::addPluginLibFile(const string& pluginName, const string& filename) {
     auto ret = _pluginLibFileMap.insert(make_pair(pluginName, filename));
     if (ret.second != true) {
-        LOG_ERROR("Insert pair of plugin name { %s } and absolute filename { %s } of the plugin library into the map failed.",
-                                    pluginName.c_str(), filename.c_str());
+        LOG_ERROR("Insert pair of plugin name { %s } and absolute filename { %s }\
+        of the plugin library into the map failed.",
+        pluginName.c_str(), filename.c_str());
         return CRANE_FAIL;
     }
 

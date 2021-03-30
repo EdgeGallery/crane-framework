@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 10:31:02
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-08 17:17:09
+ * @LastEditTime: 2021-03-30 08:57:16
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -29,38 +29,54 @@
 
 #include "craneMacro.h"
 
+using namespace std;
+
 namespace NS_CRANE {
 
 class PluginBase {
-    public:
-        /**
-         * @Descripttion: Invoked after plugin instance is created by framework.
-         *                Plugin developer should implement this method to initialize the plugin.
-         * @Param: null
-         * @Return: CRANE_SUCC/CRANE_FAIL
-         */        
-        virtual unsigned int init() = 0;
+public:
+    /**
+     * @Descripttion: Invoked after plugin instance is created by framework.
+     *                Plugin developer should implement this method to initialize the plugin.
+     * @Param: null
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */        
+    virtual unsigned int init() = 0;
 
-        /**
-         * @Descripttion: Invoked after init() method of plugin instance is called by framework.
-         *                Plugin developer should implement this method to start executive process e.g a thread.
-         *                This method could be empty, it's determined by the developer’s business needs.
-         * @Param: null
-         * @Return: CRANE_SUCC/CRANE_FAIL
-         */
-        virtual unsigned start() = 0;
+    /**
+     * @Descripttion: Invoked after init() method of plugin instance is called by framework.
+     *                Plugin developer should implement this method to start executive process e.g a thread.
+     *                This method could be empty, it's determined by the developer’s business needs.
+     * @Param: null
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */
+    virtual unsigned start() = 0;
 
-        /**
-         * @Descripttion: Invoked when plugin is destory by application or swapped down is called by framework.
-         *                Plugin developer should implement this method to stop executive process e.g a thread.
-         *                This method could be empty, it's determined by the developer’s business needs.
-         * @Param: null
-         * @Return: CRANE_SUCC/CRANE_FAIL
-         */
-        virtual unsigned stop() noexcept = 0;
+    /**
+     * @Descripttion: Invoked when plugin is destory by application or swapped down is called by framework.
+     *                Plugin developer should implement this method to stop executive process e.g a thread.
+     *                This method could be empty, it's determined by the developer’s business needs.
+     * @Param: null
+     * @Return: CRANE_SUCC/CRANE_FAIL
+     */
+    virtual unsigned stop() noexcept = 0;
 
-    public:
-        virtual ~PluginBase() {};
+public:
+    virtual ~PluginBase() {};
+
+    const string& id() const {
+        return _id;
+    }
+
+    void id(const string& id) {
+        if (!_id.compare(NULL_PLUGIN_ID)) {
+            _id = id;
+        }
+    }
+
+private:
+    // plugin instance id;
+    string          _id = NULL_PLUGIN_ID;
     
 };
 
