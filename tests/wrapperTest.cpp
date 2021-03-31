@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 15:52:48
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-08 21:53:52
+ * @LastEditTime: 2021-03-31 10:34:02
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -31,6 +31,7 @@
 using namespace std;
 using namespace NS_CRANE;
 
+#if 0
 TEST(Wrapper, create_plugin_without_hold_instance) {
 #ifdef BUILD_WRAPPER_CONSTRUCTOR
     cout << endl << endl;
@@ -98,28 +99,59 @@ TEST(Wrapper, duplicate_plugin_from_framework) {
     wrapper_play_cd_duplicated->play("wrapper_play_cd_duplicated is playing cd...");
 #endif
 }
+#endif
 
-TEST(Wrapper, 1) {
+class WrapperTest: public ::testing::Test {
+protected:
+    virtual void SetUp() {
+        pluginFrame = AbstractPluginFrame::getPluginFrame();
+        pluginFrame->init(1, nullptr, CRANE_CRN);
+    }
+
+    virtual void TearDown() {
+        AbstractPluginFrame::relPluginFrame();
+    }
+    
+    AbstractPluginFrame* pluginFrame = nullptr;
+};
+
+TEST_F(WrapperTest, create_wrapper_plugin_through_type_and_plugin_name) {
     cout << endl << endl;
-    cout << "Enter Wrapper duplicate_plugin_from_framework()" << endl;
-    AbstractPluginFrame* pluginFrame = AbstractPluginFrame::getPluginFrame();
-    pluginFrame->init(1, nullptr, CRANE_CRN);
+    cout << "Enter WrapperTest create_wrapper_plugin_through_type_and_plugin_name()" << endl;
 
-   // shared_ptr<Wrapper<Itf_Player>> wrapper_player_cd = dynamic_pointer_cast<shared_ptr<Wrapper<Itf_Player>>(
-     //Wrapper<PluginBaseInterface>& wrapper_player_cd = pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", "");
-     //Wrapper<PluginBaseInterface>& wrapper_player_cd = pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", "");
-     //SwappablePlugin<Itf_Player>& wrapper_player_cd = reinterpret_cast<SwappablePlugin<Itf_Player>>(pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", ""));
-     //SwappablePlugin<Itf_Player>& wrapper_player_cd = reinterpret_cast<SwappablePlugin<Itf_Player>>(pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", ""));
+    //*** Create wrapper plugin through the interface type and plugin implement class name.
     string id{};
-    shared_ptr<Wrapper> wrapper_player_cd = pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", id, "");
+    shared_ptr<Wrapper> wrapper_player_cd = 
+        pluginFrame->createSwappablePlugin("Itf_Player", "PlayerImplCD", id, "");
     cout << "Swappable plugin id: " << id << endl;
-    dynamic_pointer_cast<Itf_Player>(wrapper_player_cd->p())->play("wrapper_player_cd is playing cd...");
-    cout << " wrapper_player_cd use_count: " << wrapper_player_cd->p().use_count() << endl;
+    
+    plugin_cast<Itf_Player>(wrapper_player_cd)->play("wrapper_player_cd is playing cd...");
 
-    shared_ptr<Wrapper> duplicated_wrapper_player_cd = pluginFrame->fetchSwappablePlugin(id);
-    dynamic_pointer_cast<Itf_Player>(duplicated_wrapper_player_cd->p())->play("wrapper_player_cd is playing cd...");
+    //*** Check reference count of shared_ptr<plugin>, which is refered by 
+    //    _pluginInstanceMap, _pluginSwappableInstanceMap and wrapper_player_cd.
+    cout << " wrapper_player_cd use_count: " << wrapper_player_cd->p().use_count() << endl;
+    ASSERT_EQ(3, plugin_cast<Itf_Player>(wrapper_player_cd).use_count());
+
+    //*** Fetch wrapper plugin from the registry through wrapper plugin id.
+    shared_ptr<Wrapper> duplicated_wrapper_player_cd = 
+        pluginFrame->fetchSwappablePlugin(id);
+    plugin_cast<Itf_Player>(duplicated_wrapper_player_cd)->play("wrapper_player_cd is playing cd...");
+
+    //*** Check reference count of shared_ptr<plugin>, which is refered by 
+    //    _pluginInstanceMap, _pluginSwappableInstanceMap and duplicated_wrapper_player_cd.
     cout << "duplicated_wrapper_player_cd use_count: " << duplicated_wrapper_player_cd->p().use_count() << endl;
+    ASSERT_EQ(3, plugin_cast<Itf_Player>(duplicated_wrapper_player_cd).use_count());
+
     ASSERT_EQ(wrapper_player_cd->p().get(), duplicated_wrapper_player_cd->p().get());
     cout << ":::::::->" <<wrapper_player_cd->p().get() << endl;
     cout << ":::::::->" <<duplicated_wrapper_player_cd->p().get() << endl;
+
+    //*** Release swapperable plugin instance.
+    pluginFrame->releaseSwappablePlugin(std::move(wrapper_player_cd));
+    pluginFrame->releaseSwappablePlugin(std::move(duplicated_wrapper_player_cd));
+
+    //*** Unload the library of the plugin from the process memory space.
+    unsigned ret = CRANE_FAIL;
+    ret = pluginFrame->unload("Itf_Player", "PlayerImplCD");
+    ASSERT_EQ(CRANE_SUCC, ret);
 }

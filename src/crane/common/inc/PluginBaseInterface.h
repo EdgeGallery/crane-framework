@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 10:31:02
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-30 08:57:16
+ * @LastEditTime: 2021-03-30 14:35:54
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -70,6 +70,7 @@ public:
 
     void id(const string& id) {
         if (!_id.compare(NULL_PLUGIN_ID)) {
+            // Now _id is null, so set it.
             _id = id;
         }
     }

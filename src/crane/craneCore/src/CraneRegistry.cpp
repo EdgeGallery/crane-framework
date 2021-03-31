@@ -534,6 +534,8 @@ namespace NS_CRANE {
             _pluginInstanceMap.erase(itr);
             return;
         }
+        LOG_WARNING("Pluign instance of id: { %s } has been referred by { %ld } counts.", 
+                            id.c_str(), itr->second.first.use_count());
         return;
     }
 
@@ -581,10 +583,11 @@ namespace NS_CRANE {
 
                 // Release plugin instance.
                 relPluginInstance(pluginId);                
+            } else {
+                LOG_WARNING("This wrapped plugin is referred by others, \
+                            so it cannot release the wrapped plugin with id: { %s }",
+                            id.c_str());
             }
-            LOG_WARNING("This wrapped plugin is referred by others, \
-                        so it cannot release the wrapped plugin with id: { %s }",
-                        id.c_str());
             return;
         }
         LOG_WARNING("Can not find wrappable plugin id: { %s } \

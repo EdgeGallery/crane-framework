@@ -54,10 +54,11 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
-    PluginBase* PluginSysAdapter::create(const string& itfType, const string& pluginName, string& id) {
+    PluginBase* PluginSysAdapter::create(const string& itfType, 
+                                        const string& pluginName, 
+                                        string& id) {
         LOG_INFO("Creating plugin[%s] of Itf[%s]...", pluginName.c_str(), itfType.c_str());
         
-
         lock_guard<mutex> lock(_mtx);
         
         shared_ptr<PluginInterfaceInfo> spItfInfo = findPluginItfInfo(itfType);
@@ -115,6 +116,8 @@ namespace NS_CRANE {
                                                     const string& pluginName, 
                                                     string& id, 
                                                     const string& description) {
+        unused(description);
+                                                                
         if (id.empty()) { id = Util::uuid(); }
 
         PluginBase* plugin = create(type, pluginName, id);
@@ -132,6 +135,16 @@ namespace NS_CRANE {
         }
 
         return plugin_shared_ptr;
+    }
+
+    void PluginSysAdapter::release(shared_ptr<PluginBase>&& cranePlugin) {
+        string id = cranePlugin->id();
+
+        // Release the reference to the pointer of the plugin.
+        cranePlugin.reset();
+
+        // Release data in the registry and try to release instance of the plugin.
+        relPluginInstance(id);
     }
 
     void PluginSysAdapter::destory(PluginBase* cranePlugin) {
@@ -175,10 +188,9 @@ namespace NS_CRANE {
         return load(filename, desc);
     }
 
-    void PluginSysAdapter::unload(const string& type, const string& pluginName) {
+    unsigned PluginSysAdapter::unload(const string& type, const string& pluginName) {
         lock_guard<mutex> lock(_mtx);
-        clearPlugin(type, pluginName);
-        return;
+        return clearPlugin(type, pluginName);
     }
 
     shared_ptr<PluginBase> PluginSysAdapter::instance(const string& id) {
@@ -204,8 +216,11 @@ namespace NS_CRANE {
         // Get plugin instance which has been holded by Registry's _pluginInstanceMap.
         shared_ptr<PluginBase> p = create(itfType, pluginName, pluginId, desc);
 
+        // Make shared_ptr<Wrapper> and set wrapperable plugin id.
         shared_ptr<Wrapper> wp = make_shared<Wrapper>(p);
         if (id.empty()) { id = Util::uuid(); }
+        wp->id(id);
+
         addPluginSwappableInstance(id, wp, pluginId, desc);
         return getPluginSwappableInstance(id);
     }
@@ -221,12 +236,20 @@ namespace NS_CRANE {
 
         shared_ptr<Wrapper> wp = make_shared<Wrapper>(p);
         if (id.empty()) { id = Util::uuid(); }
+        wp->id(id);
+
         addPluginSwappableInstance(id, wp, pluginId, desc);
         return getPluginSwappableInstance(id);
     }
     
     shared_ptr<Wrapper> PluginSysAdapter::fetchSwappablePlugin(const string& id) {
         return getPluginSwappableInstance(id);
+    }
+
+    void PluginSysAdapter::releaseSwappablePlugin(shared_ptr<Wrapper>&& wp) {
+        string id = wp->id();
+        wp.reset();
+        relPluginSwappableInstance(id);
     }
 
     unsigned PluginSysAdapter::swapByFilename(const string& id, const string& filename) {

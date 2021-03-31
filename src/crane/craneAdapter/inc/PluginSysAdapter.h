@@ -92,6 +92,17 @@ public:
                             string& id, const string& description) override;
 
     /**
+     * @Descripttion:   Release the shared_ptr of the plugin instance.
+     *                  Release the reference to pointer of plugin instance.
+     *                  Release the data of plugin instance in the registry.
+     *                  Try to destory the shared_ptr of plugin instance which is
+     *                  holded by framework.
+     * @Param:          shared_ptr of the plugin instance. 
+     * @Return:         null
+     */
+    void release(shared_ptr<PluginBase>&& cranePlugin) override;
+
+    /**
      * @Descripttion: Release the plugin throuth the raw point of plugin instance.
      * @Param: the pointer of the plugin instance.
      * @Return: null
@@ -144,7 +155,7 @@ public:
      *          description: Description of this instance of the plugin.                      
      * @Return: null
      */            
-    void unload(const string& type, const string& pluginName) override;
+    unsigned unload(const string& type, const string& pluginName) override;
 
     /**
      * @Descripttion: Fetch a plugin instance by id.
@@ -200,6 +211,7 @@ public:
      */   
     shared_ptr<Wrapper> fetchSwappablePlugin(const string& id) override;
 
+    void releaseSwappablePlugin(shared_ptr<Wrapper>&& wp) override;
     /**
      * @Descripttion: Swapping a Swappable plugin by the absolute ELF filename of fresh plugin instance.
      *              NOTE: wrapped plugin id will not changed, and no NEW

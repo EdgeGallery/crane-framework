@@ -6,7 +6,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-02-23 11:11:40
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-03-09 09:26:04
+ * @LastEditTime: 2021-03-31 10:03:57
  */
 
 /*
@@ -204,6 +204,10 @@ public:
     }
     
 private:
+    void id(const string& id) {
+        _id = id;
+    }
+    
     void _p(shared_ptr<PluginBase> p) {
         _plugin = p;
     }
