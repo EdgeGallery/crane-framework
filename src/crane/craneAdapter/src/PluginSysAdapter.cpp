@@ -174,6 +174,10 @@ namespace NS_CRANE {
         {
             lock_guard<mutex> lock(_mtx);
             shared_ptr<PluginInterfaceInfo> newItfInfo = createItfInfo(filename, desc);
+            if (!newItfInfo) {
+                LOG_ERROR("Create ItfInfo with library file { %s } failed",filename.c_str());
+                return CRANE_FAIL;
+            }
             const string type = newItfInfo->type();
             ret = registry_(newItfInfo);
         }

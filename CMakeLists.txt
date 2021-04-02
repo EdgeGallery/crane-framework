@@ -43,11 +43,17 @@ include_directories("/usr/local/include/gstreamer-1.0")
 link_directories("/usr/local/lib/gstreamer-1.0")
 include_directories("/usr/include/python3.8")
 
+link_directories(${PROJECT_BINARY_DIR}/third-party/disruptor/Disruptor)
+
+#Third party dependence
+add_subdirectory(third-party/disruptor)
+
 add_subdirectory(src/crane/common)
 add_subdirectory(src/crane/craneCore)
 add_subdirectory(src/crane/cranePlugins/msg)
 add_subdirectory(src/crane/cranePlugins/mep)
 add_subdirectory(src/crane/cranePlugins/srv)
+add_subdirectory(src/crane/cranePlugins/disruptor)
 add_subdirectory(src/crane/gstFacade)
 add_subdirectory(src/crane/craneAdapter)
 add_subdirectory(src/crane/craneWrapper)

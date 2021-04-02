@@ -8,6 +8,9 @@ function(crane_test test_name)
     include_directories("${PROJECT_SOURCE_DIR}/src/crane/cranePlugins/msg/inc")
     include_directories("${PROJECT_SOURCE_DIR}/src/crane/cranePlugins/mep/inc")
     include_directories("${PROJECT_SOURCE_DIR}/src/crane/cranePlugins/srv/inc")
+
+    include_directories("${PROJECT_SOURCE_DIR}/third-party/disruptor")
+    include_directories("${PROJECT_SOURCE_DIR}/src/crane/cranePlugins/disruptor/inc")
     
     include_directories("${PROJECT_SOURCE_DIR}/src/crane/common/inc")
     include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneAdapter/inc")
@@ -35,10 +38,12 @@ configure_file("certs/client.crt" "certs/client.crt" COPYONLY)
 
 
 #crane_test(jsontest)
-crane_test(coreTest)
-crane_test(srvTest)
+##crane_test(coreTest)
+##crane_test(srvTest)
 #crane_test(msgCenterTest)
-crane_test(pluginInstMgntTest)
-crane_test(wrapperTest)
-crane_test(swapTest)
+##crane_test(pluginInstMgntTest)
+##crane_test(wrapperTest)
+##crane_test(swapTest)
+crane_test(disruptorTest)
 #crane_test(mepTest)
+

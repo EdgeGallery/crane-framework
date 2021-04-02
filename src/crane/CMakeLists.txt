@@ -39,6 +39,9 @@ target_link_libraries(cranepluginsysmep boost_system pistache crypto ssl cpprest
 add_library(cranepluginsyssrv MODULE $<TARGET_OBJECTS:cranesrv>)
 target_link_libraries(cranepluginsyssrv pistache ssl crane)
 
+add_library(cranepluginsysdisruptor MODULE $<TARGET_OBJECTS:cranedisruptor>)
+target_link_libraries(cranepluginsysdisruptor Disruptor crane)
+
 set(CRANE_PUBLIC_HEADERS 
         ${PROJECT_SOURCE_DIR}/src/inc/crane.h
         ${PROJECT_SOURCE_DIR}/src/inc/cranePlugin.h
