@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-04-02 09:39:41
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-04-02 17:59:23
+ * @LastEditTime: 2021-04-02 18:04:21
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -53,7 +53,7 @@ public:
         _handlerName(handlerName),
         _expectProcessed(expectedProcessed) {}
     void onEvent(DisruptorEvent& event, int64_t seq, bool b) override {
-        cout << _handlerName << ", Age: " << event.age << endl;
+        //cout << _handlerName << ", Age: " << event.age << endl;
         _sumOfAge += event.age;
 
         if (++_actuallyProcessed == _expectProcessed) {
@@ -90,7 +90,7 @@ TEST_F(DisrutporTest, base) {
     cout << endl << endl;
     cout <<"Enter DisruptorTest base()" << endl;
 
-    uint32_t expectedNumOfEvents = 100;
+    uint32_t expectedNumOfEvents = 10000;
 
     //*** Create disruptor instance.
     string disruptor_id{"disruptor_1"};
