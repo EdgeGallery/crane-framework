@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-03-31 19:38:15
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-04-02 17:51:23
+ * @LastEditTime: 2021-04-08 10:07:01
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -40,35 +40,146 @@ using namespace std;
 
 namespace NS_CRANE {
 
-struct DisruptorEvent
-{
-    string name;
-    uint32_t age;
-};
-
-class CraneDisruptor : public Itf_CraneDisruptor<DisruptorEvent> {
+template<typename E>
+class CraneDisruptor : public Itf_CraneDisruptor<E> {
 public:
-    unsigned int init() override;
-    unsigned start() override;
-    unsigned stop() noexcept override;
+    unsigned int init() override {
+        return CRANE_SUCC;
+    }
+    unsigned start() override {
+        return CRANE_SUCC;
+    }
+    unsigned stop() noexcept override {
+        return CRANE_SUCC;
+    }
 
-    unsigned swap_up(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) override;
-    unsigned swap_down(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) override;     
+    unsigned swap_up(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) override {
+        unused(stale, fresh);
+        return CRANE_SUCC;
+    }
+    unsigned swap_down(shared_ptr<PluginBase> stale, shared_ptr<PluginBase> fresh) override {
+        unused(stale, fresh);
+        return CRANE_SUCC;
+    }
+
+    void initialize(const typename Itf_CraneDisruptor<E>::Options& ops) override {
+        _threadNum = ops.threadNum();
+        _producerType = ops.producerType();
+        _eventFactory = [](){ return E(); };
+
+        _taskScheduler = taskPolicys.at(ops.taskSchedulerPolicy()).taskScheduler();
+        _waitStrategy = createWaitStrategys(ops).at(ops.waitStrategy()).waitStrategy();
+
+        _disruptor = make_shared<Disruptor::disruptor<E>>(
+            _eventFactory,
+            ops.ringBufferLen(), 
+            _taskScheduler,
+            _producerType,
+            _waitStrategy
+        );
+    }
+
+    void handler(typename Itf_CraneDisruptor<E>::EventHandlers& ds) override {
+        _disruptor->handleEventsWith(ds);        
+    }
     
-    void initialize(const Options& ops) override;
-    void startUp() override;
-    void closeUp() override;
-    //void handler(Disruptor::IEventHandler<DisruptorEvent>& d) override;
-    void handler(EventHandlers& ds) override;
-    void publish(DisruptorEvent e) override;
+    void startUp() override {
+        _taskScheduler->start(_threadNum);
+        _disruptor->start();    
+    }
+
+    void closeUp() override {
+        _disruptor->shutdown();
+        _taskScheduler->stop();
+    }
+
+    void publish(E&& e) override {
+        auto ringBuffer = _disruptor->ringBuffer();
+        auto nextSequence = ringBuffer->next();
+        (*ringBuffer)[nextSequence].name = e.name;
+        (*ringBuffer)[nextSequence].age = e.age;
+        ringBuffer->publish(nextSequence); 
+    }
+
     virtual ~CraneDisruptor() { cout << "~CraneDisruptor()" << endl; }
     
     private:
-        function<DisruptorEvent()>              _eventFactory;
+        function<E()>                           _eventFactory;
+        Disruptor::ProducerType                 _producerType;
         shared_ptr<Disruptor::ITaskScheduler>   _taskScheduler;
         shared_ptr<Disruptor::IWaitStrategy>    _waitStrategy;
-        shared_ptr<Disruptor::disruptor<DisruptorEvent>>     _disruptor;
+        shared_ptr<Disruptor::disruptor<E>>     _disruptor;
         uint32_t                                _threadNum;
+
+        using TaskSchedulerPolicy = typename Itf_CraneDisruptor<E>::TaskSchedulerPolicy;
+        struct ITaskSchedulerPolicy {
+            virtual shared_ptr<Disruptor::ITaskScheduler> taskScheduler() const {
+                return make_shared<Disruptor::ThreadPerTaskScheduler>();
+            }
+        };
+        struct ThreadPerTaskSchedulerPolicy : public ITaskSchedulerPolicy {
+            shared_ptr<Disruptor::ITaskScheduler> taskScheduler() const override {
+                    return make_shared<Disruptor::ThreadPerTaskScheduler>();
+            }
+        };
+        struct RoundRobinThreadAffinedTaskSchedulerPolicy : public ITaskSchedulerPolicy {
+            shared_ptr<Disruptor::ITaskScheduler> taskScheduler() const override {
+                    return make_shared<Disruptor::RoundRobinThreadAffinedTaskScheduler>();
+            }
+        };
+        const map<const TaskSchedulerPolicy, const ITaskSchedulerPolicy> taskPolicys = {
+            {TaskSchedulerPolicy::ThreadPerTaskScheduler, ThreadPerTaskSchedulerPolicy()},
+            {TaskSchedulerPolicy::RoundRobinThreadAffinedTaskScheduler, RoundRobinThreadAffinedTaskSchedulerPolicy()}
+        };
+
+        struct IWaitStrategy {
+            virtual shared_ptr<Disruptor::IWaitStrategy> waitStrategy() const {
+                return make_shared<Disruptor::BlockingWaitStrategy>();
+            }
+        };
+        struct BlockingWaitStrategy : public IWaitStrategy {
+            shared_ptr<Disruptor::IWaitStrategy> waitStrategy() const override {
+                return make_shared<Disruptor::BlockingWaitStrategy>();
+            }
+        };
+        struct TimeoutBlockingWaitStrategy : public IWaitStrategy {
+            TimeoutBlockingWaitStrategy(Disruptor::ClockConfig::Duration d) : _d(d) {}
+            shared_ptr<Disruptor::IWaitStrategy> waitStrategy() const override {
+                return make_shared<Disruptor::TimeoutBlockingWaitStrategy>(_d);
+            }
+        private:
+            Disruptor::ClockConfig::Duration _d;
+        };
+        struct SleepWaitStrategy : public IWaitStrategy {
+            SleepWaitStrategy(uint32_t t) : _t(t) {}
+            shared_ptr<Disruptor::IWaitStrategy> waitStrategy() const override {
+                return make_shared<Disruptor::SleepingWaitStrategy>(_t);
+            }
+        private:
+            uint32_t    _t;
+        };
+        struct YieldWaitStrategy : public IWaitStrategy {
+            shared_ptr<Disruptor::IWaitStrategy> waitStrategy() const override {
+                return make_shared<Disruptor::YieldingWaitStrategy>();
+            }
+        };
+        struct SpinWaitWaitStrategy : public IWaitStrategy {
+            shared_ptr<Disruptor::IWaitStrategy> waitStrategy() const override {
+                return make_shared<Disruptor::SpinWaitWaitStrategy>();
+            }
+        };
+        using WaitStrategy = typename Itf_CraneDisruptor<E>::WaitStrategy;
+        using Options = typename Itf_CraneDisruptor<E>::Options;
+        const map<const WaitStrategy, const IWaitStrategy>
+        createWaitStrategys(const Options& ops) {
+            return map<const WaitStrategy, const IWaitStrategy> {
+                {WaitStrategy::BlockingWaitStrategy, BlockingWaitStrategy()},
+                {WaitStrategy::TimeoutBlockingWaitStrategy, TimeoutBlockingWaitStrategy(ops.time4TimeoutBlockingWait())},
+                {WaitStrategy::SleepWaitStrategy, SleepWaitStrategy(ops.retries4SleepWait())},
+                {WaitStrategy::YieldWaitStrategy, YieldWaitStrategy()},
+                {WaitStrategy::SpinWaitWaitStrategy, SpinWaitWaitStrategy()}
+            };
+        }
 };
     
 }

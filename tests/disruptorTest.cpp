@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-04-02 09:39:41
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-04-02 18:04:21
+ * @LastEditTime: 2021-04-07 20:51:27
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -21,6 +21,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#include <vector>
+#include <thread>
+#include <functional>
+#include <atomic>
+#include <mutex>
+
 #include "gtest/gtest.h"
 
 #include "crane.h"
@@ -28,9 +34,12 @@
 #include "playerInterface.h"
 
 #include "CraneDisruptor.h"
+#include "CraneDisruptorEvent.h"
 
 using namespace std;
 using namespace NS_CRANE;
+
+//using DisruptorEvent = NS_CRANE::CRANE_DISRUPTOR_EVENT::DisruptorEvent;
 
 class DisrutporTest: public ::testing::Test {
 protected:
@@ -54,6 +63,7 @@ public:
         _expectProcessed(expectedProcessed) {}
     void onEvent(DisruptorEvent& event, int64_t seq, bool b) override {
         //cout << _handlerName << ", Age: " << event.age << endl;
+        unused(seq, b);
         _sumOfAge += event.age;
 
         if (++_actuallyProcessed == _expectProcessed) {
@@ -86,9 +96,14 @@ private:
     uint32_t    _sumOfAge{0};
 };
 
-TEST_F(DisrutporTest, base) {
+template<typename T = DisruptorEvent>
+static shared_ptr<Itf_CraneDisruptor<T>> instance(AbstractPluginFrame* pluginFrame, const string& id) {
+    return dynamic_pointer_cast<Itf_CraneDisruptor<T>>(pluginFrame->instance(id));
+}
+
+TEST_F(DisrutporTest, threadPerTask) {
     cout << endl << endl;
-    cout <<"Enter DisruptorTest base()" << endl;
+    cout <<"Enter DisruptorTest threadPerTask_blockingWait_multiProducer()" << endl;
 
     uint32_t expectedNumOfEvents = 10000;
 
@@ -97,7 +112,7 @@ TEST_F(DisrutporTest, base) {
     shared_ptr<Itf_CraneDisruptor<DisruptorEvent>> disruptor = 
         dynamic_pointer_cast<Itf_CraneDisruptor<DisruptorEvent>>(pluginFrame->create(
                                                             "Itf_CraneDisruptor", 
-                                                            "CraneDisruptor",
+                                                            "CraneDisruptor<DisruptorEvent>",
                                                             disruptor_id, 
                                                             ""));
     Itf_CraneDisruptor<DisruptorEvent>::Options ops{};
@@ -106,13 +121,13 @@ TEST_F(DisrutporTest, base) {
     auto eventHandler_1 = make_shared<EventHandler>("handler_1", expectedNumOfEvents);
     auto eventHandler_2 = make_shared<EventHandler>("handler_2", expectedNumOfEvents);
     Itf_CraneDisruptor<DisruptorEvent>::EventHandlers handlers{eventHandler_1, eventHandler_2};
-    disruptor->handler(handlers);
+    instance<>(pluginFrame, disruptor_id)->handler(handlers);
 
-    disruptor->startUp();
+    instance<>(pluginFrame, disruptor_id)->startUp();
     
     uint32_t sumOfAge{0};
     for(uint32_t i = 0; i<expectedNumOfEvents; ++i) {
-        disruptor->publish(DisruptorEvent{"dongyin", i});
+        instance<>(pluginFrame, disruptor_id)->publish(DisruptorEvent{"dongyin", i});
         sumOfAge += i;
     }
 
@@ -122,15 +137,16 @@ TEST_F(DisrutporTest, base) {
     ASSERT_EQ(sumOfAge, eventHandler_1->sumOfAge()); 
     ASSERT_EQ(sumOfAge, eventHandler_2->sumOfAge()); 
 
-    disruptor->closeUp();
+    instance<>(pluginFrame, disruptor_id)->closeUp();
+    //disruptor->closeUp();
 
     pluginFrame->release(std::move(disruptor));
         
 }
 
-TEST_F(DisrutporTest, RoundRobinThreadAffinedTaskScheduler) {
+TEST_F(DisrutporTest, roundRobinTask) {
     cout << endl << endl;
-    cout <<"Enter DisruptorTest base2()" << endl;
+    cout <<"Enter DisruptorTest  roundRobinTask()" << endl;
 
     uint32_t expectedNumOfEvents = 10000;
 
@@ -139,7 +155,7 @@ TEST_F(DisrutporTest, RoundRobinThreadAffinedTaskScheduler) {
     shared_ptr<Itf_CraneDisruptor<DisruptorEvent>> disruptor = 
         dynamic_pointer_cast<Itf_CraneDisruptor<DisruptorEvent>>(pluginFrame->create(
                                                             "Itf_CraneDisruptor", 
-                                                            "CraneDisruptor",
+                                                            "CraneDisruptor<DisruptorEvent>",
                                                             disruptor_id, 
                                                             ""));
     Itf_CraneDisruptor<DisruptorEvent>::Options ops{};
@@ -160,6 +176,149 @@ TEST_F(DisrutporTest, RoundRobinThreadAffinedTaskScheduler) {
         disruptor->publish(DisruptorEvent{"dongyin", i});
         sumOfAge += i;
     }
+    eventHandler_1->waitEndOfProcessing();
+    eventHandler_2->waitEndOfProcessing();
+    ASSERT_EQ(sumOfAge, eventHandler_1->sumOfAge());
+    ASSERT_EQ(sumOfAge, eventHandler_2->sumOfAge());
+
+    disruptor->closeUp();
+
+    pluginFrame->release(std::move(disruptor));
+}
+
+TEST_F(DisrutporTest, roundRobinTask_singleProducer) {
+    cout << endl << endl;
+    cout <<"Enter DisruptorTest roundRobinTask_singleProducer()" << endl;
+
+    uint32_t expectedNumOfEvents = 10000;
+
+    //*** Create disruptor instance.
+    string disruptor_id{"disruptor_1"};
+    shared_ptr<Itf_CraneDisruptor<DisruptorEvent>> disruptor = 
+        dynamic_pointer_cast<Itf_CraneDisruptor<DisruptorEvent>>(pluginFrame->create(
+                                                            "Itf_CraneDisruptor", 
+                                                            "CraneDisruptor<DisruptorEvent>",
+                                                            disruptor_id, 
+                                                            ""));
+    Itf_CraneDisruptor<DisruptorEvent>::Options ops{};
+    ops.producerType(Disruptor::ProducerType::Single);
+    ops.taskSchedulerPolicy(Itf_CraneDisruptor<DisruptorEvent>::TaskSchedulerPolicy::RoundRobinThreadAffinedTaskScheduler);
+    
+    disruptor->initialize(ops);
+
+    auto eventHandler_1 = make_shared<EventHandler>("hangler_1" ,expectedNumOfEvents);
+    auto eventHandler_2 = make_shared<EventHandler>("handler_2", expectedNumOfEvents);
+    Itf_CraneDisruptor<DisruptorEvent>::EventHandlers handlers{eventHandler_1,
+                                                                eventHandler_2};
+    disruptor->handler(handlers);
+
+    disruptor->startUp();
+
+    uint32_t sumOfAge{0};
+    for(uint32_t i = 0; i<expectedNumOfEvents; ++i) {
+        DisruptorEvent e{"dongyin", i};
+        disruptor->publish(std::move(e));
+        sumOfAge += i;
+    }
+    eventHandler_1->waitEndOfProcessing();
+    eventHandler_2->waitEndOfProcessing();
+    ASSERT_EQ(sumOfAge, eventHandler_1->sumOfAge());
+    ASSERT_EQ(sumOfAge, eventHandler_2->sumOfAge());
+
+    disruptor->closeUp();
+
+    pluginFrame->release(std::move(disruptor));
+}
+
+TEST_F(DisrutporTest, roundRobinTask_spinWait_singleProducer) {
+    cout << endl << endl;
+    cout <<"Enter DisruptorTest roundRobinTask_spinWait_singleProducer()" << endl;
+
+    uint32_t expectedNumOfEvents = 10000;
+
+    //*** Create disruptor instance.
+    string disruptor_id{"disruptor_1"};
+    shared_ptr<Itf_CraneDisruptor<DisruptorEvent>> disruptor = 
+        dynamic_pointer_cast<Itf_CraneDisruptor<DisruptorEvent>>(pluginFrame->create(
+                                                            "Itf_CraneDisruptor", 
+                                                            "CraneDisruptor<DisruptorEvent>",
+                                                            disruptor_id, 
+                                                            ""));
+    Itf_CraneDisruptor<DisruptorEvent>::Options ops{};
+    ops.producerType(Disruptor::ProducerType::Single);
+    ops.taskSchedulerPolicy(Itf_CraneDisruptor<DisruptorEvent>::TaskSchedulerPolicy::RoundRobinThreadAffinedTaskScheduler);
+    ops.waitStrategy(Itf_CraneDisruptor<DisruptorEvent>::WaitStrategy::SpinWaitWaitStrategy);
+
+    disruptor->initialize(ops);
+
+    auto eventHandler_1 = make_shared<EventHandler>("hangler_1" ,expectedNumOfEvents);
+    auto eventHandler_2 = make_shared<EventHandler>("handler_2", expectedNumOfEvents);
+    Itf_CraneDisruptor<DisruptorEvent>::EventHandlers handlers{eventHandler_1,
+                                                                eventHandler_2};
+    disruptor->handler(handlers);
+
+    disruptor->startUp();
+
+    uint32_t sumOfAge{0};
+    for(uint32_t i = 0; i<expectedNumOfEvents; ++i) {
+        DisruptorEvent e{"dongyin", i};
+        disruptor->publish(std::move(e));
+        sumOfAge += i;
+    }
+    eventHandler_1->waitEndOfProcessing();
+    eventHandler_2->waitEndOfProcessing();
+    ASSERT_EQ(sumOfAge, eventHandler_1->sumOfAge());
+    ASSERT_EQ(sumOfAge, eventHandler_2->sumOfAge());
+
+    disruptor->closeUp();
+
+    pluginFrame->release(std::move(disruptor));
+}
+
+TEST_F(DisrutporTest, threadPerTask_twoProducers) {
+    cout << endl << endl;
+    cout <<"Enter DisruptorTest  threadPerTask_twoProducers()" << endl;
+
+    uint32_t expectedNumOfEvents = 10000;
+
+    //*** Create disruptor instance.
+    string disruptor_id{"disruptor_1"};
+    shared_ptr<Itf_CraneDisruptor<DisruptorEvent>> disruptor = 
+        dynamic_pointer_cast<Itf_CraneDisruptor<DisruptorEvent>>(pluginFrame->create(
+                                                            "Itf_CraneDisruptor", 
+                                                            "CraneDisruptor<DisruptorEvent>",
+                                                            disruptor_id, 
+                                                            ""));
+    Itf_CraneDisruptor<DisruptorEvent>::Options ops{};
+
+    disruptor->initialize(ops);
+
+    auto eventHandler_1 = make_shared<EventHandler>("hangler_1" ,expectedNumOfEvents);
+    auto eventHandler_2 = make_shared<EventHandler>("handler_2", expectedNumOfEvents);
+    Itf_CraneDisruptor<DisruptorEvent>::EventHandlers handlers{eventHandler_1,
+                                                                eventHandler_2};
+    disruptor->handler(handlers);
+
+    disruptor->startUp();
+
+    uint32_t sumOfAge{0};
+    AtomicFlagMutex atomic_flag_mutex{};
+    function<unsigned(const long)> f = [&](const long n)->unsigned{
+        for(uint32_t i = 0; i < n; ++i) {
+            lock_guard<AtomicFlagMutex> lock(atomic_flag_mutex);
+            disruptor->publish(DisruptorEvent{"dongyin", i});
+            sumOfAge += i;
+        }
+        return 0;
+    };
+    vector<thread> threads;
+    threads.emplace_back(f, expectedNumOfEvents/2);
+    threads.emplace_back(f, expectedNumOfEvents/2);
+
+    for(auto&& t : threads) {
+        t.join();
+    }
+    
     eventHandler_1->waitEndOfProcessing();
     eventHandler_2->waitEndOfProcessing();
     ASSERT_EQ(sumOfAge, eventHandler_1->sumOfAge());

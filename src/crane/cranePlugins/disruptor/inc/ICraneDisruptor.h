@@ -4,7 +4,7 @@
  * @Author: dongyin@huawei.com
  * @Date: 2021-03-31 19:38:45
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-04-02 17:04:12
+ * @LastEditTime: 2021-04-08 10:08:26
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -34,6 +34,7 @@
 #ifndef __PLUGIN_ICRANE_DISRUPTOR_H__
 #define __PLUGIN_ICRANE_DISRUPTOR_H__
 
+#include "Util.h"
 #include "cranePlugin.h"
 
 #include "Disruptor/Disruptor.h"
@@ -50,9 +51,9 @@ using namespace std;
 
 namespace NS_CRANE {
 
-constexpr size_t DISRUPTOR_RING_BUFFER_LEN = 1024 * 1024; 
-constexpr size_t TIME_4_TIMEOUT_BLOCKING_WAIT_STRATEGY = 500;
-constexpr int32_t RETRIES_4_SLEEP_WAIT_STRATEGY = 200;
+// constexpr size_t DISRUPTOR_RING_BUFFER_LEN = 1024 * 1024; 
+// constexpr size_t TIME_4_TIMEOUT_BLOCKING_WAIT_STRATEGY = 500;
+// constexpr int32_t RETRIES_4_SLEEP_WAIT_STRATEGY = 200;
 
     
 template < typename E >
@@ -75,6 +76,7 @@ public:
     public:
         Options() : 
             _ring_buffer_len(DISRUPTOR_RING_BUFFER_LEN),
+            _producerType(Disruptor::ProducerType::Multi),
             _taskSchedulerPolicy(TaskSchedulerPolicy::ThreadPerTaskScheduler), 
             _waitStrategyPolicy(WaitStrategy::BlockingWaitStrategy),
             _time4TimeoutBlockingWait(TIME_4_TIMEOUT_BLOCKING_WAIT_STRATEGY),
@@ -84,6 +86,11 @@ public:
     
         Options& ringBufferLen(size_t l) {
             _ring_buffer_len = l;
+            return *this;
+        }
+
+        Options& producerType(Disruptor::ProducerType t) {
+            _producerType = t;
             return *this;
         }
     
@@ -114,6 +121,10 @@ public:
         long ringBufferLen() const { 
             return _ring_buffer_len; 
         }
+
+        Disruptor::ProducerType producerType() const {
+            return _producerType;
+        }
     
         TaskSchedulerPolicy taskSchedulerPolicy() const {
             return _taskSchedulerPolicy;
@@ -136,7 +147,12 @@ public:
         }
     
     private:
+        static constexpr size_t DISRUPTOR_RING_BUFFER_LEN = 1024 * 1024; 
+        static constexpr size_t TIME_4_TIMEOUT_BLOCKING_WAIT_STRATEGY = 500;
+        static constexpr int32_t RETRIES_4_SLEEP_WAIT_STRATEGY = 200;
+
         size_t                  _ring_buffer_len;
+        Disruptor::ProducerType _producerType;
         TaskSchedulerPolicy     _taskSchedulerPolicy;
         WaitStrategy            _waitStrategyPolicy;
         Disruptor::ClockConfig::Duration   _time4TimeoutBlockingWait;
@@ -148,10 +164,10 @@ public:
     using EventHandlers = vector<shared_ptr<Disruptor::IEventHandler<E>>>;
 
     virtual void initialize(const Options&) = 0;
+    virtual void handler(vector<shared_ptr<Disruptor::IEventHandler<E>>>&) = 0;
     virtual void startUp() = 0;
     virtual void closeUp() = 0;
-    virtual void handler(vector<shared_ptr<Disruptor::IEventHandler<E>>>&) = 0;
-    virtual void publish(E) = 0;
+    virtual void publish(E&&) = 0;
 };
 
 }

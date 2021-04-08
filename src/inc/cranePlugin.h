@@ -151,4 +151,42 @@ extern "C" shared_ptr<crane::IPluginFactory> createPluginFactory() {\
     return make_shared<pluginName##Factory>();\
 }
 
+///////////////////////////////////////////////////////////////////////
+/// \brief  Developer of the pluign should invoke the macro function to generate
+///         the struction of the plugin information, the factory class and 
+///         factory method of the plugin.
+///         插件框架调用。。。
+///         fwVer:      framework version which is depended by the plugin.
+///         itfType:    interface name of plugin, e.g. Itf_Player
+///         itfVer:     version of the plugin implemention，如1.2.1
+///         pluginName: class name of the implemention of interface. e.g PlayerImplCD 
+///         T:          template parameter of the plugin implement class.
+///         desc:       description of the plugin. 
+///         author:     author of the plugin, e.g dongyin@huawei.com
+///         license:    license of the plugin
+///////////////////////////////////////////////////////////////////////
+#define CRANE_PLUGIN_DEFINE_WITH_T(fwVer, itfType, itfVer, pluginName, T, desc, author, license) \
+class pluginName_T_Factory : public crane::IPluginFactory { \
+    public: \
+        pluginName<T> * create() { return new pluginName<T>(); } \
+        pluginName_T_Factory() : crane::IPluginFactory(#itfType, #pluginName"<"#T">", itfVer) { } \
+        bool isAllowInit() { return true; } \
+}; \
+\
+const PluginDesc pluginDesc = { \
+    fwVer,\
+    CRANE_STRIFY(itfType),\
+    itfVer,\
+    #pluginName"<"#T">",\
+    desc,\
+    author,\
+    license\
+};\
+extern "C" const PluginDesc* crane_plugin_desc(void) \
+{\
+    return &pluginDesc; \
+} \
+extern "C" shared_ptr<crane::IPluginFactory> createPluginFactory() {\
+    return make_shared<pluginName_T_Factory>();\
+}
 #endif

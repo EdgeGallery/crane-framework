@@ -2,9 +2,9 @@
  * @Descripttion: 
  * @Version: 1.0
  * @Author: dongyin@huawei.com
- * @Date: 2021-04-01 09:12:15
+ * @Date: 2021-04-07 16:58:59
  * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-04-07 20:49:48
+ * @LastEditTime: 2021-04-07 20:49:12
  */
 /*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
@@ -22,28 +22,21 @@
  *    limitations under the License.
  */
 
+#ifndef __PLUGIN_CRANE_DISRUPTOR_EVENT_H__
+#define __PLUGIN_CRANE_DISRUPTOR_EVENT_H__
 
-/*
- * @Descripttion: 
- * @Version: 1.0
- * @Author: dongyin@huawei.com
- * @Date: 2021-04-01 09:12:15
- * @LastEditors: dongyin@huawei.com
- * @LastEditTime: 2021-04-01 09:40:43
- */
+#include <iostream>
 
-#include "CraneDisruptor.h"
-#include "CraneDisruptorEvent.h"
+using namespace std;
 
 namespace NS_CRANE {
 
-CRANE_PLUGIN_DEFINE_WITH_T("1.0.0",
-                    Itf_CraneDisruptor,
-                    "1.0.0",
-                    CraneDisruptor,
-                    DisruptorEvent,
-                    "crane system plugin, which is a high perfermence message bus.",
-                    "dongyin@huawei.com",
-                    "LGPL")
+struct DisruptorEvent
+{
+    string name;
+    uint32_t age;
+};
 
 }
+
+#endif
