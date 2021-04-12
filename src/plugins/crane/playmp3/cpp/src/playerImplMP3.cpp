@@ -46,5 +46,5 @@ CRANE_PLUGIN_DEFINE("1.0.0",    //插件接口版本
                     "1.0.1",    //要求的插件框架版本   
                     PlayerImplMP3,
                     "MP3 player which is implement the Itf_Player interface.",
-                    "dongyin@huawei.com",
+                    "testuser",
                     "LGPL")

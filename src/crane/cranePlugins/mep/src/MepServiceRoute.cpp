@@ -21,7 +21,7 @@ namespace NS_CRANE {
 	\"appId\": \"TC_APPF_APIGW_PUT_Routes_00\", \
 	\"serInfo\": {\
 		\"serName\": \"test\",\
-		\"addresses\":[{\"host\": \"19.1.56.14\", \"port\": 8080} ]\
+		\"addresses\":[{\"host\": \"127.0.0.1\", \"port\": 8080} ]\
 	},\
 	\"netType\": \"5GCORE_SERVICE\",\
 	\"interfaces\": [{\

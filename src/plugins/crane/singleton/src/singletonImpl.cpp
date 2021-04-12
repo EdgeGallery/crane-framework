@@ -36,5 +36,5 @@ CRANE_PLUGIN_DEFINE_SINGLETON("1.0.0",    //插件接口版本
                     "1.0.1",    //要求的插件框架版本   
                     SingletonImpl,
                     "Test crane singleton plugin.",
-                    "dongyin@huawei.com",
+                    "testuser",
                     "LGPL")

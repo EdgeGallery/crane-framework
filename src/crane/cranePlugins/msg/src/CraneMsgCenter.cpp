@@ -255,6 +255,6 @@ namespace NS_CRANE {
                     "1.0.0",    //要求的插件框架版本   
                     CraneMsgCenter,
                     "crane system plugin, which is a message center.",
-                    "dongyin@huawei.com",
+                    "testuser",
                     "LGPL")
 }
