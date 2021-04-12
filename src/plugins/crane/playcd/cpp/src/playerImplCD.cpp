@@ -46,6 +46,6 @@ CRANE_PLUGIN_DEFINE(
     "1.0.1",        //Required the version of the plugin framework.    
     PlayerImplCD,   //Name of the plugin interface implemention.
     "CD player which is implement the Itf_Player interface.",   //Description of the plugin implemention
-    "dongyin@huawei.com",       //Author of the plugin implemention.
+    "testuser",       //Author of the plugin implemention.
     "LGPL"                      //License.
     )

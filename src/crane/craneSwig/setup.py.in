@@ -43,7 +43,7 @@ if __name__ == '__main__':
         version='1.0.0.dev',
         packages=['crane4py'],
         license='Apache License 2.0',
-        author='Dongyin',
-        author_email='dongyin@huawei.com',
+        author='testuser',
+        author_email='testeamil',
         cmdclass={'install': CompiledLibInstall}
     )
