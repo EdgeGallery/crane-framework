@@ -68,7 +68,7 @@ namespace NS_CRANE {
             if (insertFactoryAndPluginNameFlags) {
                 //添加插件接口实现类名称
                 LOG_INFO("Add the pair of plugin name and plugin library filename into the registry.");
-                (*itr).second->addPluginLibFileMap(tmpItfInfo->pluginLibFileMap());
+                (*itr).second->addPluginLibFile(tmpItfInfo->pluginLibFileMap());
                 //(*itr).second->addPluginNames(spItfInfo->getPluginNameList());
 
                 //添加插件类型的工厂对象
@@ -96,12 +96,12 @@ namespace NS_CRANE {
     unsigned CraneRegistry::_addPluginLibMap(unique_ptr<DlLibrary> library) {
         //getDlFileDesc = reinterpret_cast<Func_Crane_Dl_Name_Desc>(library->symbol("crane_dl_" + -lib-file-name- + "_desc"));
         //DlLibrary& dlLibrary = dynamic_cast<DlLibrary>(library);
-        const PluginDesc& pluginDesc = library->pluginDesc();
-        unused(pluginDesc);
+        //const PluginDesc& pluginDesc = library->pluginDesc();
+        //unused(pluginDesc);
 
         //pluginMap.insert(pluginDlDesc->name, library);
         const string& filename = library->name(); //absolate filename of the plugin library.
-        PluginImplementMap::const_iterator itr = _pluginLibMap.find(filename);
+        PluginLibMap::const_iterator itr = _pluginLibMap.find(filename);
         if (itr != _pluginLibMap.cend()) {
             LOG_ERROR("This plugin{ %s } has existed in plugin library map.", filename.c_str());
             return CRANE_SUCC;
@@ -116,7 +116,7 @@ namespace NS_CRANE {
             LOG_ERROR("filename is empty.");
             return CRANE_FAIL;
         }
-        PluginImplementMap::const_iterator itr = _pluginLibMap.find(filename);
+        PluginLibMap::const_iterator itr = _pluginLibMap.find(filename);
         if (itr == _pluginLibMap.cend()) {
             LOG_ERROR("This plugin{ %s } has not existed in plugin library map.", filename.c_str());
             return CRANE_SUCC;
@@ -156,11 +156,10 @@ namespace NS_CRANE {
         }
     }
 
-    shared_ptr<PluginInterfaceInfo> CraneRegistry::findPluginItfInfo(const string& itfType) {
+    shared_ptr<PluginInterfaceInfo> CraneRegistry::findPluginItfInfo(const string& itfType) const {
 
         PluginInterfaceMap::const_iterator itr = _pluginItfMap.find(itfType);
         if (itr == _pluginItfMap.end()) {
-            //返回一个空的PluginInterfaceInfo对象；
             LOG_ERROR("Cannot find itf type{ %s } in the plugin map.", itfType.c_str());
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         }
@@ -306,71 +305,296 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
-    shared_ptr<PluginInterfaceInfo> CraneRegistry::createItfInfo(const string& filename) {
+    shared_ptr<PluginInterfaceInfo> CraneRegistry::createItfInfo(const string& filename, PluginDesc& desc) {
         unique_ptr<DlLibrary> lib = DlLibrary::Load(filename);
         if (lib == nullptr) {
             LOG_ERROR("Load plugin library { %s } Failed", filename.c_str());
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         }
-        //read the description of the plugin and write it into the lib object.
-        lib->getPluginDesc();
-        const PluginDesc& pluginDesc = lib->pluginDesc();
 
-        //Check whether the version of the plugin framework meet the need of the plugin interface.
+        // read the description of the plugin and write it into the lib object.
+        const PluginDesc& pluginDesc = lib->pluginDesc();
+        desc = pluginDesc;
+
+        // Check whether the version of the plugin framework meet the need of the plugin interface.
         if (Util::compareVersion(pluginDesc.fwVer, CRANE_FRAMEWORK_VERION) == CRANE_HIGHER) {
             LOG_ERROR("Current Crane framework version[%s] is below than the version[%s] plugin library required.", 
                         CRANE_FRAMEWORK_VERION, pluginDesc.fwVer.c_str());
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         } 
 
-        //Create plugin interface instance.
-        shared_ptr<PluginInterfaceInfo> spItfInfo = make_shared<PluginInterfaceInfo>(pluginDesc.itfType, 
-                                                                                     pluginDesc.itfVer, 
-                                                                                     pluginDesc.fwVer);
-        LOG_DEBUG("PluginItf info: Itf type[%s], Itf version[%s], Framework version[%s].",
-                        spItfInfo->type().c_str(), spItfInfo->curVersion().c_str(), spItfInfo->requireFwVer().c_str());
+        // Create plugin interface instance.
+        shared_ptr<PluginInterfaceInfo> spItfInfo = 
+            make_shared<PluginInterfaceInfo>(pluginDesc.itfType, 
+                                            pluginDesc.itfVer, 
+                                            pluginDesc.fwVer);
+        LOG_DEBUG("PluginItf info: Itf type[%s], \
+                    Itf version[%s], \
+                    Framework version[%s].",
+                    spItfInfo->type().c_str(), 
+                    spItfInfo->curVersion().c_str(), 
+                    spItfInfo->requireFwVer().c_str());
 
-        //Insert the pluginName(class name of the implement of plugin interface) into the PluginNameList.
-        spItfInfo->addPluginLibFileMap(pluginDesc.pluginName, lib->name());
-        //在接口下添加插件工厂对象
-        shared_ptr<AbstractPluginFactory> spPluginFactory = lib->createPluginFactory();
+        // Insert the pair of pluginName and absolute filename of dynamic library
+        // of the plugin into PluginLibFileMap.
+        spItfInfo->addPluginLibFile(pluginDesc.pluginName, lib->name());
+        
+        // Insert the pair of pluginname and instance of plugin factoy into the 
+        // PluginFactoryList.
+        shared_ptr<IPluginFactory> spPluginFactory = lib->createPluginFactory();
         if (spPluginFactory) {
-            LOG_DEBUG("Create plugin factory successfully with info: Itf type{ %s }, Itf version{ %s }, Plugin name{ %s }.",
-                        spPluginFactory->getInterfaceType().c_str(),
-                        spPluginFactory->getVersion().c_str(),
-                        spPluginFactory->getPluginName().c_str());
+            LOG_DEBUG("Create plugin factory successfully with info: \
+                        Itf type{ %s }, Itf version{ %s }, Plugin name{ %s }.",
+                        spPluginFactory->interfaceType().c_str(),
+                        spPluginFactory->version().c_str(),
+                        spPluginFactory->pluginName().c_str());
             spItfInfo->addPluginFactory(spPluginFactory);
         } else {
-            LOG_ERROR("Create factory of plugin interface{ %s } failed.", spItfInfo->type().c_str());
+            LOG_ERROR("Create factory of plugin interface{ %s } failed.", 
+                        spItfInfo->type().c_str());
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         }
 
-        //Add lib instance of the plugin into the map of the plugin lib with the pair of absolute filename and lib instance.
+        // Add lib instance of the plugin into the map of the plugin lib with 
+        // the pair of absolute filename and lib instance.
         if (CRANE_SUCC != _addPluginLibMap(std::move(lib))) {
             return shared_ptr<PluginInterfaceInfo>(nullptr);
         }
         return spItfInfo;
     }
 
+    shared_ptr<PluginInterfaceInfo> CraneRegistry::createItfInfo(const string& filename) {
+        PluginDesc desc;
+        return createItfInfo(filename, desc);
+    }
+
     unsigned CraneRegistry::clearPlugin(const string& type, const string& pluginName) {
         shared_ptr<PluginInterfaceInfo> itf =  findPluginItfInfo(type);
         if (!itf) {
-            LOG_ERROR("Cannot find the interface type:{ %s } in the registry.", type.c_str());
+            LOG_ERROR("Cannot find the interface type:{ %s } in the registry.", 
+                    type.c_str());
             return CRANE_FAIL;
         }
 
-        string filename = itf->findPluginLibFileMap(pluginName);
+        auto l = itf->getPluginInstanceIds(pluginName);
+        if (!l.empty()) {
+            LOG_WARNING("Instance of the plugin:{ %s } of the type: { %s } is \
+            not released now.", pluginName.c_str(), type.c_str() );
+            return CRANE_FAIL;
+        }
+        
+        const string filename = itf->findPluginLibFile(pluginName);
         if (filename.empty()) { 
-            LOG_ERROR("Plugin { %s } is not exist in _pluginLibFileMap.", pluginName);
+            LOG_ERROR("Plugin { %s } is not exist in _pluginLibFileMap.",
+                    pluginName);
             return CRANE_FAIL; 
         }
-        itf->delPluginLibFileMap(pluginName);
+        itf->delPluginLibFile(pluginName);
         itf->delPluginFactory(pluginName);
 
         _delPluginLibMap(filename);
         return CRANE_SUCC;
     }
-    
+
+    unsigned CraneRegistry::addPluginInstance(
+        const string& id, 
+        shared_ptr<PluginBase> plugin, 
+        const string& itfType, 
+        const string& pluginName) {
+        auto ret = _pluginInstanceMap.insert(make_pair(id, make_pair(plugin, make_pair(itfType, pluginName))));
+        if (ret.second != true) {
+            LOG_ERROR("Insert pair of plugin instance uuid { %s } \
+                and plugin instance of itfType { %s } and pluginName { %s } \
+                into the map failed.", 
+                    id.c_str(), itfType.c_str(), pluginName.c_str());
+            return CRANE_FAIL;
+        }
+
+        // Add it into PluginInterfaceInfo.
+        do {
+            shared_ptr<PluginInterfaceInfo> itfInfo = findPluginItfInfo(itfType);
+            if (!itfInfo) {
+                LOG_ERROR("Cannot find the interface type:{ %s } in the registry.", 
+                        itfType.c_str());
+                break;
+            }
+
+            if (CRANE_SUCC != itfInfo->addPluginInstanceId(pluginName, id)) {
+                LOG_ERROR("Add Plugin instance id { %s } of pluginName { %s } \
+                        into PluginItfInfo failed", 
+                        id.c_str(), pluginName.c_str());
+                break;
+            }
+            return CRANE_SUCC;
+        } while(0);
+
+        // Rollback
+        _pluginInstanceMap.erase(ret.first);
+
+        return CRANE_FAIL;
+    }
+
+    unsigned CraneRegistry::_clearPluginIdInItfInfo(const string& type, const string& pluginName, const string& id) {
+        shared_ptr<PluginInterfaceInfo> itfInfo = findPluginItfInfo(type);
+        if (!itfInfo) {
+            LOG_ERROR("Cannot find the interface type:{ %s } in the registry.", type.c_str());
+            LOG_ERROR("Clear plugin instance id { %s } of itfType { % } and pluginName { %s }from plugin ItfInfo failed",
+                    id.c_str(), type.c_str(), pluginName.c_str());
+            return CRANE_FAIL;
+        }
+        itfInfo->delPluginInstanceId(pluginName, id);
+        return CRANE_SUCC;
+    }
+
+    unsigned CraneRegistry::delPluginInstance(const string& id) {
+        PluginInstanceMap::const_iterator itr = _pluginInstanceMap.find(id);
+        if (itr == _pluginInstanceMap.end()) {
+            LOG_ERROR("Plugin instance ID { %s } is not exist.", id.c_str());
+            return CRANE_FAIL;
+        }
+
+        // Clear the id in the PluginInterfaceInfo.
+        if (CRANE_SUCC !=_clearPluginIdInItfInfo(itr->second.second.first, 
+                                                itr->second.second.second, id)) {
+            return CRANE_FAIL;
+        }
+
+        _pluginInstanceMap.erase(itr);
+        return CRANE_SUCC;
+    }
+
+    bool CraneRegistry::isExistPluginInstance(const string& uuid) {
+        PluginInstanceMap::const_iterator itr = _pluginInstanceMap.find(uuid);
+        if (itr == _pluginInstanceMap.end()) { return false; }
+        return true;
+    }
+
+    pair<string, string> CraneRegistry::getPluginItfAndImplName(const string& uuid) {
+        PluginInstanceMap::const_iterator itr = _pluginInstanceMap.find(uuid);
+        if (itr == _pluginInstanceMap.end()) { return make_pair<string, string>("",""); }
+
+        return itr->second.second;
+    }
+
+    shared_ptr<PluginBase> CraneRegistry::getPluginInstance(const string& id) {
+        PluginInstanceMap::const_iterator itr = _pluginInstanceMap.find(id);
+        if (itr == _pluginInstanceMap.end()) {
+            LOG_ERROR("Plugin instance ID { %s } is not exist.", id.c_str());
+            return shared_ptr<PluginBase>(nullptr);
+        }
+        return itr->second.first;
+    }
+
+    shared_ptr<PluginBase> CraneRegistry::getPluginInstance(const string& itfType, const string& pluginName) {
+        auto id = getPluginId(itfType, pluginName);
+        if (id.empty()) {
+            LOG_ERROR("Cannot find the interface type:{ %s } and pluginName { %s } in the registry.", 
+                        itfType.c_str(), pluginName.c_str());
+            return shared_ptr<PluginBase>{nullptr};
+        }
+
+        return getPluginInstance(id);
+    }
+
+    const string CraneRegistry::getPluginId(const string& itfType, const string& pluginName) const {
+        shared_ptr<PluginInterfaceInfo> itfInfo = findPluginItfInfo(itfType);
+        if (!itfInfo) {
+            LOG_ERROR("Cannot find the interface type:{ %s } and pluginName { %s } in the registry.", 
+                        itfType.c_str(), pluginName.c_str());
+            return std::move(string()); 
+        }
+
+        // Get the first id of the list.
+        list<string> ids = itfInfo->getPluginInstanceIds(pluginName);
+        if (ids.empty()) { return std::move(string()); }
+
+        const string& id = ids.front();
+        if (!id.empty()) {
+            return id;
+        } else {
+            return std::move(string());
+        }
+    }
+
+    void CraneRegistry::relPluginInstance(const string& id) {
+        PluginInstanceMap::const_iterator itr = _pluginInstanceMap.find(id);
+        if (itr == _pluginInstanceMap.end()) {
+            LOG_ERROR("Plugin id { %s } is not exist in the plugin instance map.", id.c_str());
+            return;
+        }
+
+        // If it is the only one instance, then release the plugin instance.
+        if (itr->second.first.unique()) {
+            // Clear the data in the Plugin Instance id map of PluginInterfaceInfo.
+            _clearPluginIdInItfInfo(itr->second.second.first/*itfType*/, itr->second.second.second/*pluginName*/, itr->first/*id*/);
+            // Whether it is successfully or failed, we will release 
+            // the plugin instance anyway.
+
+            // Erase the itr which is shared_ptr<Plugin>.
+            _pluginInstanceMap.erase(itr);
+            return;
+        }
+        LOG_WARNING("Pluign instance of id: { %s } has been referred by { %ld } counts.", 
+                            id.c_str(), itr->second.first.use_count());
+        return;
+    }
+
+    void CraneRegistry::relPluginInstance() {
+        PluginInstanceMap::const_iterator itr;
+        for (itr = _pluginInstanceMap.cbegin(); itr != _pluginInstanceMap.cend(); ++itr) {
+            relPluginInstance(itr->first);
+        }
+        return;
+    }
+
+    unsigned CraneRegistry::addPluginSwappableInstance(const string& id, 
+                                                    shared_ptr<Wrapper> wsp, 
+                                                    const string& pluginId, 
+                                                    const string& desc) {
+        PluginSwappableInstanceMap::const_iterator itr 
+            = _pluginSwappableInstanceMap.find(id);
+        
+        if (itr != _pluginSwappableInstanceMap.cend()) {
+            LOG_ERROR("Swrapped plugin instance id { %s } is exist in the map.",
+                id.c_str());
+            return CRANE_FAIL;
+        }
+
+        _pluginSwappableInstanceMap.insert(make_pair(id, make_pair(wsp, make_pair(pluginId, desc))));
+        return CRANE_SUCC;
+    }
+
+    shared_ptr<Wrapper> CraneRegistry::getPluginSwappableInstance(const string& id) {
+        PluginSwappableInstanceMap::const_iterator itr = _pluginSwappableInstanceMap.find(id);
+        if (itr == _pluginSwappableInstanceMap.cend()) { 
+            return _pluginSwappableInstanceMap.find(NULL_PLUGIN_SWAPPABLE_ID)->second.first; 
+        }
+        return itr->second.first;
+    }
+
+    void CraneRegistry::relPluginSwappableInstance(const string& id) {
+        PluginSwappableInstanceMap::const_iterator itr 
+            = _pluginSwappableInstanceMap.find(id);
+        if (itr != _pluginSwappableInstanceMap.cend()) {
+            if (true == itr->second.first.unique()) {
+                auto pluginId = itr->second.second.first;
+                LOG_DEBUG("Release the wrapped plugin with id: { %s }",id.c_str());
+                _pluginSwappableInstanceMap.erase(itr);
+
+                // Release plugin instance.
+                relPluginInstance(pluginId);                
+            } else {
+                LOG_WARNING("This wrapped plugin is referred by others, \
+                            so it cannot release the wrapped plugin with id: { %s }",
+                            id.c_str());
+            }
+            return;
+        }
+        LOG_WARNING("Can not find wrappable plugin id: { %s } \
+                    in the _pluginSwappableInstanceMap.", id.c_str());
+        return;
+    }
+
     unsigned CraneRegistry::_createCacheFile() {
         cout<<"_createCacheFile()"<<endl;
         //Open the cachefile
@@ -496,7 +720,7 @@ namespace NS_CRANE {
 
             //Construct the PluginInterfaceInfo instance and fill the key info of plugin and its interface.
             shared_ptr<PluginInterfaceInfo> spItfInfo = make_shared<PluginInterfaceInfo>(name, ver, reqFwVer);
-            spItfInfo->addPluginLibFileMap(pluginLibs);
+            spItfInfo->addPluginLibFile(pluginLibs);
 
             LOG_DEBUG("Insert ItfInfo { %s } into registry's _pluginIntMap", name.c_str());
             _pluginItfMap.insert(make_pair(name, spItfInfo));

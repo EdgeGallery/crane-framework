@@ -39,6 +39,7 @@ class coreTest : public testing::Test {
         {
             cout << "SetUpTestCase" << endl;
             char* cwd = NULL;
+            // Get current work dir.
             if ((cwd = getcwd(NULL, 0)) == NULL) {
                 cout << "Get current path failed." << endl;
                 free(cwd);
@@ -51,25 +52,29 @@ class coreTest : public testing::Test {
             s_oldfile = cwd; s_newfile = cwd;
             _s_cwd = s_cwd;
             free(cwd);
-
+            
+            // Generate original plugin absulote file name.
             s_oldfile += string("/../lib/plugins/libcranepluginplayermp3.so");
+            // Generate new plugin absulote file name.
             s_newfile += string("/plugins/libcranepluginplayermp3.so");
             cout << "s_oldfile: " << s_oldfile << endl;
             cout << "s_newfile: " << s_newfile << endl;
 
+            // Create plugins dir below the current path.
             if (access("plugins", F_OK|R_OK|W_OK|X_OK)) {
                 int ret = mkdir("plugins", MODE);
                 if (ret != 0) {
-                    cout << "Error: " << strerror(errno) << endl;
+                    cout << "mkdir Error: " << strerror(errno) << endl;
                     return;
                 }
                 plugins_dir = opendir("plugins");
             }
 
+            // Check whether new plugin file is exist.
             if (access("plugins/libcranepluginplayermp3.so", F_OK)) {
                 int ret = rename(s_oldfile.c_str(), s_newfile.c_str());
                 if (ret != 0) {
-                    cout << "Error: " << strerror(errno) << endl;
+                    cout << "rename Error: " << strerror(errno) << endl;
                     return;
                 }
             }
@@ -83,8 +88,8 @@ class coreTest : public testing::Test {
         {
             cout << "TearDownTestCase" << endl;
             if (!access("plugins/libcranepluginplayermp3.so", F_OK)) {
-                if (!rename(s_newfile.c_str(), s_oldfile.c_str())) {
-                    cout << "Error: " << strerror(errno) << endl;
+                if (rename(s_newfile.c_str(), s_oldfile.c_str())) {
+                    cout << "rename Error: " << strerror(errno) << endl;
                     return;
                 }
             }
@@ -92,7 +97,7 @@ class coreTest : public testing::Test {
                 closedir(plugins_dir);
                 int ret = rmdir("plugins");
                 if (!ret) {
-                    cout << "Error: " << strerror(errno) << endl;
+                    cout << "rmdir Error: " << strerror(errno) << endl;
                 }
             }
         }
@@ -116,14 +121,16 @@ TEST_F(coreTest, load_specail_plugin)
     string plugin_filename = _s_cwd + string("/plugins/libcranepluginplayermp3.so");
     pPluginFrame->load(plugin_filename);
 
+    string id1 {"my first plugin instance of mp3"};
     Itf_Player* playerMP3 = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplMP3", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplMP3", id1));
     if (playerMP3) {
         playerMP3->play("play mp3...");
     }
 
+    string id2 {"my first plugin instance of cd"};
     Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplCD", id2));
     if (playerCD) {
         playerCD->play("play cd...");
     }
@@ -145,14 +152,16 @@ TEST_F(coreTest, reload_special_plugin) {
     plugin_filename = _s_cwd + string("/../lib/plugins/libcranepluginplayercd.so");
     pPluginFrame->load(plugin_filename);
 
+    string id1 {"my first plugin instance of mp3"};
     Itf_Player* playerMP3 = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplMP3", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplMP3", id1));
     if (playerMP3) {
         playerMP3->play("play mp3...");
     }
 
+    string id2 {"my first plugin instance of cd"};
     Itf_Player* playerCD = dynamic_cast<Itf_Player*>(
-        pPluginFrame->create("Itf_Player", "PlayerImplCD", "my first plugin instance"));
+        pPluginFrame->create("Itf_Player", "PlayerImplCD", id2));
     if (playerCD) {
         playerCD->play("play cd...");
     }

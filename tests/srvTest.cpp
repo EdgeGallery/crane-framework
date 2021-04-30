@@ -71,8 +71,8 @@ TEST(SRV, http_basic)
         int argc = 1;
         char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
-
-        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+        string id {"Crane HTTP Server"};
+        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
         srv->handler(Http::make_handler<HelloHandlerBasic>());
 
@@ -117,7 +117,8 @@ TEST(SRV, http_router_func)
         char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
-        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+        string id {"Crane HTTP Server"};
+        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
         srv->router(HttpMethod::POST, string("/api/v1/img/dongyin"), Rest::Routes::bind(postProcess));
         srv->handler();
@@ -163,7 +164,8 @@ TEST(SRV, http_router_obj)
         char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
-        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+        string id {"Crane HTTP Server"};
+        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
         Http_handler http_handler;
         srv->router(HttpMethod::POST, string("/api/v1/img/dongyin"), Rest::Routes::bind(&Http_handler::postHandler, &http_handler));
@@ -201,7 +203,8 @@ TEST(SRV, http_router_shared_ptr)
         char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
-        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+        string id {"Crane HTTP Server"};
+        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
         shared_ptr<Http_handler> http_handler = make_shared<Http_handler>();
         srv->router(HttpMethod::POST, string("/api/v1/img/dongyin"), Rest::Routes::bind(&Http_handler::postHandler, http_handler));
@@ -240,7 +243,8 @@ TEST(SRV, http_init_by_code)
         char **argv = nullptr;
         pPluginFrame->init(argc, argv, CRANE_CRN);
 
-        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+        string id {"Crane HTTP Server"};
+        srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
         srv->create(port);
         srv->options()
@@ -283,7 +287,8 @@ TEST(SRV, https_basic)
     char **argv = nullptr;
     pPluginFrame->init(argc, argv, CRANE_CRN);
 
-    Itf_CraneSrv* srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", "Crane HTTP Server."));
+    string id {"Crane HTTP Server"};
+    Itf_CraneSrv* srv = dynamic_cast<Itf_CraneSrv*>(pPluginFrame->create("Itf_CraneSrv", "CraneSrv", id));
 
     srv->handler(Http::make_handler<HelloHandlerBasic>());
     srv->serverTLS("./certs/server.crt", "./certs/server.key");

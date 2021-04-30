@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 09:36:46
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,8 +38,8 @@ TEST(MEP, MepBaisc) {
     int argc = 1;
     char **argv = nullptr;
     pPluginFrame->init(argc, argv, CRANE_CRN);
-
-    Itf_CraneMep* mep = dynamic_cast<Itf_CraneMep*>(pPluginFrame->create("Itf_CraneMep", "CraneMep", "Crane MEP."));
+    string id {"Crane MEP"};
+    Itf_CraneMep* mep = dynamic_cast<Itf_CraneMep*>(pPluginFrame->create("Itf_CraneMep", "CraneMep", id));
 
     cout << "mep { " << mep << " }" << endl;
 

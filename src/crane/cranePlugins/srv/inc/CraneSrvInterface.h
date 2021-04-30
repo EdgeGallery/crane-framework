@@ -28,7 +28,7 @@ using namespace Pistache;
 
 namespace NS_CRANE {
 //template <typename Result, typename... Args>
-class Itf_CraneSrv : public PluginBaseInterface {
+class Itf_CraneSrv : public PluginBase {
     public:
         enum class ThreadMode{
             MAIN_THREAD = 0,

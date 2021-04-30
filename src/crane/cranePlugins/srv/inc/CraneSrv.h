@@ -41,6 +41,8 @@ class CraneSrv : public Itf_CraneSrv {
          * @Return: 
          */        
         unsigned init() override;
+        unsigned start() override;
+        unsigned stop() noexcept override;
 
         //template <typename Result, typename... Args>
         //unsigned router(HttpMethod method, const string& path, Result (*func)(Args...)) override;

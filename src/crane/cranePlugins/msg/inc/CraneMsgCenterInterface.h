@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-27 08:56:17
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +36,7 @@
 using namespace std;
 namespace NS_CRANE {
 
-class Itf_CraneMsgCenter : public PluginBaseInterface {
+class Itf_CraneMsgCenter : public PluginBase {
     public:
         /**
          * @Descripttion:   Subscribe a special topic with Observer implement class instance.

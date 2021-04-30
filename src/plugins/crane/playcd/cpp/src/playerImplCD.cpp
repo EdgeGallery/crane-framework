@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-08 17:28:38
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +26,12 @@
 
 unsigned int PlayerImplCD::init() {
     std::cout<<"Crane plugin: CD player is initialized."<<endl;
-    return 0;
+    return CRANE_SUCC;
+}
+
+unsigned PlayerImplCD::start() {
+    cout << "Crane plugin: PlayerImplMP3 plugin is start..." << endl;
+    return CRANE_SUCC;
 }
 
 unsigned int PlayerImplCD::play(std::string str) {
@@ -31,9 +44,9 @@ unsigned int PlayerImplCD::pause() {
     return 0;
 }
 
-unsigned int PlayerImplCD::stop() {
+unsigned PlayerImplCD::stop() noexcept {
     std::cout<<"Crane plugin: CD player has stopped."<<endl;
-    return 0;
+    return CRANE_SUCC;
 }
 
 PlayerImplCD::~PlayerImplCD() {

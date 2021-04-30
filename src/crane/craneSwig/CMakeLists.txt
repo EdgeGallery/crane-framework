@@ -7,6 +7,7 @@ FIND_PACKAGE(PythonLibs)
 link_libraries(stdc++)
 
 include_directories(${PYTHON_INCLUDE_PATH})
+include_directories("${PROJECT_SOURCE_DIR}/src/inc")
 include_directories("${PROJECT_SOURCE_DIR}/src/crane/common/inc")
 include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneServer/inc")
 include_directories("${PROJECT_SOURCE_DIR}/src/crane/craneWrapper/inc")

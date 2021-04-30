@@ -172,12 +172,26 @@ namespace NS_CRANE {
         return std::string();
     }
 
-    string Util::uuid()
-    {
+    string Util::uuid() {
         boost::uuids::uuid a_uuid = boost::uuids::random_generator()();
         string uuid = boost::uuids::to_string(a_uuid);
-        return uuid;
+        return std::move(uuid);
+        //return uuid;
     }
+
+    /*
+    string Util::linux_uuid() {
+        uuid_t uuid;
+        uuid_generate(uuid);
+
+        char uuid_str[UUID_STR_LEN] = {0};
+        snprintf(uuid_str, UUID_STR_LEN,
+                "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x", 
+                uuid[0], uuid[1], uuid[2], uuid[3], uuid[4], uuid[5], uuid[6], uuid[7],
+                uuid[8], uuid[9], uuid[10], uuid[11], uuid[12], uuid[13], uuid[14], uuid[15]);
+        return string(uuid_str); //this string will be moved in c++11.
+    }
+    */
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"

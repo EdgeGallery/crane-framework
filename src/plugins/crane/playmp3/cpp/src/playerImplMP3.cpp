@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-08 17:28:47
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +27,17 @@
 
 unsigned int PlayerImplMP3::init() {
     std::cout<<"Crane plugin: MP3 player is initialized."<<std::endl;
-    return 0;
+    return CRANE_SUCC;
+}
+
+unsigned PlayerImplMP3::start() {
+    cout << "Crane plugin: PlayerImplMP3 plugin is start..." << endl;
+    return CRANE_SUCC;
+}
+
+unsigned PlayerImplMP3::stop() noexcept {
+    cout << "Crane plugin: PlayerImplMP3 plugin is stop..." << endl;
+    return CRANE_SUCC;
 }
 
 unsigned int PlayerImplMP3::play(std::string str) {
@@ -29,11 +47,6 @@ unsigned int PlayerImplMP3::play(std::string str) {
 
 unsigned int PlayerImplMP3::pause() {
     std::cout<<"Crane plugin: MP3 player is paused."<<std::endl;
-    return 0;
-}
-
-unsigned int PlayerImplMP3::stop() {
-    std::cout<<"Crane plugin: MP3 player has stopped."<<std::endl;
     return 0;
 }
 

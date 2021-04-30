@@ -38,7 +38,6 @@ class DlLibrary : public enable_shared_from_this<DlLibrary> {
          * @Param: filename: absolute filename of library file.
          * @Return: 
          */        
-        //static shared_ptr<DlLibrary> Load(const string& filename);
         static unique_ptr<DlLibrary> Load(const string& filename);
 
         /**
@@ -49,11 +48,13 @@ class DlLibrary : public enable_shared_from_this<DlLibrary> {
         void* symbol(const string& symbolName);
 
         /**
-         * @Descripttion: Invoke the function in plugin library and initialize the plugin description data.
+         * @Descripttion: Invoke the function in plugin library,
+         *              initialize the plugin description data and
+         *              return the result.
          * @Param: null
-         * @Return: null
+         * @Return: PluginDesc
          */        
-        void getPluginDesc(); 
+        const PluginDesc& pluginDesc();
 
         /**
          * @Descripttion: Get absolute filename of the plugin's library
@@ -65,20 +66,11 @@ class DlLibrary : public enable_shared_from_this<DlLibrary> {
         }
         
         /**
-         * @Descripttion: Get plugin description information.
-         * @Param: null
-         * @Return: 
-         */        
-        inline const PluginDesc& pluginDesc() const {
-            return _pluginDesc;
-        }
-
-        /**
          * @Descripttion: Create and return the handle of instance of the plugin factory.
          * @Param: null
          * @Return: handle of instance of the plugin factory
          */        
-        shared_ptr<AbstractPluginFactory> createPluginFactory();
+        shared_ptr<IPluginFactory> createPluginFactory();
 
     private:
         DlLibrary() = delete;
@@ -95,7 +87,7 @@ class DlLibrary : public enable_shared_from_this<DlLibrary> {
     private:
         using Func_Crane_Plugin_Desc = PluginDesc* (*)();
 
-        using Func_Crane_Create_Plugin_Factory = shared_ptr<AbstractPluginFactory> (*)();
+        using Func_Crane_Create_Plugin_Factory = shared_ptr<IPluginFactory> (*)();
 
         string          _name;                      //library file name of the plugin which is not included libcraneplugin prefix and .so suffix.
 

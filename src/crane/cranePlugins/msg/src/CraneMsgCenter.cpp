@@ -29,6 +29,16 @@ namespace NS_CRANE {
         return CRANE_SUCC;
     }
 
+    unsigned CraneMsgCenter::start() {
+        cout << " CraneMsgCenter plugin is start..." << endl;
+        return CRANE_SUCC;
+    }
+
+    unsigned CraneMsgCenter::stop() noexcept {
+        cout << " CraneMsgCenter plugin is stop..." << endl;
+        return CRANE_SUCC;
+    }
+
     void CraneMsgCenter::scanning() {
         hash<shared_ptr<CraneMsg>> hashFunc;
         while(true) {            

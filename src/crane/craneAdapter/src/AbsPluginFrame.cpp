@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 11:03:40
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,18 +28,23 @@
 
 namespace NS_CRANE {
 
-    AbstractPluginFrame* AbstractPluginFrame::_instance = nullptr;
-    AbstractPluginFrame::Garbo AbstractPluginFrame::_garbo;
+AbstractPluginFrame* AbstractPluginFrame::_instance = nullptr;
+AbstractPluginFrame::Garbo AbstractPluginFrame::_garbo;
 
-    AbstractPluginFrame::AbstractPluginFrame() {
-        //_server = make_shared<Server>();
-        
-    }
+AbstractPluginFrame::AbstractPluginFrame() { }
     
-    AbstractPluginFrame* AbstractPluginFrame::getPluginFrame() {
-        if (_instance == nullptr) {
-            _instance = new PluginSysAdapter();
-        }
-        return _instance;
+AbstractPluginFrame* AbstractPluginFrame::getPluginFrame() {
+    if (_instance == nullptr) {
+        _instance = new PluginSysAdapter();
     }
+    return _instance;
+}
+
+void AbstractPluginFrame::relPluginFrame() {
+    if (_instance != nullptr) {
+        delete _instance;
+        _instance = nullptr;
+    }
+}
+
 }

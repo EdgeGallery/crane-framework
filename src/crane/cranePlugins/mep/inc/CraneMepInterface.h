@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-27 08:57:29
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,7 +62,7 @@ namespace NS_CRANE {
     };
     using ServicesSubscriberInfo = map<string, shared_ptr<ServiceSubscriberInfo>>;    
     
-class Itf_CraneMep : public PluginBaseInterface {
+class Itf_CraneMep : public PluginBase {
     public:
         /**
          * @Descripttion: 触发和MEP的交互动作，包括服务注册、发现、订阅等行为。该方法在进程加载的时候调用。

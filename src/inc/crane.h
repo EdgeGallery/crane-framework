@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 15:59:47
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-02-23 17:28:59
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +26,7 @@
 #define __CRANE_CRANE_H__
 
 //Crane basic
+#include "common.h"
 #include "craneMacro.h"
 #include "Util.h"
 
@@ -28,6 +37,7 @@
 //Crane framework interfaces
 #include "AbsPluginFrame.h"
 #include "PluginSysAdapter.h"
+#include "Wrapper.h"
 
 //Crane system plugins
 #include "CraneMsgCenterPlugin.h"

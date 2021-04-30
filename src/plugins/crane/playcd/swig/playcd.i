@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-27 09:07:23
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,4 +34,4 @@
 
 //////////////////////////////////////////////////
 
-extern unsigned playcd_play(crane::PluginBaseInterface* playcd, std::string str);
+extern unsigned playcd_play(crane::PluginBase* playcd, std::string str);

@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-08 17:35:05
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,6 +36,9 @@ using namespace std;
 class FetchImgInfo : public Itf_FetchInfo {
     public:
         unsigned init() override;
+        unsigned start() override;
+        unsigned stop() noexcept override;
+
         unsigned fetchInfo(std::array<float, 4096>&, float longitude, float latitude ,Itf_FetchInfo::Result&) override;
 
     private:

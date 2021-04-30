@@ -36,21 +36,21 @@ namespace NS_CRANE {
 ///////////////////////////////////////////////////////////////////////////////////
 //template<class T>
 //typename std::enable_if<std::is_base_of<PluginBaseInterface, T>::value, ReturnType>::type
-class AbstractPluginFactory {
+class IPluginFactory {
     public:
         /**
          * @Descripttion: 
          * @Param: 
          * @Return: 
          */        
-        AbstractPluginFactory(string itfType, string pluginName, string version) : interfaceType(itfType), pluginName(pluginName), version(version) {}
+        IPluginFactory(string itfType, string pluginName, string version) : interfaceType_(itfType), pluginName_(pluginName), version_(version) {}
 
         /**
          * @Descripttion: 插件的工厂方法，各个插件的工厂类实现该接口
          * @Param: null
          * @Return: 继承PluginBaseInterface接口的插件类实例的指针
          */        
-        virtual PluginBaseInterface* create() = 0; 
+        virtual PluginBase* create() = 0; 
         //virtual T* create() = 0;
 
         /**
@@ -65,7 +65,7 @@ class AbstractPluginFactory {
          * @Param: null
          * @Return: 接口类名称
          */        
-        const string& getInterfaceType() const;
+        const string& interfaceType() const;
 
 
         /**
@@ -73,23 +73,23 @@ class AbstractPluginFactory {
          * @Param: null
          * @Return: 插件类名称
          */        
-        const string& getPluginName() const;
+        const string& pluginName() const;
 
         /**
          * @Descripttion: 获取插件所实现的接口的版本
          * @Param: null
          * @Return: 返回插件接口的版本信息
          */        
-        const string& getVersion() const;
+        const string& version() const;
     protected:
         //插件所实现的接口名称，该名称和接口定义的名称相同
-        string interfaceType;
+        string interfaceType_;
 
         //插件接口实现类的名称，该名称和插件类的名称相同
-        string pluginName;
+        string pluginName_;
 
         //插件接口的版本
-        string version;
+        string version_;
 
         //单例插件的互斥锁
         static mutex SingletonLock;

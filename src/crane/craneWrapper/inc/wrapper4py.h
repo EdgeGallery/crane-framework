@@ -19,9 +19,9 @@
 
 unsigned init(unsigned init_type);
 
-crane::PluginBaseInterface* create(std::string itfName, std::string pluginName, std::string description);
+crane::PluginBase* create(std::string itfName, std::string pluginName, std::string description);
 
-void destory(crane::PluginBaseInterface* cranePlugin);
+void destory(crane::PluginBase* cranePlugin);
 
 void* create(std::string factoryName, std::string pluginName);
 

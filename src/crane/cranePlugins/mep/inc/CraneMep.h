@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-08 17:20:53
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,6 +54,10 @@ namespace NS_CRANE {
         virtual ~CraneMep() { }
         
         unsigned init() override;
+
+        unsigned start() override;
+        
+        unsigned stop() noexcept override;
 
         /**
          * @Descripttion: Invoke produre of interaction with mep. This method should be invoke during system has initialized.

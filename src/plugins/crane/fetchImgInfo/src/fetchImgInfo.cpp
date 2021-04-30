@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-08 17:28:29
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +53,17 @@ unsigned FetchImgInfo::init() {
 
     _pFunc = PyObject_GetAttrString(pModule, "wang");
 
-    return 0;
+    return CRANE_SUCC;
+}
+
+unsigned FetchImgInfo::start() {
+    cout << "Crane plugin: FetchImgInfo plugin is start..." << endl;
+    return CRANE_SUCC;
+}
+
+unsigned  FetchImgInfo::stop() noexcept {
+    cout << "Crane plugin: FetchImgInfo plugin is stop..." << endl;
+    return CRANE_SUCC;
 }
 
 unsigned FetchImgInfo::fetchInfo(array<float, 4096>& data, float longitude, float latitude ,Result& result) {

@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-27 15:28:19
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,15 +26,15 @@
 
 namespace NS_CRANE {
     
-    const string& AbstractPluginFactory::getVersion() const {
-        return version;
+    const string& IPluginFactory::version() const {
+        return version_;
     }
 
-    const string& AbstractPluginFactory::getInterfaceType() const {
-        return interfaceType;
+    const string& IPluginFactory::interfaceType() const {
+        return interfaceType_;
     }
 
-    const string& AbstractPluginFactory::getPluginName() const {
-        return pluginName;
+    const string& IPluginFactory::pluginName() const {
+        return pluginName_;
     }
 }

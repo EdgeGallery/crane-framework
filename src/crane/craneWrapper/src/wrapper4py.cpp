@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 09:33:37
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,12 +44,12 @@ unsigned init(unsigned init_type) {
     return ret;
 }
 
-PluginBaseInterface* create(string itfName, string pluginName, string description) {
+PluginBase* create(string itfName, string pluginName, string id) {
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();
-    return pPluginFrame->create(itfName, pluginName, description);
+    return pPluginFrame->create(itfName, pluginName, id);
 }
 
-void destory(PluginBaseInterface* cranePlugin) {
+void destory(PluginBase* cranePlugin) {
     if (cranePlugin == nullptr) { return; }
 
     AbstractPluginFrame* pPluginFrame = AbstractPluginFrame::getPluginFrame();

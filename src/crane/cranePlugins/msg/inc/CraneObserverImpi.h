@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-30 09:29:42
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,53 +38,58 @@ using namespace std;
 namespace NS_CRANE {
 
 class CraneObserverImpi : public CraneObserver, public enable_shared_from_this<CraneObserverImpi> {
-    public:
-        CraneObserverImpi () {
-            LOG_ENTER();
-            _msgCenter = dynamic_cast<Itf_CraneMsgCenter*>(
-                AbstractPluginFrame::getPluginFrame()->create("Itf_CraneMsgCenter", "CraneMsgCenter", ""));            
+public:
+    CraneObserverImpi () {
+        LOG_ENTER();
+        string id{};
+        _msgCenter = dynamic_cast<Itf_CraneMsgCenter*>(
+            AbstractPluginFrame::getPluginFrame()->create("Itf_CraneMsgCenter", 
+                                                            "CraneMsgCenter", 
+                                                            id));            
+    }
+
+    virtual unsigned subscribe(const CraneTopic& topic) override {
+        LOG_ENTER();
+        unsigned ret = _msgCenter->subscriber(topic, shared_from_this());
+        if (ret != CRANE_SUCC) {
+            LOG_ERROR("subscribe with topic { %s } failed with retCode: { %u }",
+                        topic.name().c_str(), ret);
+            return ret;
         }
 
-        virtual unsigned subscribe(const CraneTopic& topic) override {
-            LOG_ENTER();
-            unsigned ret = _msgCenter->subscriber(topic, shared_from_this());
-            if (ret != CRANE_SUCC) {
-                LOG_ERROR("subscribe with topic { %s } failed with retCode: { %u }", topic.name().c_str(), ret);
-                return ret;
-            }
+        _topics.push_back(topic);
 
-            _topics.push_back(topic);
+        return CRANE_SUCC;
+    }
 
-            return CRANE_SUCC;
+    unsigned unsubscribe(const CraneTopic& topic) override {
+        LOG_ENTER();
+        unsigned ret = _msgCenter->unSubscriber(topic, dynamic_pointer_cast<CraneObserver>(shared_from_this()));
+        if (ret != CRANE_SUCC) {
+            LOG_ERROR("unsubscribe with topic { %s } failed with retCode: { %u }",
+                    topic.name().c_str(), ret);
+            return ret;
         }
 
-        unsigned unsubscribe(const CraneTopic& topic) override {
-            LOG_ENTER();
-            unsigned ret = _msgCenter->unSubscriber(topic, dynamic_pointer_cast<CraneObserver>(shared_from_this()));
-            if (ret != CRANE_SUCC) {
-                LOG_ERROR("unsubscribe with topic { %s } failed with retCode: { %u }", topic.name().c_str(), ret);
-                return ret;
-            }
+        _topics.remove(topic);
 
-            _topics.remove(topic);
+        return CRANE_SUCC;
+    }
 
-            return CRANE_SUCC;
+    Itf_CraneMsgCenter*         msgCenter() {
+        return _msgCenter;
+    }
+
+    ~CraneObserverImpi() {
+        LOG_ENTER();
+        for (CraneTopic t : _topics) {
+            _msgCenter->unSubscriber(t, dynamic_pointer_cast<CraneObserver>(shared_from_this()));
         }
+    }       
 
-        Itf_CraneMsgCenter*         msgCenter() {
-            return _msgCenter;
-        }
-
-        ~CraneObserverImpi() {
-            LOG_ENTER();
-            for (CraneTopic t : _topics) {
-                _msgCenter->unSubscriber(t, dynamic_pointer_cast<CraneObserver>(shared_from_this()));
-            }
-        }       
-
-    private:
-        Itf_CraneMsgCenter*         _msgCenter;
-        list<CraneTopic>            _topics;
+private:
+    Itf_CraneMsgCenter*         _msgCenter;
+    list<CraneTopic>            _topics;
 
 };
 

@@ -1,4 +1,12 @@
 /*
+ * @Descripttion: 
+ * @Version: 1.0
+ * @Author: dongyin@huawei.com
+ * @Date: 2021-02-23 10:31:02
+ * @LastEditors: dongyin@huawei.com
+ * @LastEditTime: 2021-03-27 10:38:20
+ */
+/*
  *    Copyright 2020 Huawei Technologies Co., Ltd.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +26,9 @@
 
 
 namespace NS_CRANE {
-    //shared_ptr<DlLibrary> DlLibrary::Load(const string& filename) {
     unique_ptr<DlLibrary> DlLibrary::Load(const string& filename) {
         if ( filename.empty() ){
             LOG_ERROR("Absolute filename of plugin is empty.");
-            //return shared_ptr<DlLibrary>(nullptr);
             return unique_ptr<DlLibrary>(nullptr);
         } else {
             LOG_DEBUG("Plugin absolute filename: { %s }", filename.c_str());
@@ -36,26 +42,29 @@ namespace NS_CRANE {
             return unique_ptr<DlLibrary>(nullptr);
         }
 
-        //return shared_ptr<DlLibrary>(new DlLibrary(filename, handle));
         return unique_ptr<DlLibrary>(new DlLibrary(filename, handle));
     }
 
-    void DlLibrary::getPluginDesc() {
+    const PluginDesc& DlLibrary::pluginDesc() {
+        if (_pluginDesc) { return _pluginDesc; }
+
         string funcName(CRANE_PLUGIN_DESC_FUNC_SYMBOL);
         Func_Crane_Plugin_Desc getPluginDescFunc = reinterpret_cast<Func_Crane_Plugin_Desc>(symbol(funcName));
         if (getPluginDescFunc != nullptr) { 
             _pluginDesc = *getPluginDescFunc();
         } else {
             LOG_ERROR("Cannot get description of the plugin: { % }", _name.c_str());
+            // Return empty _pluginDesc below;
         }
+        return _pluginDesc;
     }
 
-    shared_ptr<AbstractPluginFactory> DlLibrary::createPluginFactory() {
+    shared_ptr<IPluginFactory> DlLibrary::createPluginFactory() {
         string funcName = string(CRANE_PLUGIN_FACTORY_FUNC_SYMBOL);
         Func_Crane_Create_Plugin_Factory createFactory = reinterpret_cast<Func_Crane_Create_Plugin_Factory>(symbol(funcName));
         if (createFactory == nullptr) {
             LOG_ERROR("Cannot get factory func of plugin: { %s }", _name.c_str());
-            return shared_ptr<AbstractPluginFactory>(nullptr);
+            return shared_ptr<IPluginFactory>(nullptr);
         } else {
             LOG_DEBUG("Create plugin { %s } factory instance successfully.", _name.c_str());
             return createFactory();
