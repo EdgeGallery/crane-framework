@@ -1,9 +1,9 @@
 /*
  * @Descripttion: 
  * @Version: 1.0
- * @Author: dongyin@huawei.com
+ * @Author: hwdy
  * @Date: 2021-04-01 09:12:15
- * @LastEditors: dongyin@huawei.com
+ * @LastEditors: hwdy
  * @LastEditTime: 2021-04-07 20:49:48
  */
 /*
@@ -26,9 +26,9 @@
 /*
  * @Descripttion: 
  * @Version: 1.0
- * @Author: dongyin@huawei.com
+ * @Author: hwdy
  * @Date: 2021-04-01 09:12:15
- * @LastEditors: dongyin@huawei.com
+ * @LastEditors: hwdy
  * @LastEditTime: 2021-04-01 09:40:43
  */
 
@@ -43,7 +43,7 @@ CRANE_PLUGIN_DEFINE_WITH_T("1.0.0",
                     CraneDisruptor,
                     DisruptorEvent,
                     "crane system plugin, which is a high perfermence message bus.",
-                    "dongyin@huawei.com",
+                    "hwdy",
                     "LGPL")
 
 }

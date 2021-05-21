@@ -1,9 +1,9 @@
 /*
  * @Descripttion: Contain the all base H files which would used by crane framework and system plugins.
  * @Version: 1.0
- * @Author: dongyin@huawei.com
+ * @Author: hwdy
  * @Date: 2021-02-23 11:21:54
- * @LastEditors: dongyin@huawei.com
+ * @LastEditors: hwdy
  * @LastEditTime: 2021-02-24 11:19:18
  */
 

@@ -3,9 +3,9 @@
  *                  Wrapper class could add some behavior before or after the invoking 
  *                  plugin's interface.
  * @Version: 1.0
- * @Author: dongyin@huawei.com
+ * @Author: hwdy
  * @Date: 2021-02-23 11:11:40
- * @LastEditors: dongyin@huawei.com
+ * @LastEditors: hwdy
  * @LastEditTime: 2021-03-31 10:03:57
  */
 
