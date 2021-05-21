@@ -1,9 +1,9 @@
 /*
  * @Descripttion: 
  * @Version: 1.0
- * @Author: dongyin@huawei.com
+ * @Author: hwdy
  * @Date: 2021-03-08 14:19:40
- * @LastEditors: dongyin@huawei.com
+ * @LastEditors: hwdy
  * @LastEditTime: 2021-03-27 08:56:44
  */
 /*
@@ -98,5 +98,5 @@ CRANE_PLUGIN_DEFINE("1.0.0",
                     "1.0.1",
                     Car,
                     "Car which is implement the Itf_Vechile interface.",
-                    "dongyin@huawei.com",
+                    "hwdy",
                     "LGPL")

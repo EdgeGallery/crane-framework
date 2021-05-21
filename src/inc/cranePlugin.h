@@ -122,7 +122,7 @@ extern "C" shared_ptr<crane::IPluginFactory> createPluginFactory() {\
 ///         itfVer:     插件接口版本，如1.2.1
 ///         pluginName: 插件接口实现类的名称，如：PlayerImplCD 
 ///         desc:       插件实现描述 
-///         author:     插件作者，如：dongyin@huawei.com
+///         author:     插件作者，如：hwdy
 ///         license:    插件license
 ///////////////////////////////////////////////////////////////////////
 
@@ -162,7 +162,7 @@ extern "C" shared_ptr<crane::IPluginFactory> createPluginFactory() {\
 ///         pluginName: class name of the implemention of interface. e.g PlayerImplCD 
 ///         T:          template parameter of the plugin implement class.
 ///         desc:       description of the plugin. 
-///         author:     author of the plugin, e.g dongyin@huawei.com
+///         author:     author of the plugin, e.g hwdy
 ///         license:    license of the plugin
 ///////////////////////////////////////////////////////////////////////
 #define CRANE_PLUGIN_DEFINE_WITH_T(fwVer, itfType, itfVer, pluginName, T, desc, author, license) \
