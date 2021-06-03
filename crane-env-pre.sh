@@ -80,7 +80,7 @@ install_gtest()
     cmake CMakeLists.txt
     make
 
-    #拷贝到系统目录，注意，如果下诉目录位置在不同版本位置有变动，用find . -name "libgtest*.a" 找到位置
+    #Copy to system directory，note，If the location of the download directory changes in different versions，usefind . -name "libgtest*.a" Find location
     sudo cp lib/libgtest*.a  /usr/lib
     sudo cp -a googletest/include/gtest /usr/include
     cd ../
@@ -103,7 +103,7 @@ install_pistache()
     make
     #make test
     sudo make install
-    #创建软连接
+    #Create soft connection
     ln -s /usr/local/lib/libpistache-0.0.002-git20200802.so /usr/local/lib/libpistache.so
     cd ../../
 }
@@ -116,7 +116,7 @@ sudo apt-get install -y cmake
 
 echo "安装gtest"
 install_gtest 
-#sudo apt-get install googletest 使用adp-get安装后缺少相关头文件
+#sudo apt-get install googletest useadp-getMissing related header files after installation
 
 echo "安装python3.8"
 sudo apt-get install -y python3.8-dev
@@ -127,7 +127,7 @@ sudo apt-get install -y swig
 echo "安装rapidjson"
 sudo apt-get install -y rapidjson-dev
 
-#安装openssl，目前环境基本都默认安装的有，如果没有可以使用如下命令安装
+#installationopenssl，目前环境基本都默认installation的有，如果没有可以使用如下命令installation
 #sudo apt-get install -y openssl
 
 echo "安装cpprestsdk"
