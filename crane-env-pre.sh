@@ -15,7 +15,7 @@
 
 install_gstreamer()
 {
-    echo "步骤一：下载"
+    echo "step 1: downloading"
     git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gstreamer.git
     git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-base.git
     git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-good.git
@@ -23,7 +23,7 @@ install_gstreamer()
     git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-plugins-ugly.git
     git clone -b 1.16.2 https://gitlab.freedesktop.org/gstreamer/gst-libav.git
 
-    echo "步骤二：安装依赖"
+    echo "step 2: installing dependency"
     sudo apt-get install -y autoconf
     sudo apt-get install -y autopoint
     sudo apt-get install -y bison
@@ -33,13 +33,13 @@ install_gstreamer()
     sudo apt-get install -y libgtk-3-dev
     sudo apt-get install -y libssl-dev
 
-    echo "步骤三：将版本切换到gcc5和g++5"
+    echo "step 3: switch the verison to gcc5 and g++5"
     sudo apt-get install -y gcc-5
     sudo apt-get install -y g++-5
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 100 --slave /usr/bin/g++ g++ /usr/bin/g++-5
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 50 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 
-    echo "步骤四：在各个目录下执行编译、安装"
+    echo "step 4: building and installing in every directory"
     cd gstreamer
     ./autogen.sh --disable-gtk-doc
     make
@@ -80,7 +80,7 @@ install_gtest()
     cmake CMakeLists.txt
     make
 
-    #Copy to system directory，note，If the location of the download directory changes in different versions，usefind . -name "libgtest*.a" Find location
+    #Copy to system directory，note，If the location of the download directory changes in different versions，use command 'find . -name "libgtest*.a"' to find location
     sudo cp lib/libgtest*.a  /usr/lib
     sudo cp -a googletest/include/gtest /usr/include
     cd ../
@@ -108,38 +108,38 @@ install_pistache()
     cd ../../
 }
 
-echo "准备环境"
+echo "preparing the enviroment"
 sudo apt-get update
 
-echo "安装cmake"
+echo "installing cmake"
 sudo apt-get install -y cmake
 
-echo "安装gtest"
+echo "installing gtest"
 install_gtest 
-#sudo apt-get install googletest useadp-getMissing related header files after installation
+#sudo apt-get install googletest   Missing related header files after using adp-get installation
 
-echo "安装python3.8"
+echo "installing python3.8"
 sudo apt-get install -y python3.8-dev
 
-echo "安装SWIG"
+echo "installing SWIG"
 sudo apt-get install -y swig
 
-echo "安装rapidjson"
+echo "installing rapidjson"
 sudo apt-get install -y rapidjson-dev
 
 #installationopenssl，The current environment is basically defaultinstallationOf have，If not, you can use the following commandinstallation
 #sudo apt-get install -y openssl
 
-echo "安装cpprestsdk"
+echo "installing cpprestsdk"
 sudo apt-get install -y libcpprest-dev
 
-echo "安装curl"
+echo "installing curl"
 sudo apt-get install -y libcurl4-openssl-dev
 
-echo "安装pistache"
+echo "installing pistache"
 install_pistache
 
-echo "安装Gstreamer"
+echo "installing Gstreamer"
 install_gstreamer
 
 
