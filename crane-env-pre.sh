@@ -127,7 +127,7 @@ sudo apt-get install -y swig
 echo "installing rapidjson"
 sudo apt-get install -y rapidjson-dev
 
-#installationopenssl，The current environment is basically defaultinstallationOf have，If not, you can use the following commandinstallation
+#installation openssl，The current environment is basically default installation，If not, you can use the following command installation
 #sudo apt-get install -y openssl
 
 echo "installing cpprestsdk"
