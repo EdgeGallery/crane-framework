@@ -127,7 +127,7 @@ sudo apt-get install -y swig
 echo "installing rapidjson"
 sudo apt-get install -y rapidjson-dev
 
-#installing openssl，usually the software openssl exists in enviroment, if not, you can use following command to install openssl.
+#please use below command to install openssl, if environment does not have it already
 #sudo apt-get install -y openssl
 
 echo "installing cpprestsdk"
